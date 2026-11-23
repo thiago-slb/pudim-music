@@ -4,8 +4,9 @@ A music player for [Jellyfin](https://jellyfin.org), built with Flutter for Andr
 It aims for the feel of a modern streaming app: a home page with shelves, fast search, a full-screen "now playing",
 synced lyrics, offline downloads, and an optional extras server for social features.
 
-The interface is available in **Portuguese (Brazil)**, **English** and **Spanish**. It follows the device language
-(falling back to Portuguese) and can be changed in Settings. See [Translations](#translations) to add another language.
+The interface is available in **Portuguese (Brazil)**, **English**, **Spanish**, **French**, **German**, **Italian**,
+**Dutch**, **Swedish**, **Polish**, **Turkish**, **Russian**, **Ukrainian**, **Japanese**, **Korean** and
+**Simplified Chinese**. It follows the device language (falling back to Portuguese) and can be changed in Settings. See [Translations](#translations) to add another language.
 
 ## Features
 
@@ -19,9 +20,16 @@ The interface is available in **Portuguese (Brazil)**, **English** and **Spanish
 - Synced lyrics (from Jellyfin), full screen or in the side panel
 - Offline downloads of albums and playlists, with automatic offline mode when the connection drops
 - Create, edit and add to playlists; favorites
+- Gapless playback, volume normalization (Jellyfin's analysis) and streaming quality per connection (original or
+  transcoded, separate for Wi-Fi and mobile data)
+- Sleep timer (minutes or end of track, with fade out) and podcast playback speed
 - Playback reporting to Jellyfin (play counts, resume, "recently played")
 - OS media controls: Android notification and lock screen, Windows media keys and overlay (SMTC)
 - Android home-screen widget
+- Android Auto and CarPlay: browse your library and play from the car
+- Chromecast: cast from phone or desktop to any Google Cast device on the same Wi-Fi
+- Sign in with password or Quick Connect
+- Several accounts and servers saved on the device, switch in one tap
 - Separate local and remote server addresses (uses the local one when it answers)
 - Desktop layout with three columns and keyboard shortcuts; phone layout with bottom navigation and mini player
 
@@ -73,7 +81,7 @@ discovery, which depend on a separate download pipeline. The app is a complete J
 | Auto mixes / smart playlists | ◐¹² | ◐¹⁴ | ◐¹⁵ | ✅ | ? | ❌ | ? | ? |
 | Listen together / social | ◐¹² | ? | ? | ? | ? | ❌¹⁶ | ? | ✅¹⁷ |
 | OS media controls / media keys | ✅ | ? | ✅ | ❌ | ? | ❌ | ✅ | ? |
-| Interface languages | pt, en, es | many | many | many | ? | ? | ? | many |
+| Interface languages | 15 | many | many | many | ? | ? | ? | many |
 
 1. Runs in any browser; the official desktop and mobile apps wrap it.
 2. Builds from the same code, but only Android and Windows are tested regularly.
@@ -159,15 +167,16 @@ Everything can also be changed in the app (login screen and Settings).
 
 Texts live in [`lib/l10n/`](lib/l10n) as ARB files and are compiled with Flutter's
 [gen-l10n](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization):
-`app_pt.arb` is the template (and the fallback), `app_en.arb` and `app_es.arb` are the translations.
+`app_pt.arb` is the template (and the fallback); every other `app_<code>.arb` is a translation. Fixes from native
+speakers are very welcome.
 
 To add a language:
 
 1. Copy `lib/l10n/app_en.arb` to `lib/l10n/app_<code>.arb` (e.g. `app_fr.arb`), set `"@@locale"` to the code and
    translate the values. Keep the `{placeholders}` and the ICU `plural`/`select` structure; the `@key` entries in
    `app_pt.arb` describe the placeholders.
-2. Add the code to `appLanguages` in [`lib/l10n/l10n.dart`](lib/l10n/l10n.dart) and to the language picker in
-   [`lib/features/settings/settings_page.dart`](lib/features/settings/settings_page.dart).
+2. Add the code to `appLanguages` and its native name to `appLanguageNames` in
+   [`lib/l10n/l10n.dart`](lib/l10n/l10n.dart).
 3. Run `flutter gen-l10n` (or just `flutter run`), then `flutter analyze` and `flutter test`.
 
 Names of the auto-generated playlists (e.g. "Descobertas", "Mistura da semana", "Radar de Novidades") are matched by

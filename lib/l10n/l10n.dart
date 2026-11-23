@@ -5,7 +5,29 @@ import 'app_localizations.dart';
 export 'app_localizations.dart';
 
 /// Idiomas da interface. O primeiro é o padrão quando o do aparelho não é suportado.
-const appLanguages = ['pt', 'en', 'es'];
+const appLanguages = [
+  'pt', 'en', 'es', 'fr', 'de', 'it', 'nl', 'sv', 'pl', 'tr', 'ru', 'uk', //
+  'ja', 'ko', 'zh',
+];
+
+/// Nome de cada idioma na própria língua (seletor em Configurações).
+const appLanguageNames = {
+  'pt': 'Português',
+  'en': 'English',
+  'es': 'Español',
+  'fr': 'Français',
+  'de': 'Deutsch',
+  'it': 'Italiano',
+  'nl': 'Nederlands',
+  'sv': 'Svenska',
+  'pl': 'Polski',
+  'tr': 'Türkçe',
+  'ru': 'Русский',
+  'uk': 'Українська',
+  'ja': '日本語',
+  'ko': '한국어',
+  'zh': '简体中文',
+};
 
 /// Textos do idioma atual para quem tem um [BuildContext].
 extension L10nContext on BuildContext {

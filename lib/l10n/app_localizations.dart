@@ -5,9 +5,21 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_nl.dart';
+import 'app_localizations_pl.dart';
 import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
+import 'app_localizations_sv.dart';
+import 'app_localizations_tr.dart';
+import 'app_localizations_uk.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -94,9 +106,21 @@ abstract class L10n {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
     Locale('en'),
     Locale('es'),
+    Locale('fr'),
+    Locale('it'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('nl'),
+    Locale('pl'),
     Locale('pt'),
+    Locale('ru'),
+    Locale('sv'),
+    Locale('tr'),
+    Locale('uk'),
+    Locale('zh'),
   ];
 
   /// No description provided for @languageTitle.
@@ -3613,8 +3637,23 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'pt'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'es',
+    'fr',
+    'it',
+    'ja',
+    'ko',
+    'nl',
+    'pl',
+    'pt',
+    'ru',
+    'sv',
+    'tr',
+    'uk',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -3623,12 +3662,36 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
 L10n lookupL10n(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return L10nDe();
     case 'en':
       return L10nEn();
     case 'es':
       return L10nEs();
+    case 'fr':
+      return L10nFr();
+    case 'it':
+      return L10nIt();
+    case 'ja':
+      return L10nJa();
+    case 'ko':
+      return L10nKo();
+    case 'nl':
+      return L10nNl();
+    case 'pl':
+      return L10nPl();
     case 'pt':
       return L10nPt();
+    case 'ru':
+      return L10nRu();
+    case 'sv':
+      return L10nSv();
+    case 'tr':
+      return L10nTr();
+    case 'uk':
+      return L10nUk();
+    case 'zh':
+      return L10nZh();
   }
 
   throw FlutterError(
