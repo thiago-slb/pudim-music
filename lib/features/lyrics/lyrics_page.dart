@@ -10,7 +10,7 @@ import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
 import 'lyrics_data.dart';
 
-/// Letra em tela cheia, na cor da capa, com a linha atual em destaque.
+/// Full-screen lyrics, in the cover color, with the current line highlighted.
 class LyricsPage extends ConsumerWidget {
   const LyricsPage({super.key});
 

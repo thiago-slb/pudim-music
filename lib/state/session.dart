@@ -20,15 +20,15 @@ class Session {
   String get userId => api.userId!;
 }
 
-/// [wan] é o endereço principal (qualquer rede); [lan] é opcional (rede local, tentado primeiro).
+/// [wan] is the main address (any network); [lan] is optional (local network, tried first).
 class ServerUrls {
   final String lan;
   final String wan;
   const ServerUrls(this.lan, this.wan);
 }
 
-/// Conta salva no aparelho: um usuário num servidor Jellyfin. O token fica no [TokenStore]
-/// da conta (cifrado); aqui só o que aparece na lista.
+/// Account saved on the device: a user on a Jellyfin server. The token stays in the account [TokenStore]
+/// (encrypted); here only what shows up in the list.
 class Account {
   final String userId;
   final String userName;
@@ -45,7 +45,7 @@ class Account {
 
   String get id => userId;
 
-  /// Endereço para mostrar na lista ("music.exemplo.com").
+  /// Address to show in the list ("music.example.com").
   String get host {
     final u = Uri.tryParse(wan.isNotEmpty ? wan : lan);
     return u == null || u.host.isEmpty ? (wan.isNotEmpty ? wan : lan) : u.host;
@@ -78,7 +78,7 @@ class Account {
   );
 }
 
-/// Completa o endereço digitado: sem esquema vira https (ou http na rede local), sem barra no fim.
+/// Completes the typed address: no scheme becomes https (or http on the local network), no trailing slash.
 String normalizeUrl(String raw, {bool local = false}) {
   var s = raw.trim();
   if (s.isEmpty) return '';
@@ -90,7 +90,7 @@ String normalizeUrl(String raw, {bool local = false}) {
 }
 
 final prefsProvider = Provider<SharedPreferences>(
-  (ref) => throw UnimplementedError('prefsProvider é sobrescrito no main'),
+  (ref) => throw UnimplementedError('prefsProvider is overridden in main'),
 );
 
 class SessionNotifier extends AsyncNotifier<Session?> {
@@ -99,10 +99,10 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   static const _accountsKey = 'accounts';
   static const _activeKey = 'account';
 
-  /// Conta para onde voltar se a pessoa desistir de adicionar outra.
+  /// Account to return to if the person gives up adding another.
   String? _returnTo;
 
-  /// Contas salvas neste aparelho (a primeira é a mais antiga).
+  /// Accounts saved on this device (the first is the oldest).
   List<Account> get accounts {
     final raw = _prefs.getString(_accountsKey);
     if (raw == null) return const [];
@@ -118,7 +118,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   String? get activeId => _prefs.getString(_activeKey);
 
-  /// Está na tela de entrar só para adicionar outra conta (dá para voltar).
+  /// On the sign-in screen only to add another account (can go back).
   bool get adding => _returnTo != null;
 
   Future<void> _saveAccounts(List<Account> list) => _prefs.setString(
@@ -126,7 +126,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     jsonEncode([for (final a in list) a.toJson()]),
   );
 
-  /// As chaves antigas (uma conta só) continuam valendo para a conta em uso.
+  /// The old keys (single account) remain valid for the account in use.
   Future<void> _mirror(Account a) async {
     await _prefs.setString(_activeKey, a.id);
     await _prefs.setString('userId', a.userId);
@@ -139,7 +139,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     }
   }
 
-  /// Versões antigas guardavam uma conta só: vira a primeira da lista.
+  /// Old versions stored a single account: it becomes the first in the list.
   Future<void> _migrate() async {
     if (_prefs.getString(_accountsKey) != null) return;
     final userId = _prefs.getString('userId');
@@ -179,7 +179,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     _prefs.getString('wanUrl') ?? defaultServerUrl,
   );
 
-  /// LAN se responder, senão o endereço de fora.
+  /// LAN if it answers, otherwise the outside address.
   Future<String?> pickServer(ServerUrls u) async {
     final results = await Future.wait([
       u.lan.isEmpty ? Future.value(false) : Jellyfin.reachable(u.lan),
@@ -205,7 +205,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     final userId = active.userId;
     final userName = active.userName;
     final picked = await pickServer(urls);
-    // Sem resposta de nenhum: o de fora funciona em qualquer rede quando a internet voltar.
+    // No answer from either: the outside one works on any network once the internet is back.
     final base = picked ?? (urls.wan.isNotEmpty ? urls.wan : urls.lan);
     final cache = ResponseCache.instance;
     final api = Jellyfin(
@@ -217,15 +217,15 @@ class SessionNotifier extends AsyncNotifier<Session?> {
       cache: cache,
     );
     if (cache != null) {
-      // Volta a procurar nos dois endereços: sair do Wi-Fi de casa não pode prender o app
-      // no endereço da rede local (era o "Sem internet" com o 4G funcionando).
+      // Search both addresses again: leaving the home Wi-Fi must not trap the app
+      // on the local network address (it used to show "No internet" while 4G was working).
       cache.probe = () async {
         final p = await pickServer(urls);
         if (p == null) return false;
         if (p != api.baseUrl) api.switchTo(p);
         return true;
       };
-      // Sem internet: abre com o que está guardado.
+      // No internet: open with what is stored.
       if (picked == null) cache.markOffline();
     }
     api.reportCapabilities();
@@ -254,7 +254,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     await _finish(u, api, await api.login(user, password));
   }
 
-  /// Quick Connect, passo 1: acha o servidor e pede um código (mostrado na tela).
+  /// Quick Connect, step 1: finds the server and requests a code (shown on screen).
   Future<(Jellyfin, String, String)> quickConnectStart(ServerUrls u) async {
     final api = await _connect(u);
     if (!await api.quickConnectEnabled()) {
@@ -264,7 +264,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     return (api, secret, code);
   }
 
-  /// Quick Connect, passo 2: true quando o código foi aprovado e a conta entrou.
+  /// Quick Connect, step 2: true when the code was approved and the account signed in.
   Future<bool> quickConnectPoll(
     ServerUrls u,
     Jellyfin api,
@@ -295,7 +295,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     state = AsyncData(Session(api, r.userName));
   }
 
-  /// Depois de trocar o nome de usuário no Jellyfin (a sessão continua a mesma).
+  /// After changing the username in Jellyfin (the session stays the same).
   Future<void> renamed(String name) async {
     final s = state.value;
     if (s == null) return;
@@ -307,7 +307,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     state = AsyncData(Session(s.api, name));
   }
 
-  /// Troca para outra conta salva (outro usuário ou outro servidor).
+  /// Switches to another saved account (another user or another server).
   Future<void> switchTo(String id) async {
     final a = accounts.where((x) => x.id == id).firstOrNull;
     if (a == null || (id == activeId && state.value != null)) return;
@@ -318,21 +318,21 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     ref.invalidateSelf();
   }
 
-  /// Abre a tela de entrar para adicionar outra conta, sem sair da atual.
+  /// Opens the sign-in screen to add another account, without leaving the current one.
   void beginAdd() {
     if (state.value == null) return;
     _returnTo = activeId;
     state = const AsyncData(null);
   }
 
-  /// Desistiu de adicionar: volta para a conta de antes.
+  /// Gave up adding: goes back to the previous account.
   Future<void> cancelAdd() async {
     final back = _returnTo;
     _returnTo = null;
     if (back != null) await switchTo(back);
   }
 
-  /// Sai da conta em uso (e esquece o token). Se houver outras, entra na próxima.
+  /// Signs out of the account in use (and forgets the token). If there are others, moves to the next.
   Future<void> logout() async {
     final s = state.value;
     final id = activeId;
@@ -359,14 +359,14 @@ final sessionProvider = AsyncNotifierProvider<SessionNotifier, Session?>(
   SessionNotifier.new,
 );
 
-/// Atalho para o cliente da sessão atual (só usado em telas logadas).
+/// Shortcut to the current session client (only used on logged-in screens).
 final apiProvider = Provider<Jellyfin>((ref) {
   final s = ref.watch(sessionProvider).value;
-  if (s == null) throw StateError('sem sessão');
+  if (s == null) throw StateError('no session');
   return s.api;
 });
 
-/// Endereço do servidor de extras (vazio = sem extras).
+/// Address of the extras server (empty = no extras).
 class ExtrasUrl extends Notifier<String> {
   @override
   String build() =>
@@ -381,12 +381,12 @@ class ExtrasUrl extends Notifier<String> {
 
 final extrasUrlProvider = NotifierProvider<ExtrasUrl, String>(ExtrasUrl.new);
 
-/// Tem servidor de extras? Sem ele, as telas e botões que dependem dele ficam escondidos.
+/// Is there an extras server? Without it, the screens and buttons that depend on it stay hidden.
 final hasExtrasProvider = Provider<bool>(
   (ref) => ref.watch(extrasUrlProvider).isNotEmpty,
 );
 
-/// Cliente do servidor de extras, com o mesmo token do Jellyfin.
+/// Client of the extras server, with the same token as Jellyfin.
 final catalogProvider = Provider<Catalog>(
   (ref) => Catalog(
     ref.watch(apiProvider).token ?? '',

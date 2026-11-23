@@ -3,14 +3,14 @@ import 'package:flutter/services.dart';
 
 import 'media_session.dart';
 
-/// Ponte com o CarPlay (iOS). A parte nativa (`ios/Runner/CarPlaySceneDelegate.swift`) só desenha
-/// as listas do carro; as pastas e o "tocar" vêm da mesma navegação do Android Auto
-/// ([MediaSession.getChildren] e [MediaSession.playFromMediaId]).
+/// Bridge to CarPlay (iOS). The native part (`ios/Runner/CarPlaySceneDelegate.swift`) only draws
+/// the car's lists; the folders and "play" come from the same navigation as Android Auto
+/// ([MediaSession.getChildren] and [MediaSession.playFromMediaId]).
 ///
-/// Métodos do canal `pudim/carplay`:
-/// - `children(String parentId)` → lista de `{id, title, subtitle, art, playable}`;
-///   `parentId` "root" devolve as pastas do topo.
-/// - `play(String id)` → toca a faixa (com a pasta inteira como fila).
+/// Methods of the `pudim/carplay` channel:
+/// - `children(String parentId)` → list of `{id, title, subtitle, art, playable}`;
+///   `parentId` "root" returns the top-level folders.
+/// - `play(String id)` → plays the track (with the whole folder as the queue).
 class CarPlayBridge {
   static const _channel = MethodChannel('pudim/carplay');
 

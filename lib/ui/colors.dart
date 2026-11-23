@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Cor dominante de uma capa, para os gradientes dos cabeçalhos e o fundo da letra.
-/// Baixa uma miniatura, reduz para 24 px e escolhe a cor mais "viva".
+/// Dominant color of a cover, for the header gradients and the lyrics background.
+/// Downloads a thumbnail, shrinks it to 24 px and picks the most "vivid" color.
 final coverColorProvider = FutureProvider.family<Color, String>((
   ref,
   url,
@@ -36,7 +36,7 @@ final coverColorProvider = FutureProvider.family<Color, String>((
 const fallbackColor = Color(0xFF535353);
 
 Color _pick(ByteData data) {
-  // Agrupa em baldes de matiz e soma um peso que favorece saturação e brilho médio.
+  // Groups into hue buckets and adds a weight that favors saturation and medium brightness.
   final buckets = <int, List<double>>{};
   for (var i = 0; i + 3 < data.lengthInBytes; i += 4) {
     final c = Color.fromARGB(
@@ -58,12 +58,12 @@ Color _pick(ByteData data) {
   if (buckets.isEmpty) return fallbackColor;
   final best = buckets.values.reduce((a, b) => a[0] >= b[0] ? a : b);
   if (best[0] < 0.5) {
-    // Capa quase cinza: usa um cinza escuro.
+    // Almost gray cover: uses a dark gray.
     return fallbackColor;
   }
   final hue = best[1] / best[0];
   final sat = (best[2] / best[0]).clamp(0.35, 0.8);
-  // Escurece para o texto branco ficar legível, como o Spotify faz.
+  // Darkens so the white text stays readable, as Spotify does.
   return HSVColor.fromAHSV(1, hue, sat, 0.55).toColor();
 }
 

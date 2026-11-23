@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'player.dart';
 
 class SleepState {
-  /// Quando para (null = sem timer de tempo).
+  /// When it stops (null = no time-based timer).
   final DateTime? until;
 
-  /// Para quando a música atual acabar.
+  /// Stops when the current track ends.
   final bool endOfTrack;
 
   const SleepState({this.until, this.endOfTrack = false});
@@ -23,8 +23,8 @@ class SleepState {
   }
 }
 
-/// Timer para dormir: para a música depois de um tempo (baixando o volume nos últimos
-/// 20 segundos) ou quando a música atual acabar.
+/// Sleep timer: stops the music after a set time (fading the volume over the last
+/// 20 seconds) or when the current track ends.
 class SleepTimer extends Notifier<SleepState> {
   static const _fadeFor = Duration(seconds: 20);
   Timer? _t;
@@ -76,7 +76,7 @@ class SleepTimer extends Notifier<SleepState> {
     }
     state = SleepState(
       until: state.until,
-    ); // atualiza o tempo que falta na tela
+    ); // updates the remaining time on screen
   }
 }
 

@@ -10,9 +10,9 @@ import '../l10n/l10n.dart';
 const appName = 'Pudim';
 const appVersion = '0.2.0';
 
-/// Campos pedidos em toda lista de itens.
-// Só valores válidos de ItemFields: /Items ignora os desconhecidos, mas
-// /InstantMix responde 400 (SongCount e ProductionYear já vêm sempre).
+/// Fields requested in every item list.
+// Only valid ItemFields values: /Items ignores unknown ones, but
+// /InstantMix answers 400 (SongCount and ProductionYear always come anyway).
 const _fields =
     'PrimaryImageAspectRatio,ChildCount,DateCreated,Overview,ParentId';
 
@@ -30,9 +30,9 @@ class JellyfinException implements Exception {
   String toString() => message;
 }
 
-/// Cliente do Jellyfin escrito à mão: só os endpoints que o app usa.
+/// Hand-written Jellyfin client: only the endpoints the app uses.
 class Jellyfin {
-  /// Muda quando o aparelho troca de rede (casa ↔ fora); veja [switchTo].
+  /// Changes when the device switches networks (home ↔ away); see [switchTo].
   String baseUrl;
   final String deviceId;
   final String deviceName;
@@ -40,7 +40,7 @@ class Jellyfin {
   String? userId;
   late final Dio _dio;
 
-  /// Cópia das respostas no aparelho (o app funciona sem internet com o que já abriu).
+  /// On-device copy of responses (the app works without internet with what it already opened).
   final ResponseCache? cache;
 
   Jellyfin({
@@ -82,14 +82,14 @@ class Jellyfin {
     return 'MediaBrowser ${parts.join(', ')}';
   }
 
-  /// Passa a falar com outro endereço do mesmo servidor (ex.: saiu do Wi-Fi de casa).
+  /// Starts talking to another address of the same server (e.g. left the home Wi-Fi).
   void switchTo(String url) {
     baseUrl = url;
     _dio.options.baseUrl = url;
   }
 
-  /// Testa se o servidor responde (usado para escolher LAN ou endereço de fora).
-  /// O de fora passa pelo túnel e, no 4G, pode levar uns segundos.
+  /// Checks whether the server responds (used to choose LAN or the outside address).
+  /// The outside one goes through the tunnel and, on 4G, can take a few seconds.
   static Future<bool> reachable(
     String url, {
     Duration timeout = const Duration(seconds: 3),
@@ -123,7 +123,7 @@ class Jellyfin {
     }
   }
 
-  // ---------- Quick Connect (entrar com um código, aprovado num app já logado) ----------
+  // ---------- Quick Connect (sign in with a code, approved in an already signed-in app) ----------
 
   Future<bool> quickConnectEnabled() async {
     try {
@@ -134,7 +134,7 @@ class Jellyfin {
     }
   }
 
-  /// Pede um código novo: devolve (segredo, código de 6 dígitos para mostrar).
+  /// Requests a new code: returns (secret, 6-digit code to display).
   Future<(String, String)> quickConnectStart() async {
     try {
       final r = await _dio.post('/QuickConnect/Initiate');
@@ -148,7 +148,7 @@ class Jellyfin {
     }
   }
 
-  /// Já aprovaram o código em outro aparelho?
+  /// Has the code been approved on another device yet?
   Future<bool> quickConnectApproved(String secret) async {
     final r = await _dio.get(
       '/QuickConnect/Connect',
@@ -175,7 +175,7 @@ class Jellyfin {
     } catch (_) {}
   }
 
-  // ---------- listas ----------
+  // ---------- lists ----------
 
   Future<List<Item>> items(Map<String, dynamic> query) async {
     final r = await _dio.get(
@@ -196,17 +196,17 @@ class Jellyfin {
     return raw.whereType<Map<String, dynamic>>().map(Item.fromJson).toList();
   }
 
-  /// Foto do perfil de uma conta (pública no Jellyfin); [tag] muda quando a foto muda.
+  /// Profile photo of an account (public in Jellyfin); [tag] changes when the photo changes.
   String userImageUrl(String userId, String tag, {int size = 160}) =>
       '$baseUrl/Users/$userId/Images/Primary?maxWidth=$size&quality=90&tag=$tag';
 
-  /// Tag da foto desta conta (null = sem foto).
+  /// Photo tag of this account (null = no photo).
   Future<String?> myImageTag() async {
     final r = await _dio.get('/Users/$userId');
     return (r.data as Map<String, dynamic>)['PrimaryImageTag'] as String?;
   }
 
-  /// Troca a foto do perfil (o Jellyfin quer a imagem em base64).
+  /// Replaces the profile photo (Jellyfin wants the image as base64).
   Future<void> setMyImage(List<int> bytes, String mime) async {
     await _dio.post(
       '/Users/$userId/Images/Primary',
@@ -219,7 +219,7 @@ class Jellyfin {
     await _dio.delete('/Users/$userId/Images/Primary');
   }
 
-  /// Troca a senha desta conta (o Jellyfin confere a senha atual).
+  /// Changes this account's password (Jellyfin checks the current password).
   Future<void> changePassword(String current, String next) async {
     try {
       await _dio.post(
@@ -261,8 +261,8 @@ class Jellyfin {
 
   String? _musicViewId;
 
-  /// Id da biblioteca "Música" do usuário (o /Items/Latest precisa dele:
-  /// com IncludeItemTypes e sem ParentId ele volta vazio).
+  /// Id of the user's "Music" library (/Items/Latest needs it:
+  /// with IncludeItemTypes and no ParentId it comes back empty).
   Future<String?> musicViewId() async {
     if (_musicViewId != null) return _musicViewId;
     final r = await _dio.get('/UserViews', queryParameters: {'userId': userId});
@@ -296,9 +296,9 @@ class Jellyfin {
     'MediaTypes': 'Audio',
   });
 
-  // ---------- editar playlists (as do usuário e as compartilhadas com permissão de editar) ----------
+  // ---------- edit playlists (the user's own and those shared with edit permission) ----------
 
-  /// Cria uma playlist privada desta conta; devolve o id.
+  /// Creates a private playlist for this account; returns the id.
   Future<String> createPlaylist(String name, List<String> ids) async {
     final r = await _dio.post(
       '/Playlists',
@@ -325,14 +325,14 @@ class Jellyfin {
     }
   }
 
-  /// [entryIds] = PlaylistItemId de cada faixa na playlist.
+  /// [entryIds] = PlaylistItemId of each track in the playlist.
   Future<void> removeFromPlaylist(String playlistId, List<String> entryIds) =>
       _dio.delete(
         '/Playlists/$playlistId/Items',
         queryParameters: {'entryIds': entryIds.join(',')},
       );
 
-  /// Dá acesso a outra conta (só o dono consegue; o painel não tem como fazer isso por ele).
+  /// Grants access to another account (only the owner can; the panel has no way to do it for them).
   Future<void> sharePlaylist(
     String playlistId,
     String otherUserId, {
@@ -461,7 +461,7 @@ class Jellyfin {
     return _list(r.data);
   }
 
-  // ---------- letras ----------
+  // ---------- lyrics ----------
 
   Future<Lyrics> lyrics(String trackId) async {
     try {
@@ -473,7 +473,7 @@ class Jellyfin {
     }
   }
 
-  // ---------- favoritos ----------
+  // ---------- favorites ----------
 
   Future<void> setFavorite(String itemId, bool fav) async {
     final path = '/UserFavoriteItems/$itemId';
@@ -485,21 +485,21 @@ class Jellyfin {
     }
   }
 
-  // ---------- mídia ----------
+  // ---------- media ----------
 
-  /// Arquivo original (as faixas da biblioteca já são MP3).
+  /// Original file (the library's tracks are already MP3).
   String streamUrl(String trackId) =>
       '$baseUrl/Audio/$trackId/stream?static=true&deviceId=$deviceId&api_key=$token';
 
-  /// Para o Chromecast: o arquivo como está quando ele toca o formato (MP3, AAC, FLAC,
-  /// Opus, Vorbis, WAV); senão, convertido para MP3 320 kbps.
+  /// For the Chromecast: the file as is when it plays the format (MP3, AAC, FLAC,
+  /// Opus, Vorbis, WAV); otherwise, converted to MP3 320 kbps.
   String castUrl(String trackId) =>
       '$baseUrl/Audio/$trackId/universal?userId=$userId&deviceId=$deviceId'
       '&api_key=$token&container=mp3,aac,m4a|aac,flac,opus,webm|opus,ogg|vorbis,wav'
       '&transcodingContainer=mp3&transcodingProtocol=http&audioCodec=mp3'
       '&maxStreamingBitrate=320000';
 
-  /// Versão mais leve, convertida pelo Jellyfin para AAC em [kbps] (HLS, dá para avançar na música).
+  /// Lighter version, converted by Jellyfin to AAC at [kbps] (HLS, seeking is possible).
   String transcodeUrl(String trackId, int kbps) {
     final bps = kbps * 1000;
     return '$baseUrl/Audio/$trackId/main.m3u8?mediaSourceId=$trackId'
@@ -526,7 +526,7 @@ class Jellyfin {
     return '$baseUrl/Items/$itemId/Images/$type?maxWidth=$size&quality=90$t';
   }
 
-  // ---------- reporte de reprodução ----------
+  // ---------- playback reporting ----------
 
   Future<void> reportCapabilities() async {
     try {
@@ -574,7 +574,7 @@ class Jellyfin {
         },
       );
     } catch (_) {
-      // Reporte é melhor-esforço: nunca atrapalha a música.
+      // Reporting is best-effort: it never disrupts the music.
     }
   }
 }

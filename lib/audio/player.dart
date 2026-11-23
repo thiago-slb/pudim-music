@@ -20,15 +20,15 @@ import '../l10n/l10n.dart';
 
 enum RepeatMode { off, all, one }
 
-/// Jam: no convidado, os botões viram pedidos para o anfitrião (devolve true quando tratou).
+/// Jam: on the guest, the buttons become requests to the host (returns true when handled).
 typedef JamRemote = bool Function(
   String action, {
   int? index,
   List<Item>? items,
 });
 
-/// Outro aparelho tocando no lugar deste (Chromecast). A fila continua no app; cada
-/// música é mandada para lá por endereço.
+/// Another device playing in place of this one (Chromecast). The queue stays in the app; each
+/// track is sent there by URL.
 abstract class RemoteOutput {
   Future<void> load(
     Item item,
@@ -45,27 +45,28 @@ abstract class RemoteOutput {
   Duration get position;
 }
 
-/// Estado da fila, no estilo do Spotify:
-/// "Tocando agora", "A seguir na fila" (adicionadas à mão) e "Próximas de: `<contexto>`".
+/// Queue state, Spotify style:
+/// "Now playing", "Next in queue" (added manually) and "Next from: `<context>`".
 class QueueState {
   final List<Item> queue;
   final int index;
-  final int manualCount; // quantas depois da atual foram adicionadas à mão
+  final int manualCount; // how many after the current one were added manually
   final String contextName;
-  final String? contextRoute; // rota da playlist/álbum/artista que gerou a fila
+  final String?
+  contextRoute; // route of the playlist/album/artist that produced the queue
   final bool shuffle;
   final RepeatMode repeat;
   final bool playing;
   final bool buffering;
 
-  /// Nome do aparelho que está tocando (Chromecast); vazio = este aparelho.
+  /// Name of the device that is playing (Chromecast); empty = this device.
   final String castingTo;
   bool get casting => castingTo.isNotEmpty;
 
-  /// Smart Shuffle: aleatório com recomendações no meio (só em playlist).
+  /// Smart Shuffle: shuffle with recommendations mixed in (playlists only).
   final bool smart;
 
-  /// Ids das faixas que o Smart Shuffle colocou (aparecem com ✦ na fila).
+  /// Ids of the tracks Smart Shuffle added (shown with ✦ in the queue).
   final Set<String> recommended;
 
   const QueueState({
@@ -83,7 +84,7 @@ class QueueState {
     this.recommended = const {},
   });
 
-  /// Id da playlist que gerou a fila (null se não for playlist).
+  /// Id of the playlist that produced the queue (null if it is not a playlist).
   String? get contextPlaylistId {
     final r = contextRoute ?? '';
     return r.startsWith('/playlist/') ? r.substring(10) : null;
@@ -130,49 +131,50 @@ class PlayerController extends Notifier<QueueState> {
   final AudioPlayer audio = AudioPlayer();
   final _subs = <StreamSubscription>[];
   Timer? _progressTimer;
-  Item? _reported; // faixa que o Jellyfin sabe que está tocando
+  Item? _reported; // track Jellyfin knows is playing
   List<Item> _unshuffled = const [];
   bool autoplay = true;
-  bool _sourceReady = false; // a faixa atual já foi carregada no player?
+  bool _sourceReady =
+      false; // has the current track already been loaded into the player?
   Duration _resumeAt =
-      Duration.zero; // posição guardada da última vez que o app fechou
+      Duration.zero; // position saved the last time the app closed
   Timer? _saveTimer;
 
-  /// Jam (convidado): next/previous/play/fila viram pedidos para o anfitrião.
+  /// Jam (guest): next/previous/play/queue become requests to the host.
   JamRemote? remote;
 
-  /// Chromecast: quando ligado, o som sai lá e o player deste aparelho fica parado.
+  /// Chromecast: when on, the sound comes out there and this device's player stays stopped.
   RemoteOutput? _out;
   final _remotePos = StreamController<Duration>.broadcast();
 
-  /// Posição, tocando e duração de onde o som está saindo (aqui ou no Chromecast).
+  /// Position, playing state and duration of where the sound is coming out (here or on the Chromecast).
   Duration get position => _out?.position ?? audio.position;
   bool get isPlaying => _out?.playing ?? audio.playing;
   Duration? get duration =>
       _out == null ? audio.duration : state.current?.duration;
   Stream<Duration> get remotePositionStream => _remotePos.stream;
 
-  // Last.fm: "tocando agora" e scrobble (metade da música ou 4 min).
+  // Last.fm: "now playing" and scrobble (half the track or 4 min).
   bool _npSent = false, _scrobbled = false;
   DateTime _startedAt = DateTime.now();
 
-  // Gapless: a próxima faixa já fica carregada no player, logo depois da atual.
-  String? _preId; // id da faixa carregada depois da atual (null = nenhuma)
-  bool _busy = false; // trocando as faixas do player (não confundir com passagem automática)
+  // Gapless: the next track is already loaded in the player, right after the current one.
+  String? _preId; // id of the track loaded after the current one (null = none)
+  bool _busy = false; // swapping the player's tracks (not to be confused with an automatic advance)
   Timer? _syncSoon;
 
-  // Volume: o da barra × normalização da faixa × fade do timer para dormir.
+  // Volume: the slider's × the track's normalization × the sleep timer's fade.
   double _userVol = 0.8;
   double _fade = 1;
   final _volume = StreamController<double>.broadcast();
 
-  /// Timer para dormir "fim da música": não emenda a próxima e para quando esta acabar.
+  /// Sleep timer "end of track": does not chain the next one and stops when this one ends.
   bool _stopAfterCurrent = false;
   void Function()? onSleepEnded;
 
   Jellyfin get _api => ref.read(apiProvider);
 
-  /// Guarda no painel onde parou no episódio (e na memória, para voltar nele sem esperar o painel).
+  /// Saves the episode's resume point to the panel (and in memory, to return to it without waiting for the panel).
   void _podcastSave(Item c) {
     final pos = position;
     podcastResume[c.id] = pos;
@@ -203,7 +205,7 @@ class PlayerController extends Notifier<QueueState> {
         }
       }),
     );
-    // Mudou o que vem depois da atual (fila, aleatório, repetir): troca a faixa pré-carregada.
+    // What comes after the current one changed (queue, shuffle, repeat): swaps the preloaded track.
     listenSelf((prev, next) {
       if (prev?.next?.id != next.next?.id ||
           prev?.repeat != next.repeat ||
@@ -219,7 +221,7 @@ class PlayerController extends Notifier<QueueState> {
     Future.microtask(() {
       if (ref.mounted) MediaSession.instance?.attach(this);
     });
-    // Guarda onde parou a cada 5 s tocando (fechar o app perde no máximo isso).
+    // Saves the resume point every 5 s while playing (closing the app loses at most that).
     _saveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (isPlaying) {
         _save();
@@ -240,11 +242,11 @@ class PlayerController extends Notifier<QueueState> {
     return _restore(prefs.getString(_saveKey));
   }
 
-  // ---------- lembrar onde parou ----------
+  // ---------- remember where it stopped ----------
 
   static const _saveKey = 'lastQueue';
 
-  /// Fila, faixa atual, posição, aleatório e repetir: o app abre pausado no mesmo lugar.
+  /// Queue, current track, position, shuffle and repeat: the app opens paused at the same place.
   void _save() {
     final st = state;
     final prefs = ref.read(prefsProvider);
@@ -252,7 +254,7 @@ class PlayerController extends Notifier<QueueState> {
       prefs.remove(_saveKey);
       return;
     }
-    // Guarda até 300 faixas em volta da atual (filas de rádio podem crescer muito).
+    // Saves up to 300 tracks around the current one (radio queues can grow a lot).
     final from = max(0, st.index - 50);
     final items = st.queue.skip(from).take(300).toList();
     final pos = _sourceReady ? position : _resumeAt;
@@ -297,19 +299,19 @@ class PlayerController extends Notifier<QueueState> {
         recommended: {for (final x in (j['rec'] as List? ?? const [])) '$x'},
       );
     } catch (_) {
-      return const QueueState(); // formato antigo ou estragado: começa vazio
+      return const QueueState(); // old or corrupted format: starts empty
     }
   }
 
-  /// Posição guardada, mostrada antes de a faixa ser carregada (a barra não começa em 0:00).
+  /// Saved position, shown before the track is loaded (the bar does not start at 0:00).
   Duration? get pendingPosition => _sourceReady ? null : _resumeAt;
 
   bool get sourceReady => _sourceReady;
 
-  /// Fila atual (para a sessão de mídia, fora do Riverpod).
+  /// Current queue (for the media session, outside Riverpod).
   QueueState get queue => state;
 
-  /// Cliente do Jellyfin assim que a sessão estiver pronta (Android Auto pode abrir antes da tela).
+  /// Jellyfin client as soon as the session is ready (Android Auto can open before the UI).
   Future<Jellyfin?> apiReady() async {
     try {
       return (await ref.read(sessionProvider.future))?.api;
@@ -318,12 +320,13 @@ class PlayerController extends Notifier<QueueState> {
     }
   }
 
-  /// Músicas baixadas no aparelho (para o Android Auto).
+  /// Tracks downloaded on the device (for Android Auto).
   List<Item> offlineTracks() =>
       ref.read(offlineProvider).tracks.values.toList();
 
   void _onPlayerState(PlayerState s) {
-    if (_out != null) return; // tocando no Chromecast: o player daqui está parado
+    // playing on the Chromecast: this device's player is stopped
+    if (_out != null) return;
     final buffering =
         s.processingState == ProcessingState.loading ||
         s.processingState == ProcessingState.buffering;
@@ -343,9 +346,10 @@ class PlayerController extends Notifier<QueueState> {
   }
 
   Future<void> _onTrackEnded() async {
-    if (remote != null) return; // Jam: quem passa para a próxima é o anfitrião
+    // Jam: the host is the one who advances to the next track
+    if (remote != null) return;
     if (_stopAfterCurrent) {
-      // Timer para dormir "fim da música": deixa a próxima pronta, mas parada.
+      // Sleep timer "end of track": leaves the next one ready, but stopped.
       _stopAfterCurrent = false;
       onSleepEnded?.call();
       if (state.index + 1 < state.queue.length) {
@@ -371,10 +375,10 @@ class PlayerController extends Notifier<QueueState> {
     await next();
   }
 
-  // ---------- tocar ----------
+  // ---------- play ----------
 
-  /// Toca [tracks] começando em [start]. [contextName] aparece na fila como
-  /// "Próximas de: ...".
+  /// Plays [tracks] starting at [start]. [contextName] appears in the queue as
+  /// "Next from: ...".
   Future<void> playList(
     List<Item> tracks, {
     int start = 0,
@@ -383,7 +387,7 @@ class PlayerController extends Notifier<QueueState> {
     bool? shuffle,
   }) async {
     if (tracks.isEmpty) return;
-    // Jam (convidado): escolher uma música pede para ela entrar na fila de todos.
+    // Jam (guest): choosing a track asks for it to join everyone's queue.
     if (remote?.call(
           'add',
           items: [tracks[start.clamp(0, tracks.length - 1)]],
@@ -414,7 +418,7 @@ class PlayerController extends Notifier<QueueState> {
     await _load(play: true);
   }
 
-  /// Smart Shuffle direto da página da playlist.
+  /// Smart Shuffle straight from the playlist page.
   Future<void> smartShufflePlay(
     List<Item> tracks, {
     String contextName = '',
@@ -430,7 +434,7 @@ class PlayerController extends Notifier<QueueState> {
     await _addRecommendations();
   }
 
-  /// Coloca uma recomendação a cada 3 músicas do que vem depois (Mix instantâneo de algumas da playlist).
+  /// Places a recommendation every 3 tracks of what comes next (Instant Mix from a few of the playlist's).
   Future<void> _addRecommendations() async {
     final ctx = state.contextNext
         .where((t) => !t.isCatalog && !t.isPodcast)
@@ -448,7 +452,7 @@ class PlayerController extends Notifier<QueueState> {
         }
       } catch (_) {}
     }
-    if (!state.smart || recs.isEmpty) return; // desligou enquanto buscava
+    if (!state.smart || recs.isEmpty) return; // turned off while fetching
     recs.shuffle(Random());
     final headLen = state.index + 1 + state.manualCount;
     final head = state.queue.take(headLen).toList();
@@ -461,7 +465,7 @@ class PlayerController extends Notifier<QueueState> {
       if ((i + 1) % 3 == 0 && ri < want) out.add(recs[ri++]);
     }
     while (ri < min(want, 3)) {
-      out.add(recs[ri++]); // playlist curta: pelo menos umas recomendações
+      out.add(recs[ri++]); // short playlist: at least a few recommendations
     }
     state = state.copyWith(
       queue: [...head, ...out],
@@ -470,14 +474,14 @@ class PlayerController extends Notifier<QueueState> {
     _save();
   }
 
-  /// Recomendação aceita (foi para a playlist): perde o ✦.
+  /// Accepted recommendation (went to the playlist): loses the ✦.
   void acceptRecommendation(String id) {
     state = state.copyWith(recommended: {...state.recommended}..remove(id));
   }
 
-  // ---------- Jam (convidado) ----------
+  // ---------- Jam (guest) ----------
 
-  /// Carrega a fila do anfitrião já na faixa e posição dele.
+  /// Loads the host's queue already at the host's track and position.
   Future<void> jamLoad(
     List<Item> q,
     int index,
@@ -497,7 +501,7 @@ class PlayerController extends Notifier<QueueState> {
     await _load(play: play, at: at);
   }
 
-  /// A fila do anfitrião mudou, mas a faixa é a mesma: só troca a lista.
+  /// The host's queue changed, but the track is the same: just swaps the list.
   void jamQueue(List<Item> q, int index, String context) {
     state = state.copyWith(
       queue: List.of(q),
@@ -542,7 +546,7 @@ class PlayerController extends Notifier<QueueState> {
     }
   }
 
-  /// Toca uma lista começando numa faixa aleatória com o aleatório ligado.
+  /// Plays a list starting at a random track with shuffle on.
   Future<void> shufflePlay(
     List<Item> tracks, {
     String contextName = '',
@@ -558,19 +562,19 @@ class PlayerController extends Notifier<QueueState> {
     );
   }
 
-  /// De onde tocar [t]: arquivo baixado, podcast, catálogo ou Jellyfin (original ou convertido).
-  /// null = sem internet e a faixa não está no aparelho.
+  /// Where to play [t] from: downloaded file, podcast, catalog or Jellyfin (original or converted).
+  /// null = no internet and the track is not on the device.
   Future<AudioSource?> _sourceFor(Item t) async {
     final dz = t.isCatalog ? t.deezerId : null;
     final direct = t.streamUrl;
-    // Baixada no aparelho: toca do arquivo (funciona sem internet).
+    // Downloaded on the device: plays from the file (works without internet).
     final local = dz == null && direct == null
         ? ref.read(offlineProvider.notifier).audioPath(t.id)
         : null;
     if (local != null) return AudioSource.file(local, tag: t);
     if (ResponseCache.instance?.offline.value ?? false) return null;
     if (direct != null) return AudioSource.uri(Uri.parse(direct), tag: t);
-    // Faixa do catálogo: o painel acha no YouTube Music e serve o áudio (e já pede o download).
+    // Catalog track: the panel finds it on YouTube Music and serves the audio (and already requests the download).
     if (dz != null) {
       final cat = ref.read(catalogProvider);
       return AudioSource.uri(
@@ -590,7 +594,7 @@ class PlayerController extends Notifier<QueueState> {
     return AudioSource.uri(Uri.parse(_api.streamUrl(t.id)), tag: t);
   }
 
-  /// Qualidade escolhida para a conexão de agora (0 = arquivo original).
+  /// Quality chosen for the current connection (0 = original file).
   Future<int> _qualityKbps() async {
     final p = ref.read(prefsProvider);
     if (!(Platform.isAndroid || Platform.isIOS)) return p.getInt('qWifi') ?? 0;
@@ -606,7 +610,7 @@ class PlayerController extends Notifier<QueueState> {
     }
   }
 
-  /// Faixa que deve ficar pré-carregada depois da atual (gapless), ou null.
+  /// Track that should be preloaded after the current one (gapless), or null.
   Item? _desiredNext() {
     final st = state;
     final cur = st.current;
@@ -652,7 +656,7 @@ class PlayerController extends Notifier<QueueState> {
       }
       final src = await _sourceFor(cur);
       if (src == null) {
-        // Sem internet: pula direto para a próxima faixa baixada no aparelho.
+        // No internet: skips straight to the next track downloaded on the device.
         final off = ref.read(offlineProvider);
         for (var j = state.index + 1; j < state.queue.length; j++) {
           if (off.has(state.queue[j].id)) {
@@ -665,7 +669,7 @@ class PlayerController extends Notifier<QueueState> {
             return;
           }
         }
-        // Nada baixado depois desta: fica parado nela.
+        // Nothing downloaded after this one: stays stopped on it.
         await audio.stop();
         return;
       }
@@ -677,7 +681,7 @@ class PlayerController extends Notifier<QueueState> {
         } catch (_) {}
       }
       if (state.current?.id != cur.id) {
-        return; // trocou de faixa enquanto preparava
+        return; // the track changed while preparing
       }
       await audio.setAudioSources(
         [src, ?nextSrc],
@@ -690,9 +694,9 @@ class PlayerController extends Notifier<QueueState> {
       _resumeAt = Duration.zero;
       _started(cur, play: play, at: at ?? Duration.zero);
       if (play) unawaited(audio.play());
-      _scheduleSync(); // a fila pode ter mudado enquanto carregava
+      _scheduleSync(); // the queue may have changed while loading
     } catch (_) {
-      // Arquivo com problema: pula para a próxima.
+      // Problematic file: skips to the next one.
       if (state.index + 1 < state.queue.length) {
         state = state.copyWith(
           index: state.index + 1,
@@ -706,8 +710,8 @@ class PlayerController extends Notifier<QueueState> {
     }
   }
 
-  /// Começou a tocar [cur] (carregada agora ou emendada sem pausa): volume, velocidade,
-  /// scrobble, "lembrar onde parou" e o reporte para o Jellyfin.
+  /// Started playing [cur] (loaded now or chained without a gap): volume, speed,
+  /// scrobble, "remember where it stopped" and the report to Jellyfin.
   void _started(Item cur, {required bool play, required Duration at}) {
     _npSent = false;
     _scrobbled = false;
@@ -719,7 +723,7 @@ class PlayerController extends Notifier<QueueState> {
     _save();
     _progressTimer?.cancel();
     if (cur.streamUrl != null) {
-      // Podcast: guarda no painel onde parou (continua do mesmo ponto no outro aparelho).
+      // Podcast: saves the resume point to the panel (continues from the same point on the other device).
       _progressTimer = Timer.periodic(const Duration(seconds: 15), (_) {
         final c = state.current;
         if (c != null && c.isPodcast && isPlaying) _podcastSave(c);
@@ -728,7 +732,7 @@ class PlayerController extends Notifier<QueueState> {
     }
     if (cur.isCatalog && cur.deezerId != null) {
       ref.read(downloadsProvider.notifier).refreshSoon();
-      return; // o Jellyfin não conhece essa faixa: nada de reportar
+      return; // Jellyfin does not know this track: nothing to report
     }
     _reported = cur;
     _api.reportStart(cur.id, at, paused: !play);
@@ -740,7 +744,7 @@ class PlayerController extends Notifier<QueueState> {
     });
   }
 
-  /// O player passou sozinho para a faixa pré-carregada (sem pausa entre as duas).
+  /// The player moved on by itself to the preloaded track (no gap between the two).
   Future<void> _autoAdvanced([int tries = 0]) async {
     if (_busy) {
       // Busy preparing the next track (e.g. the queue just changed): try again shortly instead of
@@ -761,7 +765,7 @@ class PlayerController extends Notifier<QueueState> {
     await _advanced(tag.id);
   }
 
-  /// A faixa pré-carregada ([id]) virou a atual: acerta a fila e tira a anterior do player.
+  /// The preloaded track ([id]) became the current one: fixes the queue and removes the previous one from the player.
   Future<void> _advanced(String id) async {
     final st = state;
     final r = _reported;
@@ -804,7 +808,7 @@ class PlayerController extends Notifier<QueueState> {
     );
   }
 
-  /// Deixa carregada depois da atual a faixa certa (a fila pode ter mudado).
+  /// Leaves the right track loaded after the current one (the queue may have changed).
   Future<void> _syncNext() async {
     if (_busy || !_sourceReady) return;
     final want = _desiredNext();
@@ -823,15 +827,15 @@ class PlayerController extends Notifier<QueueState> {
         }
       }
     } catch (_) {
-      // sem pré-carregar: a próxima carrega quando esta acabar
+      // no preloading: the next one loads when this one ends
     } finally {
       _busy = false;
     }
   }
 
-  // ---------- volume, normalização, velocidade e timer ----------
+  // ---------- volume, normalization, speed and timer ----------
 
-  /// Volume da barra (sem a normalização), para os controles da tela.
+  /// Slider volume (without normalization), for the on-screen controls.
   Stream<double> get volumeStream async* {
     yield _userVol;
     yield* _volume.stream;
@@ -846,8 +850,8 @@ class PlayerController extends Notifier<QueueState> {
     _applyVolume();
   }
 
-  /// Quanto baixar o volume desta faixa para todas ficarem iguais (análise do Jellyfin).
-  /// Faixa sem análise usa um valor típico, para não ficar mais alta que as outras.
+  /// How much to lower this track's volume so all of them match (Jellyfin analysis).
+  /// A track without analysis uses a typical value, so it does not end up louder than the others.
   double get _gain {
     final c = state.current;
     if (!normalize || c == null || c.isPodcast) return 1;
@@ -855,11 +859,12 @@ class PlayerController extends Notifier<QueueState> {
   }
 
   void _applyVolume() {
-    if (_out != null) return; // no Chromecast, só quando a pessoa mexe
+    // on the Chromecast, only when the user changes it
+    if (_out != null) return;
     unawaited(audio.setVolume((_userVol * _gain * _fade).clamp(0.0, 1.0)));
   }
 
-  /// Timer para dormir: 1 = normal, 0 = mudo (vai baixando nos últimos segundos).
+  /// Sleep timer: 1 = normal, 0 = muted (fades down over the last seconds).
   set fade(double f) {
     _fade = f.clamp(0.0, 1.0);
     _applyVolume();
@@ -867,7 +872,7 @@ class PlayerController extends Notifier<QueueState> {
     if (out != null && _fade < 1) unawaited(out.setVolume(_userVol * _fade));
   }
 
-  /// Timer "fim da música": a próxima não emenda e o player para quando esta acabar.
+  /// "End of track" timer: the next one does not chain and the player stops when this one ends.
   set stopAfterCurrent(bool v) {
     _stopAfterCurrent = v;
     _scheduleSync();
@@ -876,7 +881,7 @@ class PlayerController extends Notifier<QueueState> {
   double get podcastSpeed =>
       ref.read(prefsProvider).getDouble('podSpeed') ?? 1.0;
 
-  /// Velocidade dos podcasts (as músicas tocam sempre em 1×).
+  /// Podcast speed (music always plays at 1×).
   void setPodcastSpeed(double v) {
     ref.read(prefsProvider).setDouble('podSpeed', v);
     if (state.current?.isPodcast ?? false) unawaited(audio.setSpeed(v));
@@ -895,7 +900,7 @@ class PlayerController extends Notifier<QueueState> {
     if (c != null && c.isPodcast) _podcastSave(c);
   }
 
-  /// Dados da faixa para a notificação, tela de bloqueio e Android Auto.
+  /// Track data for the notification, lock screen and Android Auto.
   MediaItem mediaItemOf(Item t, {Duration? duration}) {
     final art = _api.imageUrl(t.imageItemId, size: 512);
     final d = duration ?? t.duration;
@@ -921,7 +926,7 @@ class PlayerController extends Notifier<QueueState> {
     if (state.current == null) return;
     if (remote?.call('toggle') ?? false) return;
     if (!_sourceReady) {
-      // Fila guardada da última vez: carrega agora e continua de onde parou.
+      // Queue saved last time: loads now and continues from where it stopped.
       await _load(play: true, at: _resumeAt);
       return;
     }
@@ -942,7 +947,7 @@ class PlayerController extends Notifier<QueueState> {
         !_busy &&
         audio.sequence.length > (audio.currentIndex ?? 0) + 1 &&
         (state.next?.id == pre || state.next == null)) {
-      // Já está carregada: só passa para ela.
+      // Already loaded: just switches to it.
       _busy = true;
       try {
         await audio.seek(Duration.zero, index: (audio.currentIndex ?? 0) + 1);
@@ -977,7 +982,7 @@ class PlayerController extends Notifier<QueueState> {
     await _pauseAt(Duration.zero);
   }
 
-  /// Para no ponto [d] (aqui ou no Chromecast).
+  /// Pauses at point [d] (here or on the Chromecast).
   Future<void> _pauseAt(Duration d) async {
     final out = _out;
     if (out != null) {
@@ -989,7 +994,7 @@ class PlayerController extends Notifier<QueueState> {
     await audio.seek(d);
   }
 
-  /// Quando a fila acaba, continua com o Mix instantâneo da última faixa.
+  /// When the queue ends, continues with the Instant Mix of the last track.
   Future<bool> _autoplayMore() async {
     try {
       final seen = state.queue.map((t) => t.id).toSet();
@@ -1030,7 +1035,7 @@ class PlayerController extends Notifier<QueueState> {
 
   Future<void> seek(Duration d) async {
     if (!_sourceReady) {
-      // Fila guardada ainda não carregada: carrega pausada já na posição escolhida.
+      // Saved queue not yet loaded: loads paused already at the chosen position.
       if (state.current != null) await _load(play: false, at: d);
       return;
     }
@@ -1053,7 +1058,7 @@ class PlayerController extends Notifier<QueueState> {
 
   // ---------- Chromecast ----------
 
-  /// Endereço que o Chromecast baixa sozinho (sem os cabeçalhos do app).
+  /// URL the Chromecast downloads on its own (without the app's headers).
   String _castUrl(Item t) {
     final direct = t.streamUrl;
     if (direct != null) return direct; // podcast
@@ -1062,8 +1067,8 @@ class PlayerController extends Notifier<QueueState> {
     return _api.castUrl(t.id);
   }
 
-  /// Liga ([out]) ou desliga (null) o Chromecast. Ao ligar, continua de onde estava,
-  /// tocando se estava tocando; ao desligar, volta para cá pausado em [at].
+  /// Turns the Chromecast on ([out]) or off (null). When turning on, continues from where it was,
+  /// playing if it was playing; when turning off, comes back here paused at [at].
   Future<void> setOutput(
     RemoteOutput? out, {
     String name = '',
@@ -1084,7 +1089,7 @@ class PlayerController extends Notifier<QueueState> {
     if (state.current != null) await _load(play: false, at: pos);
   }
 
-  /// O Chromecast avisou que está tocando/pausado/carregando.
+  /// The Chromecast reported that it is playing/paused/loading.
   void remoteStatus({required bool playing, required bool buffering}) {
     if (_out == null) return;
     if (playing == state.playing && buffering == state.buffering) return;
@@ -1096,12 +1101,12 @@ class PlayerController extends Notifier<QueueState> {
     }
   }
 
-  /// Posição estimada do Chromecast (a barra de progresso anda com ela).
+  /// Estimated Chromecast position (the progress bar moves with it).
   void remotePosition(Duration p) {
     if (_out != null && !_remotePos.isClosed) _remotePos.add(p);
   }
 
-  /// A música acabou no Chromecast.
+  /// The track ended on the Chromecast.
   void remoteEnded() {
     if (_out == null) return;
     final c = state.current;
@@ -1109,9 +1114,9 @@ class PlayerController extends Notifier<QueueState> {
     unawaited(_onTrackEnded());
   }
 
-  // ---------- fila ----------
+  // ---------- queue ----------
 
-  /// "Adicionar à fila": entra depois das que já foram adicionadas à mão.
+  /// "Add to queue": goes after the ones already added manually.
   void addToQueue(List<Item> tracks) {
     if (tracks.isEmpty) return;
     if (remote?.call('add', items: tracks) ?? false) return;
@@ -1127,7 +1132,7 @@ class PlayerController extends Notifier<QueueState> {
     );
   }
 
-  /// "Tocar em seguida": logo depois da atual.
+  /// "Play next": right after the current one.
   void playNext(List<Item> tracks) {
     if (remote?.call('add', items: tracks) ?? false) return;
     if (state.current == null) {
@@ -1151,7 +1156,7 @@ class PlayerController extends Notifier<QueueState> {
     );
   }
 
-  /// Reordena dentro do que vem depois da atual ([from]/[to] são índices da fila).
+  /// Reorders within what comes after the current one ([from]/[to] are queue indices).
   void move(int from, int to) {
     if (from <= state.index || to <= state.index) return;
     final q = List<Item>.of(state.queue);
@@ -1160,7 +1165,7 @@ class PlayerController extends Notifier<QueueState> {
     state = state.copyWith(queue: q);
   }
 
-  /// Aleatório → Smart Shuffle (em playlist) → desligado.
+  /// Shuffle → Smart Shuffle (in a playlist) → off.
   void toggleShuffle() {
     final cur = state.current;
     if (cur == null) {
@@ -1176,7 +1181,7 @@ class PlayerController extends Notifier<QueueState> {
       return;
     }
     if (state.smart) {
-      // Desliga tudo: as recomendações que ainda não tocaram saem da fila.
+      // Turns everything off: recommendations that have not played yet leave the queue.
       final keep = state.index + 1 + state.manualCount;
       state = state.copyWith(
         queue: [
@@ -1195,7 +1200,7 @@ class PlayerController extends Notifier<QueueState> {
       final rest = state.queue.skip(head.length).toList()..shuffle(Random());
       state = state.copyWith(queue: [...head, ...rest], shuffle: true);
     } else {
-      // Volta para a ordem original a partir da faixa atual.
+      // Returns to the original order starting from the current track.
       final pos = _unshuffled.indexWhere((t) => t.id == cur.id);
       final headIds = head.map((t) => t.id).toSet();
       final rest = (pos >= 0 ? _unshuffled.skip(pos + 1) : _unshuffled)
@@ -1215,7 +1220,7 @@ class PlayerController extends Notifier<QueueState> {
     ref.read(prefsProvider).setBool('autoplay', v);
   }
 
-  /// Atualiza o favorito da faixa em todos os lugares da fila.
+  /// Updates the track's favorite flag everywhere in the queue.
   void updateItem(Item item) {
     state = state.copyWith(
       queue: [for (final t in state.queue) t.id == item.id ? item : t],
@@ -1233,7 +1238,7 @@ class PlayerController extends Notifier<QueueState> {
   }
 }
 
-/// Onde parou em cada episódio de podcast (id "pod…"), vindo do painel ao abrir a página do podcast.
+/// Resume point of each podcast episode (id "pod…"), coming from the panel when the podcast page opens.
 final podcastResume = <String, Duration>{};
 
 final playerProvider = NotifierProvider<PlayerController, QueueState>(
@@ -1242,7 +1247,7 @@ final playerProvider = NotifierProvider<PlayerController, QueueState>(
 
 final positionProvider = StreamProvider<Duration>((ref) {
   final c = ref.watch(playerProvider.notifier);
-  // Antes de carregar a fila guardada, mostra onde tinha parado (e o arrastar da barra).
+  // Before loading the saved queue, shows where it had stopped (and the bar dragging).
   ref.watch(playerProvider.select((s) => (s.index, s.queue.length)));
   if (ref.watch(playerProvider.select((s) => s.casting))) {
     return c.remotePositionStream;
@@ -1259,7 +1264,7 @@ final durationProvider = StreamProvider<Duration?>((ref) {
   return c.audio.durationStream;
 });
 
-/// Volume da barra (o que a pessoa escolheu, sem a normalização).
+/// Slider volume (what the user chose, without normalization).
 final volumeProvider = StreamProvider<double>((ref) {
   final c = ref.watch(playerProvider.notifier);
   return c.volumeStream;

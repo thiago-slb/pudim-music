@@ -26,7 +26,7 @@ final rightPanelProvider = NotifierProvider<RightPanelNotifier, RightPanel>(
   RightPanelNotifier.new,
 );
 
-/// Coluna "Sua Biblioteca" recolhida (só capas) ou aberta.
+/// "Your Library" column collapsed (covers only) or open.
 class SidebarCollapsed extends Notifier<bool> {
   @override
   bool build() => ref.read(prefsProvider).getBool('sidebarCollapsed') ?? false;
@@ -40,7 +40,7 @@ final sidebarCollapsedProvider = NotifierProvider<SidebarCollapsed, bool>(
   SidebarCollapsed.new,
 );
 
-/// Buscas recentes (só locais).
+/// Recent searches (local only).
 class RecentSearches extends Notifier<List<String>> {
   @override
   List<String> build() =>

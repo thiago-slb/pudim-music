@@ -16,7 +16,7 @@ final meProvider = FutureProvider.autoDispose<Contact>(
   (ref) => ref.watch(catalogProvider).me(),
 );
 
-/// Perfil: nome que aparece para os contatos, nome de usuário do Jellyfin e senha.
+/// Profile: name shown to contacts, Jellyfin username and password.
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
   @override

@@ -12,7 +12,7 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    // CarPlay pede as pastas e o "tocar" ao Dart por este canal.
+    // CarPlay asks Dart for the folders and for "play" over this channel.
     if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "PudimCarPlay") {
       CarPlayBridge.channel = FlutterMethodChannel(
         name: "pudim/carplay", binaryMessenger: registrar.messenger())

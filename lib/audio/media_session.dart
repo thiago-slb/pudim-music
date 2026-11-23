@@ -8,11 +8,11 @@ import '../api/models.dart';
 import 'player.dart';
 import '../l10n/l10n.dart';
 
-/// Sessão de mídia do celular: notificação, tela de bloqueio, fones Bluetooth, widget
-/// e Android Auto (navegar pela biblioteca no carro).
+/// Phone media session: notification, lock screen, Bluetooth headphones, widget
+/// and Android Auto (browsing the library in the car).
 ///
-/// O player de verdade é o [PlayerController]; esta classe só espelha o estado dele para o
-/// sistema e repassa os botões. No Android Auto, as pastas vêm do Jellyfin.
+/// The real player is [PlayerController]; this class only mirrors its state to the
+/// system and forwards the buttons. In Android Auto, the folders come from Jellyfin.
 class MediaSession extends BaseAudioHandler with SeekHandler {
   MediaSession._();
 
@@ -36,7 +36,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
   PlayerController? _c;
   final _subs = <StreamSubscription>[];
 
-  /// Músicas de cada pasta já aberta no carro (para tocar a pasta inteira a partir da escolhida).
+  /// Tracks of each folder already opened in the car (to play the whole folder from the chosen one).
   final _lists = <String, List<Item>>{};
   final _titles = <String, String>{};
 
@@ -60,7 +60,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     _broadcast();
   }
 
-  /// Chamado a cada mudança da fila.
+  /// Called on every queue change.
   void update(QueueState? prev, QueueState next) {
     final a = prev?.current, b = next.current;
     if (a?.id != b?.id || a?.favorite != b?.favorite) _pushItem();
@@ -82,7 +82,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     try {
       mediaItem.add(c.mediaItemOf(t, duration: c.duration));
     } catch (_) {
-      // sem sessão ainda: a capa e o resto chegam na próxima mudança
+      // no session yet: the cover and the rest arrive on the next change
     }
   }
 
@@ -139,7 +139,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     );
   }
 
-  // ---------- botões ----------
+  // ---------- buttons ----------
 
   @override
   Future<void> play() async {
@@ -165,7 +165,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
   @override
   Future<void> skipToQueueItem(int index) async => _c?.jumpTo(index);
 
-  // ---------- Android Auto: pastas ----------
+  // ---------- Android Auto: folders ----------
 
   static const _hintGrid = {
     'android.media.browse.CONTENT_STYLE_BROWSABLE_HINT': 2,
@@ -327,7 +327,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     );
   }
 
-  /// "Ok Google, tocar … no Pudim".
+  /// "Ok Google, play … on Pudim".
   @override
   Future<void> playFromSearch(
     String query, [

@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pudim_music/l10n/l10n.dart';
 
 void main() {
-  test('os idiomas carregam', () {
+  test('languages load', () {
     expect(lookupL10n(const Locale('pt')).commonLikedSongs, 'Músicas curtidas');
     expect(lookupL10n(const Locale('en')).commonLikedSongs, 'Liked Songs');
     expect(
@@ -23,13 +23,13 @@ void main() {
     }
   });
 
-  test('plural das músicas', () {
+  test('song count plural', () {
     expect(lookupL10n(const Locale('pt')).commonSongCount(1), '1 música');
     expect(lookupL10n(const Locale('en')).commonSongCount(3), '3 songs');
     expect(lookupL10n(const Locale('es')).commonSongCount(2), '2 canciones');
   });
 
-  test('segue o idioma do aparelho, senão português', () {
+  test('follows the device language, otherwise Portuguese', () {
     expect(resolveAppLocale(const [Locale('es', 'MX')]), const Locale('es'));
     expect(
       resolveAppLocale(const [Locale('hi'), Locale('en', 'US')]),
@@ -40,7 +40,7 @@ void main() {
     expect(resolveAppLocale(null), const Locale('pt'));
   });
 
-  test('todas as traduções têm as mesmas chaves do português', () {
+  test('all translations have the same keys as Portuguese', () {
     Set<String> keys(String loc) {
       final m = jsonDecode(
         File('lib/l10n/app_$loc.arb').readAsStringSync(),

@@ -10,7 +10,7 @@ import 'disk_image.dart';
 import '../../state/session.dart';
 import 'actions.dart';
 
-/// Sino: downloads pedidos pelo app (músicas, álbuns e discografias baixando para a biblioteca).
+/// Bell: downloads requested by the app (songs, albums and discographies downloading to the library).
 class DownloadsBell extends ConsumerWidget {
   const DownloadsBell({super.key});
 
@@ -266,7 +266,7 @@ class _JobTile extends ConsumerWidget {
         ],
       ),
       isThreeLine: true,
-      // Controles discretos: só aparecem no ⋮.
+      // Discreet controls: they only show up in the ⋮.
       trailing: PopupMenuButton<String>(
         icon: const Icon(Icons.more_vert, size: 18, color: Pm.muted),
         tooltip: context.l10n.widgetDownloadsBellOptions,

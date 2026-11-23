@@ -5,23 +5,23 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-/// Guarda no aparelho as respostas GET do servidor: sem internet o app mostra a última versão
-/// de tudo o que já abriu (biblioteca, playlists, álbuns, início, artistas, letras).
-/// Com internet sempre busca de novo e atualiza a cópia.
+/// Stores the server's GET responses on the device: without internet the app shows the last version
+/// of everything it has already opened (library, playlists, albums, home, artists, lyrics).
+/// With internet it always fetches again and updates the copy.
 class ResponseCache {
   ResponseCache(this.dir);
 
-  /// Cache usado pelo app (criado no main; nulo nos testes).
+  /// Cache used by the app (created in main; null in tests).
   static ResponseCache? instance;
 
   final Directory dir;
 
-  /// Sem conexão com o servidor agora (a interface mostra o aviso "Sem internet").
+  /// No connection to the server right now (the UI shows the "No internet" notice).
   final offline = ValueNotifier<bool>(false);
   DateTime _retryAt = DateTime.fromMillisecondsSinceEpoch(0);
   Timer? _probeTimer;
 
-  /// Testa se o servidor voltou (definido pela sessão).
+  /// Checks whether the server is back (set by the session).
   Future<bool> Function()? probe;
 
   static Future<ResponseCache> open(String basePath) async {
@@ -30,7 +30,7 @@ class ResponseCache {
     return ResponseCache(d);
   }
 
-  /// Marca sem rede: por 30 s as respostas vêm direto do aparelho, sem esperar o servidor.
+  /// Marks as offline: for 30 s responses come straight from the device, without waiting for the server.
   void markOffline() {
     offline.value = true;
     _retryAt = DateTime.now().add(const Duration(seconds: 30));
@@ -49,7 +49,7 @@ class ResponseCache {
 
   bool get _skipNetwork => DateTime.now().isBefore(_retryAt);
 
-  /// Chave estável: caminho + parâmetros em ordem (FNV-1a 64 bits em hex).
+  /// Stable key: path + parameters in order (64-bit FNV-1a, hex).
   static String keyOf(String path, Map<String, dynamic> query) {
     final keys = query.keys.toList()..sort();
     final s = '$path?${[for (final k in keys) '$k=${query[k]}'].join('&')}';
@@ -83,7 +83,7 @@ class ResponseCache {
     }
   }
 
-  /// Quando a cópia foi atualizada pela última vez (nulo se não existe).
+  /// When the copy was last updated (null if it does not exist).
   Future<DateTime?> savedAt(String key) async {
     try {
       final f = _file(key);
@@ -102,7 +102,7 @@ class ResponseCache {
     _ => false,
   };
 
-  /// Interceptor para o Dio do Jellyfin.
+  /// Interceptor for the Jellyfin Dio.
   Interceptor interceptor() => InterceptorsWrapper(
     onRequest: (o, h) async {
       if (o.method == 'GET' && _skipNetwork) {

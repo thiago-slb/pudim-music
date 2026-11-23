@@ -6,10 +6,10 @@ import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
-/// Faixa discreta "Nova versão do Pudim" quando a atualização já foi baixada.
 /// Builds already offered in a dialog (both shells share it; once per build is enough).
 final _asked = <int>{};
 
+/// Discreet "New version of Pudim" strip when the update has already been downloaded.
 class UpdateBanner extends ConsumerWidget {
   const UpdateBanner({super.key});
 

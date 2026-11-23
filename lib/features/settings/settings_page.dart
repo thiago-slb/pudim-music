@@ -241,7 +241,8 @@ class _AutoplayRowState extends ConsumerState<_AutoplayRow> {
   );
 }
 
-/// Conectar o Last.fm: o painel pede um token, a pessoa autoriza na página do Last.fm e volta aqui.
+/// Connect Last.fm: the panel asks for a token, the user authorizes on the Last.fm page and comes
+/// back here.
 class _LastfmRow extends ConsumerStatefulWidget {
   const _LastfmRow();
   @override
@@ -250,7 +251,7 @@ class _LastfmRow extends ConsumerStatefulWidget {
 
 class _LastfmRowState extends ConsumerState<_LastfmRow> {
   LastfmStatus? _st;
-  String? _token; // esperando a pessoa autorizar no navegador
+  String? _token; // waiting for the user to authorize in the browser
   bool _busy = false;
 
   @override
@@ -262,7 +263,7 @@ class _LastfmRowState extends ConsumerState<_LastfmRow> {
   Future<void> _load() async {
     try {
       final st = await ref.read(catalogProvider).lastfm();
-      // o player só manda scrobble com isto ligado
+      // the player only sends scrobbles with this on
       await ref.read(prefsProvider).setBool('lastfm', st.connected);
       if (mounted) setState(() => _st = st);
     } catch (_) {
@@ -383,7 +384,7 @@ class _NormalizeRowState extends ConsumerState<_NormalizeRow> {
   );
 }
 
-/// Qualidade do streaming: arquivo original ou convertido pelo Jellyfin (AAC).
+/// Streaming quality: original file or converted by Jellyfin (AAC).
 class _QualityRow extends ConsumerStatefulWidget {
   final String prefKey;
   final String title;
@@ -433,7 +434,7 @@ class _QualityRowState extends ConsumerState<_QualityRow> {
   }
 }
 
-/// Idioma da interface: o do aparelho ou um dos que o app traduz.
+/// Interface language: the device's or one of those the app translates.
 class _LanguageRow extends ConsumerWidget {
   const _LanguageRow();
 
@@ -450,7 +451,7 @@ class _LanguageRow extends ConsumerWidget {
         borderRadius: BorderRadius.circular(8),
         items: [
           DropdownMenuItem(value: '', child: Text(context.l10n.languageSystem)),
-          // nomes dos idiomas ficam na própria língua
+          // language names stay in their own language
           for (final code in appLanguages)
             DropdownMenuItem(
               value: code,

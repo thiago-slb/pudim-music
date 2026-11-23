@@ -17,7 +17,7 @@ String _kind(L10n l, String type) => switch (type) {
   'Single' => l.catalogKindSingle,
   'Broadcast' => l.catalogKindBroadcast,
   'Other' => l.catalogKindOther,
-  _ => type, // EP e o que não conhecemos
+  _ => type, // EP and anything we don't recognize
 };
 
 String _sec(L10n l, String type) => switch (type) {
@@ -29,16 +29,16 @@ String _sec(L10n l, String type) => switch (type) {
   'Spokenword' => l.catalogSecSpokenword,
   'Remix' => 'remix',
   'Demo' => 'demo',
-  _ => type, // DJ-mix e o que não conhecemos
+  _ => type, // DJ-mix and anything we don't recognize
 };
 
-/// "ao vivo · coletânea" etc. do álbum.
+/// "live · compilation" etc. of the album.
 String planTag(L10n l, PlanAlbum a) => [
   if (a.type.isNotEmpty) _kind(l, a.type),
   for (final s in a.secondary) _sec(l, s),
 ].join(' · ');
 
-/// Buscar álbuns: a discografia que falta na biblioteca, com caixinhas para escolher.
+/// Search albums: the discography missing from the library, with checkboxes to pick.
 class AlbumPickerPage extends ConsumerStatefulWidget {
   final String artist;
   const AlbumPickerPage({super.key, required this.artist});
@@ -252,7 +252,7 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
   }
 }
 
-/// Capa do álbum no Cover Art Archive (o banco de capas do MusicBrainz); nota musical se não tiver.
+/// Album cover from the Cover Art Archive (MusicBrainz's cover database); music note if none.
 class _Cover extends StatelessWidget {
   final String rgid;
   const _Cover(this.rgid);

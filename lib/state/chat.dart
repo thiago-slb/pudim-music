@@ -7,8 +7,8 @@ import 'notify.dart';
 import 'session.dart';
 import '../l10n/l10n.dart';
 
-/// Conversas desta conta (do painel), consultadas a cada 15 s (4 s com uma conversa aberta).
-/// Mensagem nova de outra pessoa vira notificação, menos a da conversa que está aberta.
+/// Conversations of this account (from the panel), polled every 15 s (4 s with a conversation open).
+/// A new message from someone else becomes a notification, except in the conversation that is open.
 final chatsProvider = NotifierProvider<ChatsNotifier, ChatList>(
   ChatsNotifier.new,
 );
@@ -17,7 +17,7 @@ class ChatsNotifier extends Notifier<ChatList> {
   Timer? _timer;
   int _lastId = -1;
 
-  /// Conversa aberta agora (não notifica as mensagens dela).
+  /// Conversation open right now (its messages do not notify).
   String? openWith;
 
   @override

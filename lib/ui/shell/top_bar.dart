@@ -1,4 +1,4 @@
-// A API nova (nativeapi) do window_manager 0.7 ainda é recente; usamos a ponte legada.
+// The new API (nativeapi) of window_manager 0.7 is still recent; we use the legacy bridge.
 // ignore_for_file: deprecated_member_use
 import 'dart:async';
 
@@ -16,7 +16,7 @@ import '../widgets/common.dart';
 import '../../features/chat/chat_pages.dart';
 import '../widgets/user_photo.dart';
 
-/// Barra do topo: menu, voltar/avançar, Início, busca em pílula, avatar e botões da janela.
+/// Top bar: menu, back/forward, Home, pill search, avatar and window buttons.
 class TopBar extends ConsumerStatefulWidget {
   const TopBar({super.key});
   @override

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../colors.dart';
 import '../theme.dart';
 
-/// Página com fundo em gradiente da cor da capa, como no Spotify.
+/// Page with a gradient background in the cover color, as in Spotify.
 class GradientPage extends ConsumerWidget {
   final String? colorFromUrl;
   final Color? color;
@@ -47,7 +47,7 @@ class GradientPage extends ConsumerWidget {
   }
 }
 
-/// Cabeçalho grande: capa + "Playlist"/"Álbum" + título enorme + linha de detalhes.
+/// Large header: cover + "Playlist"/"Album" + huge title + details line.
 class BigHeader extends StatelessWidget {
   final Widget cover;
   final String type;
@@ -146,7 +146,7 @@ class BigHeader extends StatelessWidget {
 }
 
 extension on BigHeader {
-  /// Celular: capa centralizada e título embaixo, alinhado à esquerda.
+  /// Phone: centered cover and title below, left-aligned.
   Widget _compact(double width) {
     final size = (width * 0.62).clamp(160.0, 280.0);
     return Padding(
@@ -211,7 +211,7 @@ extension on BigHeader {
   }
 }
 
-/// Faixa escura abaixo do cabeçalho onde ficam o play verde e as ações.
+/// Dark strip below the header where the green play and the actions live.
 class ActionBar extends StatelessWidget {
   final List<Widget> children;
   const ActionBar({super.key, required this.children});
@@ -231,7 +231,7 @@ class ActionBar extends StatelessWidget {
   );
 }
 
-/// Corpo da página com recuo lateral padrão.
+/// Page body with the standard side padding.
 class PageBody extends StatelessWidget {
   final Widget child;
   const PageBody({super.key, required this.child});

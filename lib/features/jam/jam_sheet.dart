@@ -11,7 +11,7 @@ import '../../ui/widgets/actions.dart';
 import '../../ui/widgets/user_photo.dart';
 import '../chat/chat_pages.dart';
 
-/// Ícone da Jam no player (verde com o número de pessoas quando está numa).
+/// Jam icon in the player (green with the number of people when in one).
 class JamButton extends ConsumerWidget {
   final double size;
   const JamButton({super.key, this.size = 18});

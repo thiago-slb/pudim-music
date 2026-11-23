@@ -1,6 +1,6 @@
-"""Gera os ícones do app a partir de assets/icon/pudim.png (quadrado, >= 1024px).
+"""Generates the app icons from assets/icon/pudim.png (square, >= 1024px).
 
-Uso: python tool/make_icons.py  (na raiz do repositório)
+Usage: python tool/make_icons.py  (from the repository root)
 """
 from pathlib import Path
 
@@ -29,7 +29,7 @@ def main() -> None:
         out.parent.mkdir(parents=True, exist_ok=True)
         img.resize((size, size), Image.LANCZOS).save(out)
 
-    # Windows: .ico com vários tamanhos.
+    # Windows: .ico with several sizes.
     round_.save(ROOT / "windows/runner/resources/app_icon.ico",
                 sizes=[(s, s) for s in (16, 24, 32, 48, 64, 128, 256)])
 
@@ -43,11 +43,11 @@ def main() -> None:
         save(round_, f"web/icons/Icon-{s}.png", s)
         save(base, f"web/icons/Icon-maskable-{s}.png", s)
 
-    # Android (ícone legado, sem adaptive por enquanto)
+    # Android (legacy icon, no adaptive icon for now)
     for d, s in {"mdpi": 48, "hdpi": 72, "xhdpi": 96, "xxhdpi": 144, "xxxhdpi": 192}.items():
         save(round_, f"android/app/src/main/res/mipmap-{d}/ic_launcher.png", s)
 
-    print("ícones gerados")
+    print("icons generated")
 
 
 if __name__ == "__main__":

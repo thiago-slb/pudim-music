@@ -8,18 +8,18 @@ plugins {
 
 android {
     namespace = "io.github.thiagoslb.pudim"
-    compileSdk = 37 // flutter_local_notifications 23 pede a API 37
+    compileSdk = 37 // flutter_local_notifications 23 requires API 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-        // flutter_local_notifications usa APIs de data do Java 8+ (desugaring).
+        // flutter_local_notifications uses Java 8+ date APIs (desugaring).
         isCoreLibraryDesugaringEnabled = true
     }
 
     defaultConfig {
-        // Build próprio com outro id: variável de ambiente PUDIM_APP_ID ou -Ppudim.appId=... (ver README).
+        // Custom build with another id: environment variable PUDIM_APP_ID or -Ppudim.appId=... (see README).
         applicationId = providers.gradleProperty("pudim.appId")
             .orElse(providers.environmentVariable("PUDIM_APP_ID"))
             .getOrElse("io.github.thiagoslb.pudim")
@@ -35,15 +35,15 @@ android {
         versionName = flutter.versionName
     }
 
-    // No Android o áudio é o ExoPlayer (just_audio); o mpv do media_kit só serve no desktop.
-    // Os dois System.loadLibrary do plugin estão em try/catch, então tirar as .so é seguro (~7 MB por arquitetura).
+    // On Android the audio engine is ExoPlayer (just_audio); media_kit's mpv is only needed on desktop.
+    // The plugin's two System.loadLibrary calls are in try/catch, so dropping the .so files is safe (~7 MB per architecture).
     packaging {
         jniLibs {
             excludes += setOf("**/libmpv.so", "**/libmediakitandroidhelper.so")
         }
     }
 
-    // Chave de release: android/key.properties (fora do git, ver README). Sem ele, assina com a de debug.
+    // Release key: android/key.properties (not in git, see README). Without it, signs with the debug key.
     val keyProps = Properties().apply {
         val f = rootProject.file("key.properties")
         if (f.exists()) f.inputStream().use { load(it) }

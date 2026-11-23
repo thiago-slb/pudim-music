@@ -4,7 +4,7 @@ import 'package:pudim_music/api/models.dart';
 import 'package:pudim_music/ui/widgets/sleep_speed.dart';
 
 void main() {
-  test('episódio de podcast vira faixa que toca do endereço dele', () {
+  test('podcast episode becomes a track that plays from its own URL', () {
     final e = PodcastEpisode.fromJson(
       {
         'guid': 'abcdef0123456789abcd',
@@ -30,7 +30,7 @@ void main() {
     expect(back.streamUrl, it.streamUrl);
   });
 
-  test('show do MusicBrainz e contato com foto', () {
+  test('MusicBrainz show and contact with photo', () {
     final s = ShowEvent.fromJson({
       'id': 'x',
       'date': '2026-08-08',
@@ -50,7 +50,7 @@ void main() {
     );
   });
 
-  test('Jam: fila só vem quando muda e os pedidos chegam para o anfitrião', () {
+  test('Jam: queue only comes when it changes and requests reach the host', () {
     final t = const Item(id: 'a1', name: 'Música', kind: ItemKind.track);
     final j = JamState.fromJson({
       'id': 'j1',
@@ -78,7 +78,7 @@ void main() {
     expect(same.queue, isNull);
   });
 
-  test('colaborativa: quem adicionou cada música', () {
+  test('collaborative: who added each song', () {
     const info = CollabInfo(
       'u1',
       [Contact('u1', 'a', 'Ana'), Contact('u2', 'b', 'Beto')],
@@ -90,7 +90,7 @@ void main() {
     expect(CollabInfo.none.isCollab, isFalse);
   });
 
-  test('Blend e daylist vindos do painel', () {
+  test('Blend and daylist coming from the panel', () {
     final b = BlendInfo.fromJson({
       'user_id': 'u2',
       'name': 'Beto',
@@ -114,7 +114,7 @@ void main() {
   });
 
   test(
-    'ganho de normalização vem do Jellyfin e sobrevive ao salvar a fila',
+    'normalization gain comes from Jellyfin and survives saving the queue',
     () {
       final t = Item.fromJson({
         'Id': 'a1',
@@ -133,7 +133,7 @@ void main() {
     },
   );
 
-  test('rótulo da velocidade do podcast', () {
+  test('podcast speed label', () {
     expect(SpeedButton.label(1.0, 'pt'), '1×');
     expect(SpeedButton.label(1.5, 'pt'), '1,5×');
     expect(SpeedButton.label(0.75, 'pt'), '0,75×');

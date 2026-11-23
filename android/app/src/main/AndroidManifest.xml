@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <!-- Instalar a atualização baixada do servidor de extras (o Android sempre pede confirmação). -->
+    <!-- Install the update downloaded from the extras server (Android always asks for confirmation). -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <application
         android:label="Pudim"
@@ -34,13 +34,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Android Auto: o app aparece como app de música no carro. -->
+        <!-- Android Auto: the app shows up as a music app in the car. -->
         <meta-data android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
         <!-- Icon Android Auto shows for the app (must be monochrome). -->
         <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
             android:resource="@drawable/ic_stat_pudim" />
-        <!-- Reprodução em segundo plano e navegação no carro (audio_service). -->
+        <!-- Background playback and in-car browsing (audio_service). -->
         <service android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"
             android:icon="@mipmap/ic_launcher"
@@ -56,7 +56,7 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <!-- Widget da tela inicial (tocando agora). -->
+        <!-- Home screen widget (now playing). -->
         <receiver android:name=".PudimWidget" android:exported="false" android:label="Pudim">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -76,7 +76,7 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
-        <!-- Abrir a página do Last.fm no navegador (url_launcher). -->
+        <!-- Open the Last.fm page in the browser (url_launcher). -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="https"/>

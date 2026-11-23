@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/l10n.dart';
 import 'session.dart';
 
-/// Idioma escolhido em Configurações; `null` segue o idioma do aparelho.
+/// Language chosen in Settings; `null` follows the device language.
 class AppLocale extends Notifier<Locale?> {
   static const _key = 'locale';
 

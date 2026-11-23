@@ -12,7 +12,8 @@ import '../../ui/theme.dart';
 import '../../ui/widgets/actions.dart';
 import '../../ui/widgets/mix_button.dart';
 
-/// Botão "Blend" no topo da conversa: cria ou abre a playlist que mistura o gosto das duas contas.
+/// "Blend" button at the top of the conversation: creates or opens the playlist mixing both
+/// accounts' taste.
 class BlendButton extends ConsumerStatefulWidget {
   final Contact other;
   const BlendButton(this.other, {super.key});

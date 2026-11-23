@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import '../version.dart';
 import 'session.dart';
 
-/// Atualização pronta para instalar (null = nada novo ou ainda baixando).
+/// Update ready to install (null = nothing new or still downloading).
 class UpdateReady {
   final int build;
   final String path;
@@ -19,8 +19,8 @@ class UpdateReady {
   const UpdateReady(this.build, this.path, this.notes);
 }
 
-/// Confere no servidor de extras (quando tem) se há versão nova; baixa em segundo plano e
-/// avisa quando está pronta. Android abre a tela de instalar; Windows instala em silêncio e reabre.
+/// Checks the extras server (when there is one) for a new version; downloads in the background and
+/// notifies when it is ready. Android opens the install screen; Windows installs silently and reopens.
 final updaterProvider = NotifierProvider<Updater, UpdateReady?>(Updater.new);
 
 class Updater extends Notifier<UpdateReady?> {
@@ -39,7 +39,7 @@ class Updater extends Notifier<UpdateReady?> {
   UpdateReady? build() {
     ref.onDispose(() => _timer?.cancel());
     if (_kind != null) {
-      // Um pouco depois de abrir (não disputa a rede com a Início) e depois a cada hora.
+      // A little after opening (do not compete for the network with Home) and then every hour.
       Timer(const Duration(seconds: 20), check);
       _timer = Timer.periodic(const Duration(hours: 1), (_) => check());
       // The app usually stays in the background for days: also check when it comes back.
@@ -80,13 +80,13 @@ class Updater extends Notifier<UpdateReady?> {
         await cat.downloadUpdate(kind, part);
         if (want.isNotEmpty && await _sha(File(part)) != want) {
           await File(part).delete();
-          return; // arquivo corrompido ou trocado no caminho: tenta de novo mais tarde
+          return; // file corrupted or swapped on the way: try again later
         }
         await File(part).rename(path);
       }
       state = UpdateReady(build, path, '${info['notes'] ?? ''}');
     } catch (_) {
-      // Sem painel ou sem internet: tenta na próxima.
+      // No panel or no internet: try on the next one.
     } finally {
       _busy = false;
     }
@@ -95,7 +95,7 @@ class Updater extends Notifier<UpdateReady?> {
   static Future<String> _sha(File f) async =>
       (await sha256.bind(f.openRead()).first).toString();
 
-  /// Instala a versão baixada.
+  /// Installs the downloaded version.
   Future<String?> install() async {
     final u = state;
     if (u == null) return null;
@@ -107,7 +107,7 @@ class Updater extends Notifier<UpdateReady?> {
       return r.type == ResultType.done ? null : r.message;
     }
     if (Platform.isWindows) {
-      // O instalador fecha o app, instala sem perguntar nada e o script abre a versão nova.
+      // The installer closes the app, installs without asking anything and the script opens the new version.
       final exe = Platform.resolvedExecutable;
       final bat = File('${File(u.path).parent.path}\\pudim-atualizar.cmd');
       await bat.writeAsString(

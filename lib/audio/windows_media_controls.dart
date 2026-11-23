@@ -9,19 +9,19 @@ import '../api/models.dart';
 import '../state/session.dart';
 import 'player.dart';
 
-/// Carrega a parte nativa (Rust) do SMTC. Só no Windows; falha não impede o app.
+/// Loads the native (Rust) part of SMTC. Windows only; a failure does not stop the app.
 Future<void> initWindowsMediaControls() async {
   if (!Platform.isWindows) return;
   try {
     await smtc.SMTCWindows.initialize();
   } catch (e) {
-    debugPrint('SMTC indisponível: $e');
+    debugPrint('SMTC unavailable: $e');
   }
 }
 
-/// Controles de mídia do Windows (SMTC): o painel de volume/mídia, as teclas
-/// de mídia do teclado e a tela de bloqueio mostram a faixa e comandam o player.
-/// Basta assistir este provider (o app faz isso no Windows).
+/// Windows media controls (SMTC): the volume/media panel, the keyboard media keys
+/// and the lock screen show the track and control the player.
+/// Just watch this provider (the app does so on Windows).
 final windowsMediaControlsProvider = Provider<void>((ref) {
   if (!Platform.isWindows) return;
   final smtc.SMTCWindows controls;
@@ -39,7 +39,7 @@ final windowsMediaControlsProvider = Provider<void>((ref) {
       ),
     );
   } catch (e) {
-    debugPrint('SMTC indisponível: $e');
+    debugPrint('SMTC unavailable: $e');
     return;
   }
   final player = ref.read(playerProvider.notifier);
@@ -76,7 +76,7 @@ final windowsMediaControlsProvider = Provider<void>((ref) {
 
   ref.listen<QueueState>(playerProvider, apply, fireImmediately: true);
 
-  // Posição: a cada poucos segundos e logo depois de um seek (salto > 2 s).
+  // Position: every few seconds and right after a seek (jump > 2 s).
   var lastSent = Duration.zero;
   subs.add(
     player.audio.positionStream.listen((pos) {
@@ -134,7 +134,7 @@ final windowsMediaControlsProvider = Provider<void>((ref) {
   });
 });
 
-/// Título, artistas, álbum e capa como o Windows mostra no painel de mídia.
+/// Title, artists, album and cover as Windows shows them in the media panel.
 smtc.MusicMetadata metadataFor(Ref ref, Item t) {
   final albumArtist = t.albumArtists.map((a) => a.name).join(', ');
   return smtc.MusicMetadata(

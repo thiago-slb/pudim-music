@@ -14,8 +14,8 @@ import '../widgets/offline_banner.dart';
 import '../widgets/update_banner.dart';
 import '../../state/prefetch.dart';
 
-/// Layout do celular: página em tela cheia, mini player e a barra
-/// Início · Buscar · Shows · Sua Biblioteca embaixo.
+/// Phone layout: full-screen page, mini player and the bottom bar
+/// Home · Search · Shows · Your Library.
 class MobileShell extends ConsumerStatefulWidget {
   final Widget child;
   const MobileShell({super.key, required this.child});
@@ -27,8 +27,8 @@ const _allTabs = ['/', '/search', '/shows', '/library'];
 const _baseTabs = ['/', '/search', '/library'];
 
 class _MobileShellState extends ConsumerState<MobileShell> {
-  /// Histórico próprio: o app navega com `go`, então o voltar do Android
-  /// precisa saber de onde viemos.
+  /// Own history: the app navigates with `go`, so the Android back button
+  /// needs to know where we came from.
   final _stack = <String>[];
 
   static String _key(String loc) {
@@ -67,7 +67,7 @@ class _MobileShellState extends ConsumerState<MobileShell> {
     _tabs = ref.watch(hasExtrasProvider) ? _allTabs : _baseTabs;
     ref.watch(
       prefetchProvider,
-    ); // guarda a biblioteca no aparelho em segundo plano
+    ); // stores the library on the device in the background
     final uri = GoRouterState.of(context).uri;
     _track(uri.toString());
     final path = uri.path;
@@ -193,14 +193,14 @@ class _NavBar extends StatelessWidget {
   }
 }
 
-/// Cor da capa da faixa atual (para o mini player e o Tocando agora).
+/// Color of the current track cover (for the mini player and Now Playing).
 Color currentCoverColor(WidgetRef ref, Item track) {
   final url = ref.watch(apiProvider).imageUrl(track.imageItemId, size: 64);
   if (url == null) return fallbackColor;
   return ref.watch(coverColorProvider(url)).value ?? fallbackColor;
 }
 
-/// Mini player acima da barra: toque ou arraste para cima abre o Tocando agora.
+/// Mini player above the bar: tap or drag up opens Now Playing.
 class MiniPlayer extends ConsumerWidget {
   const MiniPlayer({super.key});
 

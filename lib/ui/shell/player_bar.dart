@@ -12,7 +12,7 @@ import '../../features/jam/jam_sheet.dart';
 import '../widgets/sleep_speed.dart';
 import '../widgets/cast_button.dart';
 
-/// Barra do player no rodapé: faixa à esquerda, controles no centro, extras à direita.
+/// Player bar in the footer: track on the left, controls in the center, extras on the right.
 class PlayerBar extends ConsumerWidget {
   const PlayerBar({super.key});
 
@@ -26,7 +26,7 @@ class PlayerBar extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: [
-          // Esquerda: capa, título, artista, curtir.
+          // Left: cover, title, artist, like.
           Expanded(
             flex: 3,
             child: cur == null
@@ -79,9 +79,9 @@ class PlayerBar extends ConsumerWidget {
                     ],
                   ),
           ),
-          // Centro: controles + progresso.
+          // Center: controls + progress.
           Expanded(flex: 4, child: _Controls(q: q)),
-          // Direita.
+          // Right.
           Expanded(flex: 3, child: _Extras()),
         ],
       ),

@@ -11,11 +11,11 @@ import 'session.dart';
 import 'notify.dart';
 import '../l10n/l10n.dart';
 
-/// Álbum, playlist ou "Músicas curtidas" guardado no aparelho (ou as faixas baixadas uma a uma).
+/// Album, playlist or "Liked Songs" stored on the device (or the tracks downloaded one by one).
 class OfflineCollection {
   final String id;
   final String name;
-  final Item? head; // capa e nome do álbum/playlist
+  final Item? head; // cover and name of the album/playlist
   final List<String> trackIds;
   const OfflineCollection(this.id, this.name, this.head, this.trackIds);
 
@@ -38,14 +38,14 @@ class OfflineCollection {
 }
 
 class OfflineState {
-  /// Faixas já no aparelho (o arquivo existe).
+  /// Tracks already on the device (the file exists).
   final Map<String, Item> tracks;
   final Map<String, OfflineCollection> collections;
 
-  /// Capas guardadas (id da imagem).
+  /// Stored covers (image id).
   final Set<String> covers;
 
-  /// Faixas na fila de download -> progresso 0..1.
+  /// Tracks in the download queue -> progress 0..1.
   final Map<String, double> pending;
 
   const OfflineState({
@@ -58,7 +58,7 @@ class OfflineState {
   bool has(String id) => tracks.containsKey(id);
   bool saved(String collectionId) => collections.containsKey(collectionId);
 
-  /// Faixas de uma coleção que já estão no aparelho, na ordem dela.
+  /// Tracks of a collection that are already on the device, in its order.
   List<Item> tracksOf(String collectionId) => [
     for (final id in collections[collectionId]?.trackIds ?? const <String>[])
       ?tracks[id],
@@ -77,16 +77,17 @@ class OfflineState {
   );
 }
 
-/// Músicas no aparelho para ouvir sem internet. Os arquivos ficam na pasta do app
-/// (`<suporte do app>/offline`), sem pedir permissão de armazenamento.
+/// Songs on the device to listen to without internet. The files live in the app folder
+/// (`<app support>/offline`), with no storage permission needed.
 class OfflineNotifier extends Notifier<OfflineState> {
-  /// Coleção das faixas baixadas uma a uma pelo menu.
+  /// Collection of the tracks downloaded one by one through the menu.
   static const loose = '_avulsas';
 
   Directory? _dir;
   final _queue = <Item>[];
   bool _working = false;
-  int _batchDone = 0; // baixadas nesta leva (para a notificação "3 de 20")
+  int _batchDone =
+      0; // downloaded in this batch (for the "3 of 20" notification)
   final _dio = Dio();
 
   @override
@@ -107,11 +108,11 @@ class OfflineNotifier extends Notifier<OfflineState> {
   String _cover(String id) => '${_dir!.path}${Platform.pathSeparator}$id.jpg';
   File get _index => File('${_dir!.path}${Platform.pathSeparator}index.json');
 
-  /// Caminho do arquivo local da faixa, se já está no aparelho.
+  /// Path of the track local file, if it is already on the device.
   String? audioPath(String id) =>
       _dir != null && state.has(id) ? _audio(id) : null;
 
-  /// Capa guardada (para abrir sem internet).
+  /// Stored cover (to open without internet).
   File? coverFile(String? imageId) =>
       _dir != null && imageId != null && state.covers.contains(imageId)
       ? File(_cover(imageId))
@@ -137,14 +138,14 @@ class OfflineNotifier extends Notifier<OfflineState> {
           if (File(_cover('$c')).existsSync()) '$c',
       };
       state = OfflineState(tracks: tracks, collections: cols, covers: covers);
-      // Faltou terminar algum download da última vez: continua.
+      // Some download was left unfinished last time: resume.
       final missing = <String>{
         for (final c in cols.values)
           for (final id in c.trackIds)
             if (!tracks.containsKey(id)) id,
       };
       if (missing.isNotEmpty) {
-        // As pendentes ficam guardadas no índice com os dados da faixa.
+        // Pending ones are kept in the index with the track data.
         final pend = (j['pending'] as Map? ?? const {});
         final pending = <String, double>{};
         for (final id in missing) {
@@ -158,7 +159,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
         _pump();
       }
     } catch (_) {
-      // Índice estragado: começa vazio (os arquivos ficam e são sobrescritos).
+      // Corrupted index: start empty (the files stay and get overwritten).
     }
   }
 
@@ -179,7 +180,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
     );
   }
 
-  /// Guarda um álbum/playlist/curtidas no aparelho (e baixa o que falta).
+  /// Stores an album/playlist/liked songs on the device (and downloads what is missing).
   Future<void> saveCollection(
     String id,
     String name,
@@ -198,7 +199,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
     await _saveIndex();
   }
 
-  /// Baixa faixas soltas (menu ⋯ "Baixar no aparelho").
+  /// Downloads individual tracks (menu ⋯ "Download to device").
   Future<void> saveTracks(List<Item> tracks) async {
     final ok = tracks.where((t) => !t.isCatalog).toList();
     final cur = state.collections[loose];
@@ -222,7 +223,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
     await _prune();
   }
 
-  /// Tira uma faixa do aparelho (de todas as coleções).
+  /// Removes a track from the device (from all collections).
   Future<void> removeTrack(String id) async {
     final cols = {
       for (final e in state.collections.entries)
@@ -237,7 +238,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
     await _prune();
   }
 
-  /// Apaga os arquivos que nenhuma coleção usa mais.
+  /// Deletes the files no collection uses anymore.
   Future<void> _prune() async {
     final used = {for (final c in state.collections.values) ...c.trackIds};
     final keep = <String, Item>{};
@@ -288,7 +289,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
           tracks: ok ? {...state.tracks, t.id: t} : state.tracks,
         );
         if (!ok) {
-          // Sem rede: para e tenta de novo daqui a pouco, sem perder a fila.
+          // No network: stop and retry shortly, without losing the queue.
           _queue.add(t);
           state = state.copyWith(pending: {...state.pending, t.id: 0});
           await _saveIndex();
@@ -360,7 +361,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
     } catch (_) {}
   }
 
-  /// Espaço usado no aparelho, em bytes.
+  /// Space used on the device, in bytes.
   Future<int> usedBytes() async {
     final d = await _folder();
     var total = 0;
@@ -370,7 +371,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
     return total;
   }
 
-  /// Apaga tudo o que foi baixado.
+  /// Deletes everything that was downloaded.
   Future<void> clearAll() async {
     _queue.clear();
     final d = await _folder();
