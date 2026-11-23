@@ -5,6 +5,8 @@ import 'response_cache.dart';
 
 import 'dart:convert';
 
+import '../l10n/l10n.dart';
+
 const appName = 'Pudim';
 const appVersion = '0.2.0';
 
@@ -115,9 +117,9 @@ class Jellyfin {
       return AuthResult(token!, userId!, u['Name'] as String? ?? user);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        throw JellyfinException('Usuário ou senha incorretos.');
+        throw JellyfinException(appL10n.apiBadCredentials);
       }
-      throw JellyfinException('Não consegui falar com o servidor.');
+      throw JellyfinException(appL10n.apiServerUnreachable);
     }
   }
 
@@ -140,9 +142,9 @@ class Jellyfin {
       return (d['Secret'] as String, d['Code'] as String);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        throw JellyfinException('O Quick Connect está desligado neste servidor.');
+        throw JellyfinException(appL10n.apiQuickConnectOff);
       }
-      throw JellyfinException('Não consegui falar com o servidor.');
+      throw JellyfinException(appL10n.apiServerUnreachable);
     }
   }
 
@@ -228,8 +230,8 @@ class Jellyfin {
       final code = e.response?.statusCode;
       throw JellyfinException(
         code == 401 || code == 403
-            ? 'A senha atual não confere.'
-            : 'Não consegui falar com o servidor.',
+            ? appL10n.apiWrongCurrentPassword
+            : appL10n.apiServerUnreachable,
       );
     }
   }

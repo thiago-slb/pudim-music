@@ -16,12 +16,16 @@ import '../state/offline.dart';
 import '../state/session.dart';
 import '../api/response_cache.dart';
 import 'media_session.dart';
+import '../l10n/l10n.dart';
 
 enum RepeatMode { off, all, one }
 
 /// Jam: no convidado, os botões viram pedidos para o anfitrião (devolve true quando tratou).
-typedef JamRemote =
-    bool Function(String action, {int? index, List<Item>? items});
+typedef JamRemote = bool Function(
+  String action, {
+  int? index,
+  List<Item>? items,
+});
 
 /// Estado da fila, no estilo do Spotify:
 /// "Tocando agora", "A seguir na fila" (adicionadas à mão) e "Próximas de: `<contexto>`".
@@ -249,9 +253,7 @@ class PlayerController extends Notifier<QueueState> {
         shuffle: j['sh'] == true,
         repeat: RepeatMode.values[(j['rp'] as int? ?? 0).clamp(0, 2)],
         smart: j['sm'] == true,
-        recommended: {
-          for (final x in (j['rec'] as List? ?? const [])) '$x',
-        },
+        recommended: {for (final x in (j['rec'] as List? ?? const [])) '$x'},
       );
     } catch (_) {
       return const QueueState(); // formato antigo ou estragado: começa vazio
@@ -276,7 +278,8 @@ class PlayerController extends Notifier<QueueState> {
   }
 
   /// Músicas baixadas no aparelho (para o Android Auto).
-  List<Item> offlineTracks() => ref.read(offlineProvider).tracks.values.toList();
+  List<Item> offlineTracks() =>
+      ref.read(offlineProvider).tracks.values.toList();
 
   void _onPlayerState(PlayerState s) {
     final buffering =
@@ -417,10 +420,7 @@ class PlayerController extends Notifier<QueueState> {
     }
     state = state.copyWith(
       queue: [...head, ...out],
-      recommended: {
-        ...state.recommended,
-        for (final r in recs.take(ri)) r.id,
-      },
+      recommended: {...state.recommended, for (final r in recs.take(ri)) r.id},
     );
     _save();
   }
@@ -614,7 +614,9 @@ class PlayerController extends Notifier<QueueState> {
           nextSrc = await _sourceFor(nextItem);
         } catch (_) {}
       }
-      if (state.current?.id != cur.id) return; // trocou de faixa enquanto preparava
+      if (state.current?.id != cur.id) {
+        return; // trocou de faixa enquanto preparava
+      }
       await audio.setAudioSources(
         [src, ?nextSrc],
         initialIndex: 0,
@@ -903,7 +905,7 @@ class PlayerController extends Notifier<QueueState> {
       if (mix.isEmpty) return false;
       state = state.copyWith(
         queue: [...state.queue, ...mix],
-        contextName: 'Rádio de ${state.current!.name}',
+        contextName: appL10n.audioRadioContext(state.current!.name),
       );
       return true;
     } catch (_) {
@@ -955,7 +957,7 @@ class PlayerController extends Notifier<QueueState> {
     if (tracks.isEmpty) return;
     if (remote?.call('add', items: tracks) ?? false) return;
     if (state.current == null) {
-      playList(tracks, contextName: 'Fila');
+      playList(tracks, contextName: appL10n.commonQueue);
       return;
     }
     final q = List<Item>.of(state.queue);
@@ -970,7 +972,7 @@ class PlayerController extends Notifier<QueueState> {
   void playNext(List<Item> tracks) {
     if (remote?.call('add', items: tracks) ?? false) return;
     if (state.current == null) {
-      playList(tracks, contextName: 'Fila');
+      playList(tracks, contextName: appL10n.commonQueue);
       return;
     }
     final q = List<Item>.of(state.queue)..insertAll(state.index + 1, tracks);

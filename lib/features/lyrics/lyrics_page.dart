@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/models.dart';
 import '../../audio/player.dart';
+import '../../l10n/l10n.dart';
 import '../../state/session.dart';
 import '../../ui/colors.dart';
 import '../../ui/responsive.dart';
@@ -17,12 +18,12 @@ class LyricsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cur = ref.watch(playerProvider.select((q) => q.current));
     if (cur == null) {
-      return const ColoredBox(
+      return ColoredBox(
         color: Pm.base,
         child: Center(
           child: Text(
-            'Toque alguma coisa para ver a letra.',
-            style: TextStyle(color: Pm.subdued, fontSize: 18),
+            context.l10n.lyricsPlaySomething,
+            style: const TextStyle(color: Pm.subdued, fontSize: 18),
           ),
         ),
       );
@@ -51,18 +52,18 @@ class LyricsPage extends ConsumerWidget {
 class _NoLyrics extends StatelessWidget {
   const _NoLyrics();
   @override
-  Widget build(BuildContext context) => const Center(
+  Widget build(BuildContext context) => Center(
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Sem letra para esta música',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
+          context.l10n.lyricsNone,
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
-          'Quando tiver um .lrc ou .txt ao lado do arquivo, ela aparece aqui.',
-          style: TextStyle(color: Colors.white70),
+          context.l10n.lyricsNoneHint,
+          style: const TextStyle(color: Colors.white70),
         ),
       ],
     ),
@@ -154,8 +155,8 @@ class _LyricsViewState extends ConsumerState<_LyricsView> {
               const SizedBox(height: 32),
               Text(
                 l.synced
-                    ? 'Letra sincronizada do arquivo .lrc'
-                    : 'Letra sem sincronização',
+                    ? context.l10n.lyricsSynced
+                    : context.l10n.lyricsUnsynced,
                 style: const TextStyle(color: Colors.white70, fontSize: 13),
               ),
             ],

@@ -1,6 +1,7 @@
 // A API nova (nativeapi) do window_manager 0.7 ainda é recente; usamos a ponte legada.
 // ignore_for_file: deprecated_member_use
 import 'dart:io';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,8 @@ import 'package:window_manager/legacy.dart';
 
 import 'audio/windows_media_controls.dart';
 import 'router.dart';
+import 'l10n/l10n.dart';
+import 'state/locale.dart';
 import 'state/session.dart';
 import 'ui/responsive.dart';
 import 'ui/theme.dart';
@@ -27,6 +30,14 @@ import 'audio/media_session.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  // Textos das notificações e do Android Auto antes da primeira tela.
+  final saved = prefs.getString('locale');
+  appL10n = lookupL10n(
+    saved != null && appLanguages.contains(saved)
+        ? Locale(saved)
+        : resolveAppLocale(PlatformDispatcher.instance.locales),
+  );
   // Cópias no aparelho das telas e capas: o app abre e navega sem internet.
   final support = (await getApplicationSupportDirectory()).path;
   ResponseCache.instance = await ResponseCache.open(support);
@@ -64,7 +75,6 @@ Future<void> main() async {
       },
     );
   }
-  final prefs = await SharedPreferences.getInstance();
   final container = ProviderContainer(
     overrides: [prefsProvider.overrideWithValue(prefs)],
   );
@@ -90,9 +100,15 @@ class PudimMusicApp extends ConsumerWidget {
     if (session.value != null && ref.watch(hasExtrasProvider)) {
       ref.watch(jamProvider);
     }
+    final locale = ref.watch(localeProvider);
     if (session.isLoading && !session.hasValue) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
+        locale: locale,
+        localizationsDelegates: L10n.localizationsDelegates,
+        supportedLocales: L10n.supportedLocales,
+        localeListResolutionCallback: (device, _) => resolveAppLocale(device),
+        builder: _keepL10n,
         theme: buildTheme(),
         home: const Scaffold(
           backgroundColor: Pm.black,
@@ -104,7 +120,18 @@ class PudimMusicApp extends ConsumerWidget {
       title: 'Pudim',
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
+      locale: locale,
+      localizationsDelegates: L10n.localizationsDelegates,
+      supportedLocales: L10n.supportedLocales,
+      localeListResolutionCallback: (device, _) => resolveAppLocale(device),
+      builder: _keepL10n,
       routerConfig: ref.watch(routerProvider),
     );
   }
+}
+
+/// Deixa os textos do idioma atual à mão para o código que não tem [BuildContext].
+Widget _keepL10n(BuildContext context, Widget? child) {
+  appL10n = L10n.of(context);
+  return child ?? const SizedBox.shrink();
 }

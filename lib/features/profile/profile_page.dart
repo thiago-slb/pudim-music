@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/catalog.dart';
+import '../../l10n/l10n.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
@@ -54,9 +55,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Future<void> _pickPhoto() => _run('photo', () async {
     final picked = await FilePicker.pickFiles(type: FileType.image);
     final f = picked.firstOrNull;
-    if (f == null) return 'Nenhuma foto escolhida';
+    if (f == null) return appL10n.profileNoPhoto;
     final bytes = await f.readAsBytes();
-    if (bytes.length > 8 * 1024 * 1024) return 'Foto grande demais (até 8 MB)';
+    if (bytes.length > 8 * 1024 * 1024) return appL10n.profilePhotoTooBig;
     final ext = (f.extension ?? '').toLowerCase();
     final mime = ext == 'png'
         ? 'image/png'
@@ -65,19 +66,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         : 'image/jpeg';
     await ref.read(apiProvider).setMyImage(bytes, mime);
     ref.invalidate(myPhotoTagProvider);
-    return 'Foto do perfil trocada';
+    return appL10n.profilePhotoChanged;
   });
 
   Future<void> _removePhoto() => _run('photo', () async {
     await ref.read(apiProvider).deleteMyImage();
     ref.invalidate(myPhotoTagProvider);
-    return 'Foto removida';
+    return appL10n.profilePhotoRemoved;
   });
 
   Future<void> _saveDisplay() => _run('display', () async {
     await ref.read(catalogProvider).saveDisplayName(_display.text.trim());
     ref.invalidate(meProvider);
-    return 'Nome do perfil salvo';
+    return appL10n.profileNameSaved;
   });
 
   Future<void> _rename() async {
@@ -88,19 +89,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Pm.elevated,
-        title: const Text('Trocar o nome de usuário?'),
-        content: Text(
-          'Você passa a entrar como "$name" no Pudim, no Jellyfin e nos outros apps '
-          '(Finamp, Feishin…). Suas Descobertas, Mistura e Retrospectiva vêm junto.',
-        ),
+        title: Text(ctx.l10n.profileRenameTitle),
+        content: Text(ctx.l10n.profileRenameBody(name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+            child: Text(ctx.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Trocar'),
+            child: Text(ctx.l10n.profileRenameConfirm),
           ),
         ],
       ),
@@ -110,26 +108,29 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       final got = await ref.read(catalogProvider).renameUser(name);
       await ref.read(sessionProvider.notifier).renamed(got);
       ref.invalidate(meProvider);
-      return 'Agora você entra como $got';
+      return appL10n.profileNowSignedAs(got);
     });
   }
 
   Future<void> _password() async {
-    if (_new.text.isEmpty) return toast(context, 'Digite a senha nova');
+    if (_new.text.isEmpty) {
+      return toast(context, context.l10n.profileEnterNewPassword);
+    }
     if (_new.text != _new2.text) {
-      return toast(context, 'As senhas novas não são iguais');
+      return toast(context, context.l10n.profilePasswordsDiffer);
     }
     await _run('pw', () async {
       await ref.read(apiProvider).changePassword(_cur.text, _new.text);
       for (final c in [_cur, _new, _new2]) {
         c.clear();
       }
-      return 'Senha trocada';
+      return appL10n.profilePasswordChanged;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final me = ref.watch(meProvider);
     if (!_loaded && me.value != null) {
       _loaded = true;
@@ -144,9 +145,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ? const EdgeInsets.fromLTRB(16, 64, 16, 160)
             : const EdgeInsets.fromLTRB(32, 24, 32, 64),
         children: [
-          const Text(
-            'Perfil',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
+          Text(
+            l.commonProfile,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 20),
           Row(
@@ -160,7 +161,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   children: [
                     _Save(
                       busy: _busy == 'photo',
-                      label: 'Trocar foto',
+                      label: l.profileChangePhoto,
                       onPressed: _pickPhoto,
                     ),
                     if (ref.watch(myPhotoTagProvider).value != null)
@@ -169,7 +170,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           foregroundColor: Pm.subdued,
                         ),
                         onPressed: _busy == null ? _removePhoto : null,
-                        child: const Text('Remover'),
+                        child: Text(l.commonRemove),
                       ),
                   ],
                 ),
@@ -177,11 +178,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ],
           ),
           if (me.hasError && ref.watch(hasExtrasProvider))
-            const Padding(
-              padding: EdgeInsets.only(top: 8),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
               child: Text(
-                'Não consegui falar com o servidor de extras; o nome do perfil e o de usuário ficam para depois.',
-                style: TextStyle(color: Pm.subdued),
+                l.profileExtrasUnreachable,
+                style: const TextStyle(color: Pm.subdued),
               ),
             ),
           ConstrainedBox(
@@ -190,31 +191,29 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (ref.watch(hasExtrasProvider)) ...[
-                const _Title('Nome no perfil'),
-                const _Help('É como seus contatos veem você nas conversas.'),
-                _Field(_display, hint: 'Seu nome'),
-                _Save(
-                  busy: _busy == 'display',
-                  onPressed: me.value == null ? null : _saveDisplay,
-                ),
-                const _Title('Nome de usuário'),
-                const _Help(
-                  'O nome para entrar no Jellyfin (aqui e nos outros apps).',
-                ),
-                _Field(_user, hint: 'Usuário'),
-                _Save(
-                  busy: _busy == 'user',
-                  label: 'Trocar usuário',
-                  onPressed: me.value == null ? null : _rename,
-                ),
+                  _Title(l.profileNameSection),
+                  _Help(l.profileNameHelp),
+                  _Field(_display, hint: l.profileYourName),
+                  _Save(
+                    busy: _busy == 'display',
+                    onPressed: me.value == null ? null : _saveDisplay,
+                  ),
+                  _Title(l.profileUsernameSection),
+                  _Help(l.profileUsernameHelp),
+                  _Field(_user, hint: l.profileUsernameHint),
+                  _Save(
+                    busy: _busy == 'user',
+                    label: l.profileChangeUsername,
+                    onPressed: me.value == null ? null : _rename,
+                  ),
                 ],
-                const _Title('Senha'),
-                _Field(_cur, hint: 'Senha atual', obscure: true),
-                _Field(_new, hint: 'Senha nova', obscure: true),
-                _Field(_new2, hint: 'Repita a senha nova', obscure: true),
+                _Title(l.profilePasswordSection),
+                _Field(_cur, hint: l.profileCurrentPassword, obscure: true),
+                _Field(_new, hint: l.profileNewPassword, obscure: true),
+                _Field(_new2, hint: l.profileRepeatPassword, obscure: true),
                 _Save(
                   busy: _busy == 'pw',
-                  label: 'Trocar senha',
+                  label: l.profileChangePassword,
                   onPressed: _password,
                 ),
               ],
@@ -278,9 +277,9 @@ class _Field extends StatelessWidget {
 
 class _Save extends StatelessWidget {
   final bool busy;
-  final String label;
+  final String? label;
   final VoidCallback? onPressed;
-  const _Save({required this.busy, this.label = 'Salvar', this.onPressed});
+  const _Save({required this.busy, this.label, this.onPressed});
   @override
   Widget build(BuildContext context) => Align(
     alignment: Alignment.centerLeft,
@@ -297,7 +296,10 @@ class _Save extends StatelessWidget {
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+          : Text(
+              label ?? context.l10n.commonSave,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
     ),
   );
 }

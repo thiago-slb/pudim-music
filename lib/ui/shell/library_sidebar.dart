@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
 import '../../api/models.dart';
 import '../../audio/player.dart';
 import '../../features/playlist/playlist_page.dart';
@@ -39,6 +40,7 @@ class LibrarySidebar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final compact = isCompact(context);
     final collapsed = !compact && ref.watch(sidebarCollapsedProvider);
     final lib = ref.watch(libraryProvider);
@@ -54,27 +56,27 @@ class LibrarySidebar extends ConsumerWidget {
     final entries = <_Entry>[];
     final data = lib.value;
     if (offlineOnly) {
-      entries.add(_Entry.offline(off.tracks.length));
+      entries.add(_Entry.offline(l10n, off.tracks.length));
       for (final c in off.collections.values) {
         if (c.id == 'liked') {
-          entries.add(_Entry.liked(off.tracksOf('liked').length));
+          entries.add(_Entry.liked(l10n, off.tracksOf('liked').length));
         } else if (c.head != null) {
-          entries.add(_Entry.item(c.head!));
+          entries.add(_Entry.item(l10n, c.head!));
         }
       }
     } else if (data != null) {
       if (filter == LibFilter.all || filter == LibFilter.playlists) {
-        entries.add(_Entry.liked(liked?.length ?? 0));
+        entries.add(_Entry.liked(l10n, liked?.length ?? 0));
         if (off.tracks.isNotEmpty) {
-          entries.add(_Entry.offline(off.tracks.length));
+          entries.add(_Entry.offline(l10n, off.tracks.length));
         }
-        entries.addAll(data.playlists.map(_Entry.item));
+        entries.addAll(data.playlists.map((i) => _Entry.item(l10n, i)));
       }
       if (filter == LibFilter.all || filter == LibFilter.albums) {
-        entries.addAll(data.albums.map(_Entry.item));
+        entries.addAll(data.albums.map((i) => _Entry.item(l10n, i)));
       }
       if (filter == LibFilter.all || filter == LibFilter.artists) {
-        entries.addAll(data.artists.map(_Entry.item));
+        entries.addAll(data.artists.map((i) => _Entry.item(l10n, i)));
       }
     }
     var shown = entries
@@ -116,15 +118,15 @@ class LibrarySidebar extends ConsumerWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(collapsed ? 8 : 16, 12, 8, 4),
             child: compact
-                ? const Padding(
-                    padding: EdgeInsets.only(top: 4, bottom: 8),
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 4, bottom: 8),
                     child: Row(
                       children: [
-                        UserAvatar(),
-                        SizedBox(width: 12),
+                        const UserAvatar(),
+                        const SizedBox(width: 12),
                         Text(
-                          'Sua Biblioteca',
-                          style: TextStyle(
+                          l10n.commonYourLibrary,
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
                           ),
@@ -137,17 +139,17 @@ class LibrarySidebar extends ConsumerWidget {
                       IconBtn(
                         Icons.view_sidebar_outlined,
                         tooltip: collapsed
-                            ? 'Abrir Sua Biblioteca'
-                            : 'Recolher Sua Biblioteca',
+                            ? l10n.sidebarOpenLibrary
+                            : l10n.sidebarCollapseLibrary,
                         onPressed: () => ref
                             .read(sidebarCollapsedProvider.notifier)
                             .toggle(),
                       ),
                       if (!collapsed) ...[
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Sua Biblioteca',
-                            style: TextStyle(
+                            l10n.commonYourLibrary,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                             ),
@@ -174,10 +176,10 @@ class LibrarySidebar extends ConsumerWidget {
                     Center(
                       child: Chip2(
                         switch (f) {
-                          LibFilter.playlists => 'Playlists',
-                          LibFilter.albums => 'Álbuns',
-                          LibFilter.artists => 'Artistas',
-                          LibFilter.all => 'Tudo',
+                          LibFilter.playlists => l10n.commonPlaylists,
+                          LibFilter.albums => l10n.commonAlbums,
+                          LibFilter.artists => l10n.commonArtists,
+                          LibFilter.all => l10n.commonAll,
                         },
                         selected: filter == f,
                         onTap: () => ref
@@ -239,28 +241,29 @@ class _Entry {
     this.isOffline = false,
   });
 
-  factory _Entry.offline(int n) => _Entry(
+  factory _Entry.offline(L10n l10n, int n) => _Entry(
     'offline',
-    'Baixadas',
-    'No aparelho • $n músicas',
+    l10n.commonDownloaded,
+    l10n.sidebarOnDeviceCount(n),
     null,
     isOffline: true,
   );
 
-  factory _Entry.liked(int n) => _Entry(
+  factory _Entry.liked(L10n l10n, int n) => _Entry(
     'liked',
-    'Músicas curtidas',
-    'Playlist • $n músicas',
+    l10n.commonLikedSongs,
+    l10n.sidebarPlaylistCount(n),
     null,
     isLiked: true,
   );
 
-  factory _Entry.item(Item it) => _Entry(it.id, it.name, switch (it.kind) {
-    ItemKind.playlist => 'Playlist',
-    ItemKind.album => 'Álbum • ${it.artistLine}',
-    ItemKind.artist => 'Artista',
-    _ => '',
-  }, it);
+  factory _Entry.item(L10n l10n, Item it) =>
+      _Entry(it.id, it.name, switch (it.kind) {
+        ItemKind.playlist => l10n.commonPlaylist,
+        ItemKind.album => l10n.sidebarAlbumBy(it.artistLine),
+        ItemKind.artist => l10n.commonArtist,
+        _ => '',
+      }, it);
 
   String get route => isLiked
       ? '/collection/tracks'
@@ -381,7 +384,7 @@ class _LibSearchState extends ConsumerState<_LibSearch> {
     if (!_open) {
       return IconBtn(
         Icons.search,
-        tooltip: 'Buscar na Sua Biblioteca',
+        tooltip: context.l10n.sidebarSearchLibrary,
         size: 18,
         onPressed: () => setState(() => _open = true),
       );
@@ -402,8 +405,8 @@ class _LibSearchState extends ConsumerState<_LibSearch> {
             child: TextField(
               autofocus: true,
               style: const TextStyle(fontSize: 13),
-              decoration: const InputDecoration(
-                hintText: 'Buscar na Sua Biblioteca',
+              decoration: InputDecoration(
+                hintText: context.l10n.sidebarSearchLibrary,
                 isDense: true,
               ),
               onChanged: (v) => ref.read(libQueryProvider.notifier).set(v),
@@ -425,21 +428,22 @@ class _SortMenu extends ConsumerWidget {
   const _SortMenu({required this.sort});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     String label(LibSort s) => switch (s) {
-      LibSort.recents => 'Recentes',
-      LibSort.added => 'Adicionados recentemente',
-      LibSort.alpha => 'Alfabética',
-      LibSort.creator => 'Criador',
+      LibSort.recents => l10n.sidebarSortRecents,
+      LibSort.added => l10n.sidebarSortAdded,
+      LibSort.alpha => l10n.sidebarSortAlpha,
+      LibSort.creator => l10n.sidebarSortCreator,
     };
     return PopupMenuButton<LibSort>(
-      tooltip: 'Ordenar por',
+      tooltip: l10n.sidebarSortBy,
       onSelected: (s) => ref.read(libSortProvider.notifier).set(s),
       itemBuilder: (_) => [
-        const PopupMenuItem(
+        PopupMenuItem(
           enabled: false,
           child: Text(
-            'Ordenar por',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            l10n.sidebarSortBy,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
           ),
         ),
         for (final s in LibSort.values)

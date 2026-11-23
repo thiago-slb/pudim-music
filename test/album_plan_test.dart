@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pudim_music/l10n/l10n.dart';
 import 'package:pudim_music/api/catalog.dart';
 import 'package:pudim_music/features/catalog/album_picker_page.dart';
 
@@ -31,6 +34,9 @@ void main() {
     expect(p.missing.map((a) => a.studio), [true, false]);
     expect(p.missing[1].year, '2004');
     expect(p.missing[1].partial, isTrue);
-    expect(planTag(p.missing[1]), 'Álbum · ao vivo');
+    expect(
+      planTag(lookupL10n(const Locale('pt')), p.missing[1]),
+      'Álbum · ao vivo',
+    );
   });
 }

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../api/catalog.dart';
 import '../../audio/player.dart';
+import '../../l10n/l10n.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
@@ -44,22 +45,19 @@ void _remember(List<PodcastEpisode> eps) {
   }
 }
 
-String _date(DateTime? d) {
+String _date(L10n l, DateTime? d) {
   if (d == null) return '';
-  const m = [
-    'jan', 'fev', 'mar', 'abr', 'mai', 'jun', //
-    'jul', 'ago', 'set', 'out', 'nov', 'dez',
-  ];
   final now = DateTime.now();
+  final month = l.podcastsMonthShort('m${d.month}');
   return d.year == now.year
-      ? '${d.day} de ${m[d.month - 1]}'
-      : '${d.day} de ${m[d.month - 1]} de ${d.year}';
+      ? l.podcastsDateThisYear(d.day, month)
+      : l.podcastsDateOtherYear(d.day, month, d.year);
 }
 
-String _dur(Duration d) {
+String _dur(L10n l, Duration d) {
   if (d == Duration.zero) return '';
   final h = d.inHours, min = d.inMinutes % 60;
-  return h > 0 ? '$h h $min min' : '$min min';
+  return h > 0 ? l.podcastsHoursMin(h, min) : l.podcastsMin(min);
 }
 
 /// Toca o episódio (e continua de onde parou, se já tinha começado).
@@ -189,15 +187,16 @@ class EpisodeTile extends ConsumerWidget {
         ? (e.position.inSeconds / e.duration.inSeconds).clamp(0.0, 1.0)
         : 0.0;
     final left = e.duration - e.position;
+    final l = context.l10n;
     final info = [
       if (showPodcast) e.podcast,
-      _date(e.date),
+      _date(l, e.date),
       if (e.done)
-        'ouvido'
+        l.podcastsPlayed
       else if (e.position > Duration.zero && left > Duration.zero)
-        'faltam ${_dur(left)}'
+        l.podcastsTimeLeft(_dur(l, left))
       else
-        _dur(e.duration),
+        _dur(l, e.duration),
     ].where((s) => s.isNotEmpty).join(' · ');
     return InkWell(
       onTap: () => playEpisode(ref, e),
@@ -305,7 +304,7 @@ class _PodcastsHomeState extends ConsumerState<PodcastsHome> {
               );
             },
             decoration: InputDecoration(
-              hintText: 'Buscar podcasts',
+              hintText: context.l10n.podcastsSearchHint,
               prefixIcon: const Icon(Icons.search, color: Pm.subdued),
               suffixIcon: _query.isEmpty
                   ? null
@@ -337,11 +336,11 @@ class _PodcastsHomeState extends ConsumerState<PodcastsHome> {
               onRetry: () => ref.invalidate(podcastSearchProvider(_query)),
             ),
             data: (list) => list.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(16),
+                ? Padding(
+                    padding: const EdgeInsets.all(16),
                     child: Text(
-                      'Nada encontrado.',
-                      style: TextStyle(color: Pm.subdued),
+                      context.l10n.podcastsNothingFound,
+                      style: const TextStyle(color: Pm.subdued),
                     ),
                   )
                 : Column(
@@ -372,13 +371,16 @@ class _PodcastsHomeState extends ConsumerState<PodcastsHome> {
                   ),
           )
         else ...[
-          PodcastShelf(title: 'Seus podcasts', shows: subs),
+          PodcastShelf(title: context.l10n.podcastsYours, shows: subs),
           if (latest.isNotEmpty) ...[
-            const Padding(
-              padding: EdgeInsets.fromLTRB(6, 0, 6, 4),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(6, 0, 6, 4),
               child: Text(
-                'Episódios novos',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                context.l10n.podcastsNewEpisodes,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
             for (final e in latest.take(10)) EpisodeTile(e, showPodcast: true),
@@ -391,8 +393,10 @@ class _PodcastsHomeState extends ConsumerState<PodcastsHome> {
             ),
             error: (e, _) =>
                 ErrorBox(e, onRetry: () => ref.invalidate(podcastTopProvider)),
-            data: (list) =>
-                PodcastShelf(title: 'Em alta no Brasil', shows: list),
+            data: (list) => PodcastShelf(
+              title: context.l10n.podcastsTrendingBrazil,
+              shows: list,
+            ),
           ),
         ],
       ],
@@ -546,7 +550,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
         child: Center(
           child: TextButton(
             onPressed: () => _load(reset: _eps.isEmpty),
-            child: const Text('Não carregou. Tentar de novo'),
+            child: Text(context.l10n.podcastsLoadFailed),
           ),
         ),
       );
@@ -556,8 +560,8 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
         padding: const EdgeInsets.all(24),
         child: Text(
           _q.isEmpty
-              ? 'Nenhum episódio no feed.'
-              : 'Nenhum episódio com "$_q".',
+              ? context.l10n.podcastsNoEpisodes
+              : context.l10n.podcastsNoEpisodeMatch(_q),
           style: const TextStyle(color: Pm.subdued),
         ),
       );
@@ -579,9 +583,9 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Podcast',
-                  style: TextStyle(color: Pm.subdued, fontSize: 13),
+                Text(
+                  context.l10n.podcastsKind,
+                  style: const TextStyle(color: Pm.subdued, fontSize: 13),
                 ),
                 Text(
                   p.show.title,
@@ -625,7 +629,9 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
               }
             },
             child: Text(
-              subscribed ? 'Seguindo' : 'Seguir',
+              subscribed
+                  ? context.l10n.commonFollowing
+                  : context.l10n.commonFollow,
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
@@ -648,7 +654,9 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           Text(
-            _total > 0 ? 'Episódios ($_total)' : 'Episódios',
+            _total > 0
+                ? context.l10n.podcastsEpisodesCount(_total)
+                : context.l10n.podcastsEpisodes,
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
           ),
           SizedBox(
@@ -657,7 +665,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
               controller: _search,
               onChanged: _onSearch,
               decoration: InputDecoration(
-                hintText: 'Procurar episódio',
+                hintText: context.l10n.podcastsFindEpisode,
                 prefixIcon: const Icon(Icons.search, size: 20),
                 filled: true,
                 fillColor: Pm.elevated,

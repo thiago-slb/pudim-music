@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/models.dart';
 import '../../state/offline.dart';
+import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
@@ -30,20 +31,22 @@ class OfflineButton extends ConsumerWidget {
     final notifier = ref.read(offlineProvider.notifier);
     return Tooltip(
       message: !saved
-          ? 'Baixar no aparelho'
+          ? context.l10n.commonDownloadToDevice
           : busy
-          ? 'Baixando $done de ${ids.length}'
-          : 'Remover do aparelho',
+          ? context.l10n.widgetOfflineDownloadingProgress(done, ids.length)
+          : context.l10n.commonRemoveFromDevice,
       child: InkResponse(
         radius: 22,
         onTap: () async {
           if (saved) {
             await notifier.removeCollection(id);
-            if (context.mounted) toast(context, 'Removido do aparelho');
+            if (context.mounted) {
+              toast(context, context.l10n.widgetActionsRemovedFromDevice);
+            }
           } else {
             await notifier.saveCollection(id, name, head, tracks);
             if (context.mounted) {
-              toast(context, 'Baixando no aparelho para ouvir sem internet');
+              toast(context, context.l10n.widgetActionsDownloadingToDevice);
             }
           }
         },

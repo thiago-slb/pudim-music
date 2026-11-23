@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n.dart';
+
 import '../../audio/player.dart';
+import '../../state/locale.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
@@ -31,15 +34,15 @@ class SettingsPage extends ConsumerWidget {
             ? const EdgeInsets.fromLTRB(16, 64, 16, 32)
             : const EdgeInsets.fromLTRB(32, 24, 32, 64),
         children: [
-          const Text(
-            'Configurações',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
+          Text(
+            context.l10n.commonSettings,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 24),
-          const _Section('Conta'),
+          _Section(context.l10n.settingsSectionAccount),
           _Row(
-            title: 'Perfil',
-            subtitle: 'Nome, usuário e senha',
+            title: context.l10n.commonProfile,
+            subtitle: context.l10n.settingsProfileSubtitle,
             trailing: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 foregroundColor: Pm.text,
@@ -47,12 +50,12 @@ class SettingsPage extends ConsumerWidget {
                 shape: const StadiumBorder(),
               ),
               onPressed: () => context.go('/profile'),
-              child: const Text('Editar'),
+              child: Text(context.l10n.commonEdit),
             ),
           ),
           _Row(
             title: s?.userName ?? '',
-            subtitle: 'Conectado em ${s?.api.baseUrl ?? '-'}',
+            subtitle: context.l10n.settingsConnectedAt(s?.api.baseUrl ?? '-'),
             trailing: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 foregroundColor: Pm.text,
@@ -63,26 +66,25 @@ class SettingsPage extends ConsumerWidget {
                 await ref.read(playerProvider.notifier).stop();
                 await ref.read(sessionProvider.notifier).logout();
               },
-              child: const Text('Sair'),
+              child: Text(context.l10n.settingsSignOut),
             ),
           ),
-          const _Section('Servidor'),
-          _Row(
-            title: 'Jellyfin',
-            subtitle: urls.wan.isEmpty ? '-' : urls.wan,
-          ),
-          if (urls.lan.isNotEmpty) _Row(title: 'Na rede local', subtitle: urls.lan),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 8),
+          const _LanguageRow(),
+          _Section(context.l10n.settingsSectionServer),
+          _Row(title: 'Jellyfin', subtitle: urls.wan.isEmpty ? '-' : urls.wan),
+          if (urls.lan.isNotEmpty)
+            _Row(title: context.l10n.settingsLocalNetwork, subtitle: urls.lan),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-              'Para trocar os endereços do Jellyfin, saia da conta e abra "Endereço do servidor" na tela de entrada.',
-              style: TextStyle(color: Pm.muted, fontSize: 12),
+              context.l10n.settingsServerNote,
+              style: const TextStyle(color: Pm.muted, fontSize: 12),
             ),
           ),
           _Row(
-            title: 'Servidor de extras',
+            title: context.l10n.settingsExtrasServer,
             subtitle: extras.isEmpty
-                ? 'Não configurado (chat, Jam, Blend, mixes e Retrospectiva ficam escondidos)'
+                ? context.l10n.settingsExtrasNotConfigured
                 : extras,
             trailing: OutlinedButton(
               style: OutlinedButton.styleFrom(
@@ -91,29 +93,33 @@ class SettingsPage extends ConsumerWidget {
                 shape: const StadiumBorder(),
               ),
               onPressed: () => _editExtras(context, ref, extras),
-              child: Text(extras.isEmpty ? 'Configurar' : 'Trocar'),
+              child: Text(
+                extras.isEmpty
+                    ? context.l10n.settingsConfigure
+                    : context.l10n.settingsChange,
+              ),
             ),
           ),
-          const _Section('Reprodução'),
+          _Section(context.l10n.settingsSectionPlayback),
           _AutoplayRow(initial: autoplay),
           const _NormalizeRow(),
-          const _QualityRow(
+          _QualityRow(
             prefKey: 'qWifi',
-            title: 'Qualidade no Wi-Fi',
-            subtitle: 'Original toca o arquivo como está na biblioteca.',
+            title: context.l10n.settingsQualityWifi,
+            subtitle: context.l10n.settingsQualityWifiSubtitle,
           ),
           if (Platform.isAndroid || Platform.isIOS)
-            const _QualityRow(
+            _QualityRow(
               prefKey: 'qMobile',
-              title: 'Qualidade nos dados móveis',
-              subtitle: 'Uma qualidade menor gasta menos internet do celular.',
+              title: context.l10n.settingsQualityMobile,
+              subtitle: context.l10n.settingsQualityMobileSubtitle,
             ),
           if (extras.isNotEmpty) ...[
             const _Section('Last.fm'),
             const _LastfmRow(),
           ],
-          const _Section('Sobre'),
-          const _Row(title: 'Pudim', subtitle: 'Build $appBuild'),
+          _Section(context.l10n.settingsSectionAbout),
+          _Row(title: 'Pudim', subtitle: context.l10n.settingsBuild(appBuild)),
         ],
       ),
     );
@@ -130,7 +136,7 @@ Future<void> _editExtras(
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: Pm.elevated,
-      title: const Text('Servidor de extras'),
+      title: Text(ctx.l10n.settingsExtrasServer),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,20 +150,20 @@ Future<void> _editExtras(
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Deixe vazio para desligar os extras.',
-            style: TextStyle(color: Pm.subdued, fontSize: 12),
+          Text(
+            ctx.l10n.settingsExtrasEmptyHint,
+            style: const TextStyle(color: Pm.subdued, fontSize: 12),
           ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancelar'),
+          child: Text(ctx.l10n.commonCancel),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, c.text),
-          child: const Text('Salvar'),
+          child: Text(ctx.l10n.commonSave),
         ),
       ],
     ),
@@ -219,8 +225,8 @@ class _AutoplayRowState extends ConsumerState<_AutoplayRow> {
   late bool _v = widget.initial;
   @override
   Widget build(BuildContext context) => _Row(
-    title: 'Reprodução automática',
-    subtitle: 'Quando a fila acabar, continua tocando músicas parecidas (mix do Jellyfin).',
+    title: context.l10n.settingsAutoplay,
+    subtitle: context.l10n.settingsAutoplaySubtitle,
     trailing: Switch(
       value: _v,
       activeTrackColor: Pm.green,
@@ -282,19 +288,21 @@ class _LastfmRowState extends ConsumerState<_LastfmRow> {
   Widget build(BuildContext context) {
     final st = _st;
     if (st == null) {
-      return const _Row(title: 'Scrobble', subtitle: 'Carregando…');
+      return _Row(
+        title: context.l10n.settingsScrobble,
+        subtitle: context.l10n.settingsLoading,
+      );
     }
     if (!st.configured) {
-      return const _Row(
-        title: 'Scrobble',
-        subtitle:
-            'O servidor de extras ainda não tem uma chave da API do Last.fm configurada.',
+      return _Row(
+        title: context.l10n.settingsScrobble,
+        subtitle: context.l10n.settingsLastfmNoKey,
       );
     }
     if (st.connected) {
       return _Row(
-        title: 'Conectado como ${st.name ?? ''}',
-        subtitle: 'Tudo que você ouve no Pudim vai para o seu perfil do Last.fm.',
+        title: context.l10n.settingsConnectedAs(st.name ?? ''),
+        subtitle: context.l10n.settingsLastfmConnectedSubtitle,
         trailing: OutlinedButton(
           style: _outlined,
           onPressed: _busy
@@ -303,14 +311,14 @@ class _LastfmRowState extends ConsumerState<_LastfmRow> {
                   await ref.read(catalogProvider).lastfmDisconnect();
                   await _load();
                 }),
-          child: const Text('Desconectar'),
+          child: Text(context.l10n.settingsDisconnect),
         ),
       );
     }
     if (_token != null) {
       return _Row(
-        title: 'Autorize na página do Last.fm',
-        subtitle: 'Depois de clicar em "Yes, allow access" lá, volte e toque em Concluir.',
+        title: context.l10n.settingsLastfmAuthorize,
+        subtitle: context.l10n.settingsLastfmAuthorizeSubtitle,
         trailing: FilledButton(
           onPressed: _busy
               ? null
@@ -318,25 +326,32 @@ class _LastfmRowState extends ConsumerState<_LastfmRow> {
                   await ref.read(catalogProvider).lastfmFinish(_token!);
                   _token = null;
                   await _load();
-                  if (context.mounted) toast(context, 'Last.fm conectado');
+                  if (context.mounted) {
+                    toast(context, context.l10n.settingsLastfmConnected);
+                  }
                 }),
-          child: const Text('Concluir'),
+          child: Text(context.l10n.settingsFinish),
         ),
       );
     }
     return _Row(
-      title: 'Scrobble',
-      subtitle: 'Registra no seu Last.fm cada música que você ouve.',
+      title: context.l10n.settingsScrobble,
+      subtitle: context.l10n.settingsLastfmScrobbleSubtitle,
       trailing: OutlinedButton(
         style: _outlined,
         onPressed: _busy
             ? null
             : () => _run(() async {
-                final (tok, url) = await ref.read(catalogProvider).lastfmConnect();
-                await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                final (tok, url) = await ref
+                    .read(catalogProvider)
+                    .lastfmConnect();
+                await launchUrl(
+                  Uri.parse(url),
+                  mode: LaunchMode.externalApplication,
+                );
                 if (mounted) setState(() => _token = tok);
               }),
-        child: const Text('Conectar'),
+        child: Text(context.l10n.settingsConnect),
       ),
     );
   }
@@ -352,8 +367,8 @@ class _NormalizeRowState extends ConsumerState<_NormalizeRow> {
   late bool _v = ref.read(playerProvider.notifier).normalize;
   @override
   Widget build(BuildContext context) => _Row(
-    title: 'Normalizar o volume',
-    subtitle: 'Deixa todas as músicas no mesmo volume, com a análise feita pelo Jellyfin.',
+    title: context.l10n.settingsNormalize,
+    subtitle: context.l10n.settingsNormalizeSubtitle,
     trailing: Switch(
       value: _v,
       activeTrackColor: Pm.green,
@@ -380,8 +395,8 @@ class _QualityRow extends ConsumerStatefulWidget {
 }
 
 class _QualityRowState extends ConsumerState<_QualityRow> {
-  static const _options = {
-    0: 'Original',
+  Map<int, String> _options(BuildContext context) => {
+    0: context.l10n.settingsQualityOriginal,
     320: '320 kbps',
     256: '256 kbps',
     192: '192 kbps',
@@ -390,24 +405,58 @@ class _QualityRowState extends ConsumerState<_QualityRow> {
   late int _v = ref.read(prefsProvider).getInt(widget.prefKey) ?? 0;
 
   @override
-  Widget build(BuildContext context) => _Row(
-    title: widget.title,
-    subtitle: widget.subtitle,
-    trailing: DropdownButton<int>(
-      value: _options.containsKey(_v) ? _v : 0,
-      dropdownColor: Pm.elevated,
-      underline: const SizedBox.shrink(),
-      borderRadius: BorderRadius.circular(8),
-      items: [
-        for (final e in _options.entries)
-          DropdownMenuItem(value: e.key, child: Text(e.value)),
-      ],
-      onChanged: (v) {
-        if (v == null) return;
-        setState(() => _v = v);
-        ref.read(prefsProvider).setInt(widget.prefKey, v);
-        toast(context, 'Vale a partir da próxima música');
-      },
-    ),
-  );
+  Widget build(BuildContext context) {
+    final options = _options(context);
+    return _Row(
+      title: widget.title,
+      subtitle: widget.subtitle,
+      trailing: DropdownButton<int>(
+        value: options.containsKey(_v) ? _v : 0,
+        dropdownColor: Pm.elevated,
+        underline: const SizedBox.shrink(),
+        borderRadius: BorderRadius.circular(8),
+        items: [
+          for (final e in options.entries)
+            DropdownMenuItem(value: e.key, child: Text(e.value)),
+        ],
+        onChanged: (v) {
+          if (v == null) return;
+          setState(() => _v = v);
+          ref.read(prefsProvider).setInt(widget.prefKey, v);
+          toast(context, context.l10n.settingsAppliesNextSong);
+        },
+      ),
+    );
+  }
+}
+
+/// Idioma da interface: o do aparelho ou um dos que o app traduz.
+class _LanguageRow extends ConsumerWidget {
+  const _LanguageRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final current = ref.watch(localeProvider)?.languageCode ?? '';
+    return _Row(
+      title: context.l10n.languageTitle,
+      subtitle: context.l10n.languageSubtitle,
+      trailing: DropdownButton<String>(
+        value: const ['pt', 'en', 'es'].contains(current) ? current : '',
+        dropdownColor: Pm.elevated,
+        underline: const SizedBox.shrink(),
+        borderRadius: BorderRadius.circular(8),
+        items: [
+          DropdownMenuItem(value: '', child: Text(context.l10n.languageSystem)),
+          // nomes dos idiomas ficam na própria língua
+          const DropdownMenuItem(value: 'pt', child: Text('Português')),
+          const DropdownMenuItem(value: 'en', child: Text('English')),
+          const DropdownMenuItem(value: 'es', child: Text('Español')),
+        ],
+        onChanged: (v) {
+          if (v == null) return;
+          ref.read(localeProvider.notifier).set(v.isEmpty ? null : Locale(v));
+        },
+      ),
+    );
+  }
 }

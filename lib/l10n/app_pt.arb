@@ -1,0 +1,1468 @@
+{
+  "@@locale": "pt",
+  "languageTitle": "Idioma",
+  "languageSubtitle": "Idioma da interface",
+  "languageSystem": "Padrão do sistema",
+  "@languageSystem": {
+    "description": "Language option that follows the device language"
+  },
+  "commonCancel": "Cancelar",
+  "commonClose": "Fechar",
+  "commonBack": "Voltar",
+  "commonSave": "Salvar",
+  "commonEdit": "Editar",
+  "commonDelete": "Excluir",
+  "commonRemove": "Remover",
+  "commonOk": "OK",
+  "commonRetry": "Tentar de novo",
+  "commonQueue": "Fila",
+  "commonAlbum": "Álbum",
+  "commonAlbums": "Álbuns",
+  "commonArtist": "Artista",
+  "commonArtists": "Artistas",
+  "commonSong": "Música",
+  "commonSongs": "Músicas",
+  "commonPlaylist": "Playlist",
+  "commonPlaylists": "Playlists",
+  "commonSingle": "Single",
+  "commonLikedSongs": "Músicas curtidas",
+  "commonAddToLiked": "Adicionar a Músicas curtidas",
+  "commonRemoveFromLiked": "Remover das Músicas curtidas",
+  "commonShufflePlay": "Tocar em ordem aleatória",
+  "commonPlay": "Tocar",
+  "commonPause": "Pausar",
+  "commonFollow": "Seguir",
+  "commonFollowing": "Seguindo",
+  "commonDownloadToDevice": "Baixar no aparelho",
+  "commonRemoveFromDevice": "Remover do aparelho",
+  "commonDownloaded": "Baixadas",
+  "commonDownloads": "Downloads",
+  "commonAll": "Tudo",
+  "commonRecentlyPlayed": "Tocadas recentemente",
+  "commonYourLibrary": "Sua Biblioteca",
+  "commonHome": "Início",
+  "commonSearch": "Buscar",
+  "commonProfile": "Perfil",
+  "commonSettings": "Configurações",
+  "commonBuilding": "Montando…",
+  "commonBuildNow": "Montar agora",
+  "commonShows": "Shows",
+  "commonPodcasts": "Podcasts",
+  "commonSongCount": "{count, plural, =0{Nenhuma música} =1{1 música} other{{count} músicas}}",
+  "@commonSongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonMinutes": "{count, plural, =1{1 minuto} other{{count} minutos}}",
+  "@commonMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonError": "Erro: {error}",
+  "@commonError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "apiStatusQueued": "Na fila",
+  "apiStatusDownloading": "Baixando",
+  "apiStatusDone": "Chegou na biblioteca",
+  "apiStatusUpToDate": "Já estava na biblioteca",
+  "apiStatusPartial": "Chegou em parte",
+  "apiStatusNotFound": "Não encontrado",
+  "apiStatusCancelled": "Cancelado",
+  "apiStatusInterrupted": "Interrompido",
+  "apiStatusFailed": "Falhou",
+  "apiExtrasNoResponse": "O servidor de extras não respondeu.",
+  "apiAlbumListFailed": "Não consegui listar os álbuns.",
+  "apiPlaylistSaved": "Playlist na Sua Biblioteca ({found} de {total} músicas)",
+  "@apiPlaylistSaved": {
+    "placeholders": {
+      "found": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "apiPlaylistDownloading": "Playlist na Sua Biblioteca; baixando mais {count, plural, =1{1 música} other{{count} músicas}}",
+  "@apiPlaylistDownloading": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "apiBadCredentials": "Usuário ou senha incorretos.",
+  "apiServerUnreachable": "Não consegui falar com o servidor.",
+  "apiQuickConnectOff": "O Quick Connect está desligado neste servidor.",
+  "apiWrongCurrentPassword": "A senha atual não confere.",
+  "stateChatShared": "Compartilhou {title}",
+  "@stateChatShared": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "stateDownloadingName": "Baixando {name}",
+  "@stateDownloadingName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateDownloadingRequests": "Baixando {count} pedidos",
+  "@stateDownloadingRequests": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateDownloadArrived": "{name} chegou na biblioteca",
+  "@stateDownloadArrived": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateDownloadPartial": "{name} chegou em parte",
+  "@stateDownloadPartial": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateDownloadEnded": "{name}: {status}",
+  "@stateDownloadEnded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "stateNotFromCatalog": "Esse item não veio do catálogo.",
+  "stateAlreadyDownloading": "{kind, select, album{Já está baixando o álbum.} artist{Já está baixando a discografia.} other{Já está baixando a música.}}",
+  "@stateAlreadyDownloading": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "stateDownloadRequested": "{kind, select, album{Baixando o álbum. Aparece no sino quando chegar.} artist{Baixando a discografia. Aparece no sino quando chegar.} other{Baixando a música. Aparece no sino quando chegar.}}",
+  "@stateDownloadRequested": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "stateNotifyDownloadsChannel": "Downloads",
+  "stateNotifyDownloadsChannelDesc": "Progresso das músicas baixando",
+  "stateNotifyNewsChannel": "Novidades",
+  "stateNotifyNewsChannelDesc": "Músicas que chegaram, lançamentos, Descobertas e Mistura",
+  "stateOfflineLoose": "Baixadas uma a uma",
+  "stateOfflineDoneTitle": "Baixadas no aparelho",
+  "stateOfflineDoneBody": "{count, plural, =1{1 música pronta para ouvir sem internet} other{{count} músicas prontas para ouvir sem internet}}",
+  "@stateOfflineDoneBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateOfflineProgressTitle": "Baixando no aparelho",
+  "stateOfflineProgressBody": "{done} de {total} • {name}",
+  "@stateOfflineProgressBody": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateServerNoReply": "O servidor não respondeu. Confira o endereço.",
+  "stateServerNoReplyBoth": "O servidor não respondeu em nenhum dos dois endereços.",
+  "stateTokenStoreUnsupported": "Por enquanto o Pudim só guarda login no Windows e no Android.",
+  "stateQualityPoor": "som fraco",
+  "stateQualityPartial": "incompleto",
+  "audioPlaybackChannel": "Reprodução",
+  "audioRecentAlbums": "Álbuns recentes",
+  "audioSearchContext": "Busca: {query}",
+  "@audioSearchContext": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "audioRadioContext": "Rádio de {name}",
+  "@audioRadioContext": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "podcastsMonthShort": "{m, select, m1{jan} m2{fev} m3{mar} m4{abr} m5{mai} m6{jun} m7{jul} m8{ago} m9{set} m10{out} m11{nov} other{dez}}",
+  "@podcastsMonthShort": {
+    "placeholders": {
+      "m": {
+        "type": "String"
+      }
+    }
+  },
+  "podcastsDateThisYear": "{day} de {month}",
+  "@podcastsDateThisYear": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "podcastsDateOtherYear": "{day} de {month} de {year}",
+  "@podcastsDateOtherYear": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "podcastsHoursMin": "{h} h {min} min",
+  "@podcastsHoursMin": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "podcastsMin": "{min} min",
+  "@podcastsMin": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "podcastsPlayed": "ouvido",
+  "podcastsTimeLeft": "faltam {time}",
+  "@podcastsTimeLeft": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "podcastsSearchHint": "Buscar podcasts",
+  "podcastsNothingFound": "Nada encontrado.",
+  "podcastsYours": "Seus podcasts",
+  "podcastsNewEpisodes": "Episódios novos",
+  "podcastsTrendingBrazil": "Em alta no Brasil",
+  "podcastsLoadFailed": "Não carregou. Tentar de novo",
+  "podcastsNoEpisodes": "Nenhum episódio no feed.",
+  "podcastsNoEpisodeMatch": "Nenhum episódio com \"{q}\".",
+  "@podcastsNoEpisodeMatch": {
+    "placeholders": {
+      "q": {
+        "type": "String"
+      }
+    }
+  },
+  "podcastsKind": "Podcast",
+  "podcastsEpisodes": "Episódios",
+  "podcastsEpisodesCount": "Episódios ({total})",
+  "@podcastsEpisodesCount": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "podcastsFindEpisode": "Procurar episódio",
+  "showsMonthName": "{m, select, m1{janeiro} m2{fevereiro} m3{março} m4{abril} m5{maio} m6{junho} m7{julho} m8{agosto} m9{setembro} m10{outubro} m11{novembro} other{dezembro}}",
+  "@showsMonthName": {
+    "placeholders": {
+      "m": {
+        "type": "String"
+      }
+    }
+  },
+  "showsMonthYear": "{month} de {year}",
+  "@showsMonthYear": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "showsWeekdayShort": "{m, select, w1{seg} w2{ter} w3{qua} w4{qui} w5{sex} w6{sáb} other{dom}}",
+  "@showsWeekdayShort": {
+    "placeholders": {
+      "m": {
+        "type": "String"
+      }
+    }
+  },
+  "showsFollowingNone": "Dos artistas que você segue",
+  "showsFollowingCount": "{count, plural, =1{Do 1 artista que você segue} other{Dos {count} artistas que você segue}}",
+  "@showsFollowingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showsSearchingFor": "procurando shows de {count}…",
+  "@showsSearchingFor": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "showsUpcoming": "Próximos",
+  "showsPast": "Já aconteceram",
+  "showsInBrazil": "No Brasil",
+  "showsEmptyFollow": "Siga artistas (botão Seguir na página do artista) para ver os shows deles aqui.",
+  "showsNonePast": "Nenhum show registrado ainda.",
+  "showsNoneUpcoming": "Nenhum show marcado por enquanto.",
+  "showsStillSearching": "Ainda procurando…",
+  "showsSource": "Datas do MusicBrainz (feito por fãs); shows novos podem demorar a aparecer.",
+  "showsCancelled": "cancelado",
+  "showsFestival": "festival",
+  "catalogKindAlbum": "Álbum",
+  "catalogKindSingle": "Single",
+  "catalogKindBroadcast": "Transmissão",
+  "catalogKindOther": "Outro",
+  "catalogSecLive": "ao vivo",
+  "catalogSecCompilation": "coletânea",
+  "catalogSecSoundtrack": "trilha sonora",
+  "catalogSecMixtape": "mixtape",
+  "catalogSecInterview": "entrevista",
+  "catalogSecSpokenword": "falado",
+  "catalogDownloadingOne": "Baixando {title}",
+  "@catalogDownloadingOne": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "catalogDownloadingMany": "Baixando {count} álbuns de {artist}",
+  "@catalogDownloadingMany": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "artist": {
+        "type": "String"
+      }
+    }
+  },
+  "catalogCheckingDiscography": "Conferindo a discografia… {seconds}s",
+  "@catalogCheckingDiscography": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "catalogToDownload": "{count} para baixar",
+  "@catalogToDownload": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "catalogInLibraryCount": "{count} já na biblioteca",
+  "@catalogInLibraryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "catalogSkippedOneSong": "{count, plural, =1{1 de 1 música fica de fora} other{{count} de 1 música ficam de fora}}",
+  "@catalogSkippedOneSong": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "catalogPickAll": "Todos",
+  "catalogPickStudio": "Estúdio",
+  "catalogPickNone": "Nenhum",
+  "catalogDownloadSelected": "Baixar selecionados",
+  "catalogDownloadNSelected": "{count, plural, =1{Baixar 1 selecionado} other{Baixar {count} selecionados}}",
+  "@catalogDownloadNSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "catalogNothingMissing": "Nada faltando.",
+  "catalogPartial": "parcial",
+  "catalogDownload": "Baixar",
+  "catalogAddToLibrary": "Adicionar à Sua Biblioteca",
+  "catalogInYourLibrary": "Na Sua Biblioteca",
+  "catalogAllInLibrary": "tudo na biblioteca",
+  "catalogNInLibrary": "{count} na biblioteca",
+  "@catalogNInLibrary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "catalogDownloadAlbum": "Baixar álbum",
+  "catalogArtistNotFound": "Artista não encontrado.",
+  "catalogFromCatalog": "Do catálogo: ainda não está na biblioteca",
+  "catalogDownloadAll": "Baixar tudo",
+  "catalogDownloadDiscography": "Baixar discografia",
+  "catalogPopular": "Populares",
+  "catalogShowLess": "Mostrar menos",
+  "catalogShowMore": "Ver mais",
+  "catalogSinglesEps": "Singles e EPs",
+  "catalogFansAlsoLike": "Fãs também curtem",
+  "lyricsPlaySomething": "Toque alguma coisa para ver a letra.",
+  "lyricsNone": "Sem letra para esta música",
+  "lyricsNoneHint": "Quando tiver um .lrc ou .txt ao lado do arquivo, ela aparece aqui.",
+  "lyricsSynced": "Letra sincronizada do arquivo .lrc",
+  "lyricsUnsynced": "Letra sem sincronização",
+  "profileChangePhoto": "Trocar foto",
+  "profileNoPhoto": "Nenhuma foto escolhida",
+  "profilePhotoTooBig": "Foto grande demais (até 8 MB)",
+  "profilePhotoChanged": "Foto do perfil trocada",
+  "profilePhotoRemoved": "Foto removida",
+  "profileNameSaved": "Nome do perfil salvo",
+  "profileRenameTitle": "Trocar o nome de usuário?",
+  "profileRenameBody": "Você passa a entrar como \"{name}\" no Pudim, no Jellyfin e nos outros apps (Finamp, Feishin…). Suas Descobertas, Mistura e Retrospectiva vêm junto.",
+  "@profileRenameBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profileRenameConfirm": "Trocar",
+  "profileNowSignedAs": "Agora você entra como {name}",
+  "@profileNowSignedAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "profileEnterNewPassword": "Digite a senha nova",
+  "profilePasswordsDiffer": "As senhas novas não são iguais",
+  "profilePasswordChanged": "Senha trocada",
+  "profileExtrasUnreachable": "Não consegui falar com o servidor de extras; o nome do perfil e o de usuário ficam para depois.",
+  "profileNameSection": "Nome no perfil",
+  "profileNameHelp": "É como seus contatos veem você nas conversas.",
+  "profileYourName": "Seu nome",
+  "profileUsernameSection": "Nome de usuário",
+  "profileUsernameHelp": "O nome para entrar no Jellyfin (aqui e nos outros apps).",
+  "profileUsernameHint": "Usuário",
+  "profileChangeUsername": "Trocar usuário",
+  "profilePasswordSection": "Senha",
+  "profileCurrentPassword": "Senha atual",
+  "profileNewPassword": "Senha nova",
+  "profileRepeatPassword": "Repita a senha nova",
+  "profileChangePassword": "Trocar senha",
+  "loginServerRequired": "Digite o endereço do seu servidor Jellyfin.",
+  "loginUserRequired": "Digite seu nome de usuário.",
+  "loginTitle": "Entrar no Pudim",
+  "loginSubtitle": "Use sua conta do Jellyfin.",
+  "loginUsername": "Nome de usuário",
+  "loginPassword": "Senha",
+  "loginShowPassword": "Mostrar senha",
+  "loginHidePassword": "Esconder senha",
+  "loginSubmit": "Entrar",
+  "loginQuickConnect": "Entrar com Quick Connect",
+  "loginHideAddresses": "Esconder endereços",
+  "loginServerAddress": "Endereço do servidor",
+  "loginJellyfinServer": "Servidor Jellyfin",
+  "loginJellyfinServerExample": "Ex.: https://jellyfin.exemplo.com",
+  "loginLocalNetwork": "Na rede local (opcional)",
+  "loginLocalNetworkExample": "Ex.: http://192.168.0.10:8096. Quando responde, o app usa este no lugar do principal.",
+  "loginExtrasServer": "Servidor de extras (opcional)",
+  "loginExtrasServerHint": "Liga chat, Jam, Blend, mixes e Retrospectiva. Deixe vazio se não tiver.",
+  "loginQcExpired": "O código expirou. Tente de novo.",
+  "loginQcInstructions": "Num aparelho em que você já entrou no Jellyfin, abra o seu perfil, toque em Quick Connect e digite este código:",
+  "loginQcWaiting": "Esperando a aprovação…",
+  "homeDownloadedOnDevice": "Baixadas no aparelho",
+  "homeTabMusic": "Música",
+  "homeMadeFor": "Feito para",
+  "homeMixDiscoveries": "Músicas novas para você, toda semana",
+  "homeMixWeekly": "Seus favoritos e parecidos, toda semana",
+  "homeMixRadar": "Lançamentos de quem você segue, toda sexta",
+  "homeMixDaylist": "Muda ao longo do dia",
+  "homeMixBlend": "O gosto de vocês dois junto",
+  "homeMixAuto": "Mix automático",
+  "homeSpotifyPlaylists": "Suas playlists do Spotify",
+  "homeFromSpotify": "Do Spotify",
+  "homeYourPlaylists": "Suas playlists",
+  "homeTopAlbums": "Seus álbuns mais tocados",
+  "homeTopArtists": "Seus artistas favoritos",
+  "homeRecentlyAdded": "Adicionados recentemente",
+  "homeYourPodcasts": "Seus podcasts",
+  "homeRadiosTitle": "Rádios recomendadas",
+  "homeRadiosSubtitle": "Música sem parar com base nos seus artistas favoritos.",
+  "homeRadioBadge": "RÁDIO",
+  "homeRadioWith": "Com {name} e artistas parecidos",
+  "@homeRadioWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "searchNoResults": "Nenhum resultado encontrado para \"{query}\"",
+  "@searchNoResults": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchNoResultsHint": "Verifique a ortografia ou use menos palavras ou palavras diferentes.",
+  "searchCatalogNoResponse": "O catálogo não respondeu: {error}",
+  "@searchCatalogNoResponse": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "searchAlsoCatalog": "Buscando também no catálogo…",
+  "searchLibraryOnly": "Só a biblioteca: o catálogo não respondeu ({error}).",
+  "@searchLibraryOnly": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "searchTopResult": "Melhor resultado",
+  "searchSpotifyPlaylists": "Playlists do Spotify",
+  "searchRecent": "Buscas recentes",
+  "searchClear": "Limpar",
+  "searchBrowseAll": "Navegar por todas as seções",
+  "searchHint": "O que você quer ouvir?",
+  "albumDownloadedType": "Álbum • baixado no aparelho",
+  "albumSongsAndTime": "{count, plural, =1{1 música} other{{count} músicas}}, {total}",
+  "@albumSongsAndTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "albumRemoveFromLibrary": "Remover da Sua Biblioteca",
+  "albumSaveToLibrary": "Salvar na Sua Biblioteca",
+  "albumMoreOptions": "Mais opções para {name}",
+  "@albumMoreOptions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "albumDisc": "Disco {number}",
+  "@albumDisc": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "albumMoreFrom": "Mais de {name}",
+  "@albumMoreFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "artistAlbumsInLibrary": "{count, plural, =1{1 álbum na biblioteca} other{{count} álbuns na biblioteca}}",
+  "@artistAlbumsInLibrary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "artistPlays": "{count, plural, =1{1 reprodução} other{{count} reproduções}}",
+  "@artistPlays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "artistMoreOptions": "Mais opções para {name}",
+  "@artistMoreOptions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "artistPopular": "Populares",
+  "artistShowLess": "Mostrar menos",
+  "artistShowMore": "Ver mais",
+  "artistYouLiked": "Você curtiu",
+  "artistFrom": "De {name}",
+  "@artistFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "artistDiscography": "Discografia",
+  "artistPopularReleases": "Lançamentos populares",
+  "artistSinglesEps": "Singles e EPs",
+  "artistFansAlsoLike": "Fãs também curtem",
+  "artistAppearsOn": "Aparece em",
+  "artistAbout": "Sobre",
+  "playlistOriginSpotify": "Do Spotify",
+  "playlistOriginMadeForYou": "Feita para você",
+  "playlistOriginAuto": "Mix automático",
+  "playlistDownloadedOnDevice": "Baixada no aparelho",
+  "playlistOnDevice": "No aparelho",
+  "playlistPlaysOffline": "Tocam sem internet.",
+  "playlistPlaysOfflineDownloading": "Tocam sem internet. Baixando mais {count}…",
+  "@playlistPlaysOfflineDownloading": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistSongsAndTime": "{count, plural, =1{1 música} other{{count} músicas}}, {total}",
+  "@playlistSongsAndTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "playlistMoreOptions": "Mais opções para {name}",
+  "@playlistMoreOptions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playlistSearchHint": "Buscar na playlist",
+  "playlistEmpty": "Nenhuma música por aqui ainda.",
+  "playlistErrNoPermission": "Sem permissão para editar essa playlist.",
+  "playlistErrServer": "O servidor não aceitou ({code}).",
+  "@playlistErrServer": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "playlistErrNoResponse": "sem resposta",
+  "playlistDownloadFirst": "Baixe a música primeiro para pôr numa playlist",
+  "playlistAddTo": "Adicionar à playlist",
+  "playlistNew": "Nova playlist",
+  "playlistAddedTo": "Adicionada a {name}",
+  "@playlistAddedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playlistNameHint": "Nome da playlist",
+  "playlistCreate": "Criar",
+  "playlistCreated": "Playlist {name} criada",
+  "@playlistCreated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playlistRemoved": "Removida da playlist",
+  "playlistInviteTitle": "Convidar para editar",
+  "playlistInviteSubtitle": "A pessoa vê a playlist na biblioteca dela e pode adicionar e tirar músicas.",
+  "playlistInviteOwnerOnly": "Só quem criou a playlist pode convidar",
+  "playlistInvited": "{who} agora pode editar {playlist}",
+  "@playlistInvited": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "playlist": {
+        "type": "String"
+      }
+    }
+  },
+  "playlistCollaborative": "Colaborativa · {members}",
+  "@playlistCollaborative": {
+    "placeholders": {
+      "members": {
+        "type": "String"
+      }
+    }
+  },
+  "playlistSmartShuffleTooltip": "Smart Shuffle: aleatório com recomendações",
+  "playlistSmartShuffleOn": "Smart Shuffle ligado: recomendações marcadas com ✦",
+  "playlistAddedToThis": "Adicionada à playlist",
+  "playlistRecommendation": "Recomendação do Smart Shuffle",
+  "playlistPutIn": "Pôr na playlist",
+  "settingsSectionAccount": "Conta",
+  "settingsProfileSubtitle": "Nome, usuário e senha",
+  "settingsConnectedAt": "Conectado em {url}",
+  "@settingsConnectedAt": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSignOut": "Sair",
+  "settingsSectionServer": "Servidor",
+  "settingsLocalNetwork": "Na rede local",
+  "settingsServerNote": "Para trocar os endereços do Jellyfin, saia da conta e abra \"Endereço do servidor\" na tela de entrada.",
+  "settingsExtrasServer": "Servidor de extras",
+  "settingsExtrasNotConfigured": "Não configurado (chat, Jam, Blend, mixes e Retrospectiva ficam escondidos)",
+  "settingsConfigure": "Configurar",
+  "settingsChange": "Trocar",
+  "settingsSectionPlayback": "Reprodução",
+  "settingsQualityWifi": "Qualidade no Wi-Fi",
+  "settingsQualityWifiSubtitle": "Original toca o arquivo como está na biblioteca.",
+  "settingsQualityMobile": "Qualidade nos dados móveis",
+  "settingsQualityMobileSubtitle": "Uma qualidade menor gasta menos internet do celular.",
+  "settingsQualityOriginal": "Original",
+  "settingsAppliesNextSong": "Vale a partir da próxima música",
+  "settingsSectionAbout": "Sobre",
+  "settingsBuild": "Build {build}",
+  "@settingsBuild": {
+    "placeholders": {
+      "build": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsExtrasEmptyHint": "Deixe vazio para desligar os extras.",
+  "settingsAutoplay": "Reprodução automática",
+  "settingsAutoplaySubtitle": "Quando a fila acabar, continua tocando músicas parecidas (mix do Jellyfin).",
+  "settingsNormalize": "Normalizar o volume",
+  "settingsNormalizeSubtitle": "Deixa todas as músicas no mesmo volume, com a análise feita pelo Jellyfin.",
+  "settingsScrobble": "Scrobble",
+  "settingsLoading": "Carregando…",
+  "settingsLastfmNoKey": "O servidor de extras ainda não tem uma chave da API do Last.fm configurada.",
+  "settingsConnectedAs": "Conectado como {name}",
+  "@settingsConnectedAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsLastfmConnectedSubtitle": "Tudo que você ouve no Pudim vai para o seu perfil do Last.fm.",
+  "settingsDisconnect": "Desconectar",
+  "settingsLastfmAuthorize": "Autorize na página do Last.fm",
+  "settingsLastfmAuthorizeSubtitle": "Depois de clicar em \"Yes, allow access\" lá, volte e toque em Concluir.",
+  "settingsFinish": "Concluir",
+  "settingsLastfmConnected": "Last.fm conectado",
+  "settingsLastfmScrobbleSubtitle": "Registra no seu Last.fm cada música que você ouve.",
+  "settingsConnect": "Conectar",
+  "sidebarOpenLibrary": "Abrir Sua Biblioteca",
+  "sidebarCollapseLibrary": "Recolher Sua Biblioteca",
+  "sidebarOnDeviceCount": "No aparelho • {count, plural, =1{1 música} other{{count} músicas}}",
+  "@sidebarOnDeviceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sidebarPlaylistCount": "Playlist • {count, plural, =1{1 música} other{{count} músicas}}",
+  "@sidebarPlaylistCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sidebarAlbumBy": "Álbum • {artist}",
+  "@sidebarAlbumBy": {
+    "placeholders": {
+      "artist": {
+        "type": "String"
+      }
+    }
+  },
+  "sidebarSearchLibrary": "Buscar na Sua Biblioteca",
+  "sidebarSortBy": "Ordenar por",
+  "sidebarSortRecents": "Recentes",
+  "sidebarSortAdded": "Adicionados recentemente",
+  "sidebarSortAlpha": "Alfabética",
+  "sidebarSortCreator": "Criador",
+  "topBarSearchHint": "O que você quer ouvir?",
+  "topBarClearSearch": "Limpar campo de busca",
+  "topBarBrowse": "Navegar",
+  "topBarMenu": "Menu",
+  "topBarLogoutAccount": "Sair da conta",
+  "topBarQuit": "Fechar o Pudim",
+  "topBarLogout": "Sair",
+  "playerBarSmartShuffleOff": "Desativar o Smart Shuffle",
+  "playerBarSmartShuffleOn": "Ativar o Smart Shuffle",
+  "playerBarShuffleOff": "Desativar a ordem aleatória",
+  "playerBarShuffleOn": "Ativar a ordem aleatória",
+  "playerBarPlay": "Play",
+  "playerBarForward": "Avançar",
+  "playerBarRepeatOn": "Ativar a repetição",
+  "playerBarRepeatOne": "Ativar a repetição de uma faixa",
+  "playerBarRepeatOff": "Desativar a repetição",
+  "playerBarNowPlayingView": "Tela Tocando agora",
+  "playerBarLyrics": "Letra",
+  "playerBarUnmute": "Com som",
+  "playerBarMute": "Mudo",
+  "rightPanelNothingPlaying": "Toque alguma coisa para ver aqui o que está tocando.",
+  "rightPanelLyricsPreview": "Prévia da letra",
+  "rightPanelAboutArtist": "Sobre o artista",
+  "rightPanelNextUp": "A seguir",
+  "rightPanelOpenQueue": "Abrir fila",
+  "rightPanelQueueEmptyTitle": "Adicione à fila",
+  "rightPanelQueueEmptyHint": "Clique em \"Adicionar à fila\" no menu de uma faixa para incluí-la aqui",
+  "rightPanelNowPlaying": "Tocando agora",
+  "rightPanelNextInQueue": "A seguir na fila",
+  "rightPanelNextFrom": "Próximas de: {name}",
+  "@rightPanelNextFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "nowPlayingPlayingFrom": "TOCANDO DE",
+  "nowPlayingMoreOptions": "Mais opções",
+  "chatChats": "Conversas",
+  "chatYouSaid": "Você: {text}",
+  "@chatYouSaid": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "chatContacts": "Contatos",
+  "chatServerUnreachable": "Não consegui falar com o servidor de extras.",
+  "chatMessageHint": "Mensagem",
+  "chatJoinedJam": "Você entrou na {title}",
+  "@chatJoinedJam": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCouldNotPlay": "Não consegui tocar: {error}",
+  "@chatCouldNotPlay": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "chatJamCardSubtitle": "Ouvir junto, com a mesma fila",
+  "chatInJam": "Na Jam",
+  "chatJoin": "Entrar",
+  "chatNoOtherAccounts": "Nenhuma outra conta no servidor.",
+  "chatSongsCount": "{count, plural, =1{1 música} other{{count} músicas}}",
+  "@chatSongsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatSentTo": "Enviado para {name}",
+  "@chatSentTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatShareTitle": "Compartilhar {title}",
+  "@chatShareTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "chatNoteHint": "Recado (opcional)",
+  "blendWorking": "Misturando…",
+  "blendAffinityButton": "Blend {affinity}%",
+  "@blendAffinityButton": {
+    "placeholders": {
+      "affinity": {
+        "type": "int"
+      }
+    }
+  },
+  "blendCreate": "Criar Blend",
+  "blendWith": "Blend com {name}",
+  "@blendWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blendExplain": "Uma playlist igual para vocês dois, com o que os dois ouvem, os artistas em comum e um pouco do que cada um mais gosta. Mostra a afinidade de vocês e se atualiza todo dia.",
+  "blendNotNow": "Agora não",
+  "blendAffinityTitle": "Vocês têm {affinity}% de afinidade",
+  "@blendAffinityTitle": {
+    "placeholders": {
+      "affinity": {
+        "type": "int"
+      }
+    }
+  },
+  "blendInCommon": "Em comum: {artists}",
+  "@blendInCommon": {
+    "placeholders": {
+      "artists": {
+        "type": "String"
+      }
+    }
+  },
+  "blendOpen": "{count, plural, =1{Abrir o Blend (1 música)} other{Abrir o Blend ({count} músicas)}}",
+  "@blendOpen": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "blendRefreshNow": "Atualizar agora",
+  "blendUndo": "Desfazer Blend",
+  "blendRefreshing": "Atualizando o Blend…",
+  "blendUndoTitle": "Desfazer o Blend?",
+  "blendUndoBody": "A playlist some para você e para {name}.",
+  "@blendUndoBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blendUndoConfirm": "Desfazer",
+  "blendUndone": "Blend desfeito",
+  "jamStart": "Iniciar uma Jam",
+  "jamTooltip": "{count, plural, =1{Jam (1 pessoa)} other{Jam ({count} pessoas)}}",
+  "@jamTooltip": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jamSubIdle": "Ouça junto com outras contas, na mesma fila.",
+  "jamSubHost": "Você está no comando. Todos podem pedir músicas.",
+  "jamSubGuest": "Seus botões e músicas vão para a fila de todos.",
+  "jamPlayFirst": "Toque alguma coisa antes de começar a Jam.",
+  "jamMembers": "Na Jam ({count})",
+  "@jamMembers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jamYouSuffix": "{name} (você)",
+  "@jamYouSuffix": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "jamHost": "Anfitrião",
+  "jamInvite": "Convidar",
+  "jamInviteTitle": "Convidar para a Jam",
+  "jamInviteSubtitle": "O convite chega no chat da pessoa.",
+  "jamInviteSent": "Convite enviado para {name}",
+  "@jamInviteSent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "jamEnd": "Encerrar a Jam",
+  "jamLeave": "Sair da Jam",
+  "recapTitle": "Sua Retrospectiva {year}",
+  "@recapTitle": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "recapShort": "Retrospectiva",
+  "recapBannerBody": "{minutes} minutos de música este ano. Veja o que mais tocou.",
+  "@recapBannerBody": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "recapEmpty": "Ainda não tem reproduções para montar a Retrospectiva.",
+  "recapShareCards": "Compartilhar cartões",
+  "recapBigMinutes": "minutos ouvindo",
+  "recapBigSongs": "músicas diferentes",
+  "recapBigArtists": "artistas",
+  "recapBigDays": "dias com música",
+  "recapBigStreak": "dias seguidos, seu recorde",
+  "recapTopArtists": "Seus artistas do ano",
+  "recapMinutesValue": "{minutes} minutos",
+  "@recapMinutesValue": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "recapTopSongs": "Suas músicas do ano",
+  "recapPlaysLine": "{artist} • {plays} vezes",
+  "@recapPlaysLine": {
+    "placeholders": {
+      "artist": {
+        "type": "String"
+      },
+      "plays": {
+        "type": "String"
+      }
+    }
+  },
+  "recapSongGone": "Essa música não está mais na biblioteca",
+  "recapTopAlbums": "Seus álbuns do ano",
+  "recapTopGenres": "Gêneros que mais tocaram",
+  "recapGenreLine": "{genre} • {minutes} min",
+  "@recapGenreLine": {
+    "placeholders": {
+      "genre": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "recapMonthly": "Mês a mês",
+  "recapMonthTooltip": "{month}: {minutes} min",
+  "@recapMonthTooltip": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "recapListeningStyle": "Seu jeito de ouvir",
+  "recapFavHour": "Hora favorita: {hour}h",
+  "@recapFavHour": {
+    "placeholders": {
+      "hour": {
+        "type": "String"
+      }
+    }
+  },
+  "recapFavWeekday": "Dia da semana favorito: {day}",
+  "@recapFavWeekday": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "recapBiggestDay": "Seu maior dia: {date}, {minutes} minutos",
+  "@recapBiggestDay": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "recapNewArtists": "{count, plural, =1{{n} artista novo para você} other{{n} artistas novos para você}}",
+  "@recapNewArtists": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "recapSpotifyAdded": "{added} reproduções do Spotify entraram.",
+  "@recapSpotifyAdded": {
+    "placeholders": {
+      "added": {
+        "type": "String"
+      }
+    }
+  },
+  "recapSpotifyAddedDup": "{added} reproduções do Spotify entraram ({dup} já estavam pelo Pudim).",
+  "@recapSpotifyAddedDup": {
+    "placeholders": {
+      "added": {
+        "type": "String"
+      },
+      "dup": {
+        "type": "String"
+      }
+    }
+  },
+  "recapSpotifyRemoveTitle": "Tirar o histórico do Spotify?",
+  "recapSpotifyRemoveBody": "A Retrospectiva volta a contar só o que tocou no Pudim/Jellyfin. Dá para importar de novo depois.",
+  "recapSpotifyRemoveConfirm": "Tirar",
+  "recapSpotifyRemoved": "{count} reproduções do Spotify removidas",
+  "@recapSpotifyRemoved": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recapSpotifyTitle": "Histórico do Spotify",
+  "recapSpotifyHasData": "{count} reproduções do Spotify na sua Retrospectiva ({from} a {to}). Pode mandar um arquivo mais novo: o que já entrou não repete.",
+  "@recapSpotifyHasData": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "recapSpotifyIntro": "Traga os anos de antes do Pudim. No Spotify, vá em Conta > Privacidade > Baixe seus dados e marque \"Histórico de streaming estendido\". Quando o e-mail chegar, escolha aqui o my_spotify_data.zip.",
+  "recapSpotifyImportAnother": "Importar outro arquivo",
+  "recapSpotifyImport": "Importar histórico",
+  "recapSpotifyRemoveBtn": "Tirar da Retrospectiva",
+  "recapShareSaveDialog": "Salvar cartão",
+  "recapShareSaved": "Cartão salvo",
+  "recapShareSaveFailed": "Não consegui salvar: {error}",
+  "@recapShareSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "recapShareShareFailed": "Não consegui compartilhar: {error}",
+  "@recapShareShareFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "recapShareText": "Minha Retrospectiva {year} no Pudim",
+  "@recapShareText": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "recapShareMyArtists": "Meus artistas do ano",
+  "recapShareMySongs": "Minhas músicas do ano",
+  "recapMinShort": "{minutes} min",
+  "@recapMinShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "recapShareSaveImage": "Salvar imagem",
+  "recapShareButton": "Compartilhar",
+  "recapBrand": "Retrospectiva {year}",
+  "@recapBrand": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "recapShareMyYear": "Meu ano em música",
+  "recapShareYearOf": "O ano de {name} em música",
+  "@recapShareYearOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recapShareTopArtist": "meu artista do ano",
+  "recapShareGenres": "Gêneros: {genres}",
+  "@recapShareGenres": {
+    "placeholders": {
+      "genres": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetActionsAddedToLiked": "Adicionada a Músicas curtidas",
+  "widgetActionsRemovedFromLiked": "Removida de Músicas curtidas",
+  "widgetActionsUnfollowed": "Deixou de seguir",
+  "widgetActionsSavedToLibrary": "Salvo na Sua Biblioteca",
+  "widgetActionsRemovedFromLibrary": "Removido da Sua Biblioteca",
+  "widgetActionsAddToQueue": "Adicionar à fila",
+  "widgetActionsAddedToQueue": "Adicionado à fila",
+  "widgetActionsPlayNext": "Tocar em seguida",
+  "widgetActionsGoToPodcast": "Ir para o podcast",
+  "widgetActionsRemoveFromQueue": "Remover da fila",
+  "widgetActionsAddToPlaylist": "Adicionar à playlist",
+  "widgetActionsRemoveFromThisPlaylist": "Remover desta playlist",
+  "widgetActionsInviteToEdit": "Convidar para editar",
+  "widgetActionsKeepInPlaylist": "Manter na playlist",
+  "widgetActionsDownloadTrack": "Baixar música",
+  "widgetActionsDownloadAlbum": "Baixar álbum",
+  "widgetActionsDownloadDiscography": "Baixar discografia",
+  "widgetActionsSearchAlbums": "Buscar álbuns",
+  "widgetActionsImproveQuality": "Melhorar qualidade ({count})",
+  "@widgetActionsImproveQuality": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetActionsImprovingAlbums": "Procurando versões melhores de {count} álbuns",
+  "@widgetActionsImprovingAlbums": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetActionsShare": "Compartilhar",
+  "widgetActionsSearchFlac": "Buscar em FLAC",
+  "widgetActionsSearchingFlac": "Procurando {name} em FLAC; se achar, troca o MP3",
+  "@widgetActionsSearchingFlac": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetActionsTrackRemovedFromDevice": "Removida do aparelho",
+  "widgetActionsRemovedFromDevice": "Removido do aparelho",
+  "widgetActionsDownloadingToDevice": "Baixando no aparelho para ouvir sem internet",
+  "widgetActionsUnfollow": "Deixar de seguir",
+  "widgetActionsRemoveFromLibrary": "Remover da Sua Biblioteca",
+  "widgetActionsAddToLibrary": "Adicionar à Sua Biblioteca",
+  "widgetActionsGoToSongRadio": "Ir para a rádio da música",
+  "widgetActionsStartMix": "Ligar mix",
+  "widgetActionsMixOf": "Mix de {name}",
+  "@widgetActionsMixOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetActionsGoToArtist": "Ir para o artista",
+  "widgetActionsGoToAlbum": "Ir para o álbum",
+  "widgetActionsCopyName": "Copiar nome",
+  "widgetActionsCopied": "Copiado",
+  "widgetDownloadsBellDownloading": "{count} baixando",
+  "@widgetDownloadsBellDownloading": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetDownloadsBellEmpty": "Nada por aqui. Toque uma música com nuvem ou use \"Baixar\" no menu ⋯ para trazer do catálogo para a biblioteca.",
+  "widgetDownloadsBellKindDiscography": "Discografia",
+  "widgetDownloadsBellKindFlac": "Em FLAC",
+  "widgetDownloadsBellKindQuality": "Qualidade",
+  "widgetDownloadsBellOptions": "Opções",
+  "widgetDownloadsBellCancelled": "Download cancelado",
+  "widgetDownloadsBellRetrying": "Tentando de novo",
+  "widgetDownloadsBellRemovedFromList": "Removido da lista",
+  "widgetDownloadsBellDetails": "Ver detalhes",
+  "widgetDownloadsBellRemoveFromList": "Remover da lista",
+  "widgetMixSearchingReleases": "Procurando lançamentos…",
+  "widgetMixBuildingDaylist": "Montando sua daylist…",
+  "widgetMixNewDiscoveriesTitle": "Novas Descobertas da semana?",
+  "widgetMixNewMixTitle": "Nova Mistura da semana?",
+  "widgetMixNewDiscoveriesBody": "As músicas que você ainda não ouviu saem da playlist e umas 30 novas começam a chegar. Toda segunda isso já acontece sozinho.",
+  "widgetMixNewMixBody": "Monta de novo com os seus favoritos, o que você mais ouve e músicas parecidas. Toda segunda isso já acontece sozinho.",
+  "widgetMixNotNow": "Agora não",
+  "widgetMixBuildingDiscoveries": "Montando suas Descobertas…",
+  "widgetMixBuildingMix": "Montando sua Mistura…",
+  "widgetMixBuiltOn": "Montada em {date}",
+  "@widgetMixBuiltOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetMixRedo": "Refazer",
+  "widgetMixRefresh": "Atualizar",
+  "widgetMixCreateDiscoveries": "Criar suas Descobertas da semana",
+  "widgetMixCreateMix": "Criar sua Mistura da semana",
+  "widgetMixCreateRadar": "Criar seu Radar de Novidades",
+  "widgetMixCreateDaylist": "Criar sua daylist",
+  "widgetOfflineBanner": "Sem internet · mostrando o que está guardado no aparelho",
+  "widgetOfflineDownloadingProgress": "Baixando {done} de {total}",
+  "@widgetOfflineDownloadingProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetUpdateReady": "Nova versão do Pudim pronta",
+  "widgetUpdateReadyNotes": "Nova versão do Pudim · {notes}",
+  "@widgetUpdateReadyNotes": {
+    "placeholders": {
+      "notes": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetUpdateAction": "Atualizar",
+  "widgetSleepShortMinutes": "{count} min",
+  "@widgetSleepShortMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetSleepShortSeconds": "{count} s",
+  "@widgetSleepShortSeconds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetSleepStopsAtEnd": "Para no fim da música",
+  "widgetSleepStopsIn": "Para em {time}",
+  "@widgetSleepStopsIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetSleepTimer": "Timer para dormir",
+  "widgetSleepTurnOff": "Desligar o timer",
+  "widgetSleepOneHour": "1 hora",
+  "widgetSleepOneAndHalfHours": "1 hora e meia",
+  "widgetSleepEndOfSong": "Fim da música",
+  "widgetSleepTurnedOff": "Timer desligado",
+  "widgetSleepStopsWhenSongEnds": "A música para quando esta acabar",
+  "widgetSleepSongStopsIn": "A música para em {time}",
+  "@widgetSleepSongStopsIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetSpeedPodcast": "Velocidade do podcast",
+  "widgetCommonCatalogBadge": "Do catálogo: ainda não está na biblioteca",
+  "widgetCommonShowAll": "Mostrar tudo",
+  "widgetCommonSomethingWentWrong": "Algo deu errado",
+  "widgetCommonListenDownloaded": "Ouvir as músicas baixadas",
+  "widgetTracksTitle": "Título",
+  "widgetTracksDateAdded": "Adicionada em",
+  "widgetTracksAddedBy": "por {name}",
+  "@widgetTracksAddedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetTracksMoreOptions": "Mais opções",
+  "widgetTracksAddedDate": "{date}",
+  "@widgetTracksAddedDate": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMd"
+      }
+    }
+  }
+}

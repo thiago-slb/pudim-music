@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../api/catalog.dart';
 import '../../api/models.dart';
 import '../../audio/player.dart';
+import '../../l10n/l10n.dart';
 import '../../state/downloads.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
@@ -49,12 +50,12 @@ final catalogArtistByNameProvider = FutureProvider.autoDispose
 class DownloadButton extends ConsumerWidget {
   final String kind;
   final Item item;
-  final String label;
+  final String? label;
   const DownloadButton({
     super.key,
     required this.kind,
     required this.item,
-    this.label = 'Baixar',
+    this.label,
   });
 
   @override
@@ -66,7 +67,10 @@ class DownloadButton extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
     icon: const Icon(Icons.download_outlined, size: 18),
-    label: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+    label: Text(
+      label ?? context.l10n.catalogDownload,
+      style: const TextStyle(fontWeight: FontWeight.w700),
+    ),
     onPressed: () async {
       final msg = await ref
           .read(downloadsProvider.notifier)
@@ -109,7 +113,9 @@ class _SavePlaylistButtonState extends ConsumerState<_SavePlaylistButton> {
             color: _done ? Pm.green : null,
           ),
     label: Text(
-      _done ? 'Na Sua Biblioteca' : 'Adicionar à Sua Biblioteca',
+      _done
+          ? context.l10n.catalogInYourLibrary
+          : context.l10n.catalogAddToLibrary,
       style: const TextStyle(fontWeight: FontWeight.w700),
     ),
     onPressed: _busy || _done
@@ -145,6 +151,7 @@ class CatalogListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final n = catalogNumber(id) ?? 0;
     final provider = _isAlbum
         ? catalogAlbumProvider(n)
@@ -166,7 +173,7 @@ class CatalogListPage extends ConsumerWidget {
           children: [
             BigHeader(
               cover: Cover(a, size: 232),
-              type: _isAlbum ? 'Álbum' : 'Playlist',
+              type: _isAlbum ? l.commonAlbum : l.commonPlaylist,
               title: a.name,
               meta: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -184,11 +191,11 @@ class CatalogListPage extends ConsumerWidget {
                     ),
                   if (a.year != null) Text(' • ${a.year}'),
                   Text(
-                    ' • ${d.tracks.length} músicas, ${formatTotal(total)}',
+                    ' • ${l.commonSongCount(d.tracks.length)}, ${formatTotal(total)}',
                     style: const TextStyle(color: Pm.subdued),
                   ),
                   Text(
-                    ' • ${have == d.tracks.length ? 'tudo na biblioteca' : '$have na biblioteca'}',
+                    ' • ${have == d.tracks.length ? l.catalogAllInLibrary : l.catalogNInLibrary(have)}',
                     style: const TextStyle(color: Pm.subdued),
                   ),
                 ],
@@ -209,7 +216,7 @@ class CatalogListPage extends ConsumerWidget {
                 const SizedBox(width: 16),
                 IconBtn(
                   Icons.shuffle,
-                  tooltip: 'Tocar em ordem aleatória',
+                  tooltip: l.commonShufflePlay,
                   size: 32,
                   onPressed: () => player.shufflePlay(
                     d.tracks,
@@ -219,7 +226,11 @@ class CatalogListPage extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 if (_isAlbum && have < d.tracks.length)
-                  DownloadButton(kind: 'album', item: a, label: 'Baixar álbum'),
+                  DownloadButton(
+                    kind: 'album',
+                    item: a,
+                    label: l.catalogDownloadAlbum,
+                  ),
                 if (!_isAlbum) _SavePlaylistButton(n, a),
               ],
             ),
@@ -253,6 +264,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final provider = catalogArtistProvider(catalogNumber(widget.id) ?? 0);
     final data = ref.watch(provider);
     return data.when(
@@ -261,7 +273,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
       data: (d) {
         final a = d.artist;
         if (a == null) {
-          return const Center(child: Text('Artista não encontrado.'));
+          return Center(child: Text(l.catalogArtistNotFound));
         }
         // Já está na biblioteca: vai para a página de verdade.
         if (!a.isCatalog) {
@@ -325,12 +337,12 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Row(
+                          Row(
                             children: [
-                              CloudBadge(size: 16),
+                              const CloudBadge(size: 16),
                               Text(
-                                'Do catálogo: ainda não está na biblioteca',
-                                style: TextStyle(fontSize: 15),
+                                l.catalogFromCatalog,
+                                style: const TextStyle(fontSize: 15),
                               ),
                             ],
                           ),
@@ -365,8 +377,8 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                       kind: 'artist',
                       item: a,
                       label: isCompact(context)
-                          ? 'Baixar tudo'
-                          : 'Baixar discografia',
+                          ? l.catalogDownloadAll
+                          : l.catalogDownloadDiscography,
                     ),
                     const SizedBox(width: 8),
                     Builder(
@@ -389,7 +401,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                             a.copyWith(favorite: following),
                           ),
                           child: Text(
-                            following ? 'Seguindo' : 'Seguir',
+                            following ? l.commonFollowing : l.commonFollow,
                             style: const TextStyle(fontWeight: FontWeight.w700),
                           ),
                         );
@@ -403,7 +415,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (d.top.isNotEmpty) ...[
-                      const SectionHeader('Populares'),
+                      SectionHeader(l.catalogPopular),
                       TrackTable(
                         tracks: d.top,
                         contextName: a.name,
@@ -416,7 +428,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 8, 0, 24),
                           child: TextLink(
-                            _showMore ? 'Mostrar menos' : 'Ver mais',
+                            _showMore ? l.catalogShowLess : l.catalogShowMore,
                             style: const TextStyle(
                               color: Pm.subdued,
                               fontWeight: FontWeight.w700,
@@ -427,11 +439,11 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                         ),
                     ],
                     if (albums.isNotEmpty)
-                      Shelf(title: 'Álbuns', items: albums),
+                      Shelf(title: l.commonAlbums, items: albums),
                     if (singles.isNotEmpty)
-                      Shelf(title: 'Singles e EPs', items: singles),
+                      Shelf(title: l.catalogSinglesEps, items: singles),
                     if (d.related.isNotEmpty)
-                      Shelf(title: 'Fãs também curtem', items: d.related),
+                      Shelf(title: l.catalogFansAlsoLike, items: d.related),
                   ],
                 ),
               ),

@@ -3,13 +3,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../audio/player.dart';
 import '../../audio/sleep_timer.dart';
+import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
-String _short(Duration d) {
-  if (d.inMinutes >= 1) return '${d.inMinutes + (d.inSeconds % 60 > 0 ? 1 : 0)} min';
-  return '${d.inSeconds} s';
+String _short(L10n l, Duration d) {
+  if (d.inMinutes >= 1) {
+    return l.widgetSleepShortMinutes(
+      d.inMinutes + (d.inSeconds % 60 > 0 ? 1 : 0),
+    );
+  }
+  return l.widgetSleepShortSeconds(d.inSeconds);
 }
+
+String _duration(L10n l, int minutes) => minutes < 60
+    ? l.commonMinutes(minutes)
+    : minutes == 60
+    ? l.widgetSleepOneHour
+    : l.widgetSleepOneAndHalfHours;
 
 /// Botão do timer para dormir (lua). Verde e com o tempo que falta quando está ligado.
 class SleepTimerButton extends ConsumerWidget {
@@ -20,10 +31,10 @@ class SleepTimerButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(sleepTimerProvider);
     final label = s.endOfTrack
-        ? 'Para no fim da música'
+        ? context.l10n.widgetSleepStopsAtEnd
         : s.active
-        ? 'Para em ${_short(s.left)}'
-        : 'Timer para dormir';
+        ? context.l10n.widgetSleepStopsIn(_short(context.l10n, s.left))
+        : context.l10n.widgetSleepTimer;
     return IconButton(
       tooltip: label,
       onPressed: () => _pick(context, ref),
@@ -64,9 +75,11 @@ class SleepTimerButton extends ConsumerWidget {
                 child: Text(
                   s.active
                       ? (s.endOfTrack
-                            ? 'Para no fim da música'
-                            : 'Para em ${_short(s.left)}')
-                      : 'Timer para dormir',
+                            ? ctx.l10n.widgetSleepStopsAtEnd
+                            : ctx.l10n.widgetSleepStopsIn(
+                                _short(ctx.l10n, s.left),
+                              ))
+                      : ctx.l10n.widgetSleepTimer,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -76,18 +89,21 @@ class SleepTimerButton extends ConsumerWidget {
               if (s.active)
                 ListTile(
                   leading: const Icon(Icons.close, color: Pm.subdued),
-                  title: const Text('Desligar o timer'),
+                  title: Text(ctx.l10n.widgetSleepTurnOff),
                   onTap: () => Navigator.pop(ctx, 'off'),
                 ),
               for (final m in options)
                 ListTile(
                   leading: const Icon(Icons.timer_outlined, color: Pm.subdued),
-                  title: Text(m < 60 ? '$m minutos' : m == 60 ? '1 hora' : '1 hora e meia'),
+                  title: Text(_duration(ctx.l10n, m)),
                   onTap: () => Navigator.pop(ctx, m),
                 ),
               ListTile(
-                leading: const Icon(Icons.music_off_outlined, color: Pm.subdued),
-                title: const Text('Fim da música'),
+                leading: const Icon(
+                  Icons.music_off_outlined,
+                  color: Pm.subdued,
+                ),
+                title: Text(ctx.l10n.widgetSleepEndOfSong),
                 onTap: () => Navigator.pop(ctx, 'end'),
               ),
             ],
@@ -98,13 +114,16 @@ class SleepTimerButton extends ConsumerWidget {
     if (choice == null || !context.mounted) return;
     if (choice == 'off') {
       t.cancel();
-      toast(context, 'Timer desligado');
+      toast(context, context.l10n.widgetSleepTurnedOff);
     } else if (choice == 'end') {
       t.endOfTrack();
-      toast(context, 'A música para quando esta acabar');
+      toast(context, context.l10n.widgetSleepStopsWhenSongEnds);
     } else if (choice is int) {
       t.start(Duration(minutes: choice));
-      toast(context, 'A música para em ${choice < 60 ? '$choice minutos' : choice == 60 ? '1 hora' : '1 hora e meia'}');
+      toast(
+        context,
+        context.l10n.widgetSleepSongStopsIn(_duration(context.l10n, choice)),
+      );
     }
   }
 }
@@ -115,13 +134,13 @@ class SpeedButton extends ConsumerWidget {
 
   static const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
 
-  static String label(double v) {
+  static String label(double v, String languageCode) {
     var s = v.toStringAsFixed(2);
     while (s.endsWith('0')) {
       s = s.substring(0, s.length - 1);
     }
     if (s.endsWith('.')) s = s.substring(0, s.length - 1);
-    return '${s.replaceAll('.', ',')}×';
+    return '${languageCode == 'en' ? s : s.replaceAll('.', ',')}×';
   }
 
   @override
@@ -151,11 +170,11 @@ class SpeedButton extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(24, 8, 24, 12),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
                     child: Text(
-                      'Velocidade do podcast',
-                      style: TextStyle(
+                      ctx.l10n.widgetSpeedPodcast,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                       ),
@@ -163,7 +182,9 @@ class SpeedButton extends ConsumerWidget {
                   ),
                   for (final s in speeds)
                     ListTile(
-                      title: Text(label(s)),
+                      title: Text(
+                        label(s, Localizations.localeOf(ctx).languageCode),
+                      ),
                       trailing: s == v
                           ? const Icon(Icons.check, color: Pm.green)
                           : null,
@@ -177,7 +198,7 @@ class SpeedButton extends ConsumerWidget {
         if (pick != null) c.setPodcastSpeed(pick);
       },
       child: Text(
-        label(v),
+        label(v, Localizations.localeOf(context).languageCode),
         style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
       ),
     );

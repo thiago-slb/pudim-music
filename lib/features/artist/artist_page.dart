@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n.dart';
+
 import '../../api/models.dart';
 import '../../audio/player.dart';
 import '../../state/library.dart';
@@ -177,8 +179,12 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '${d.albums.length} álbuns na biblioteca'
-                            '${a.playCount > 0 ? ' • ${a.playCount} reproduções' : ''}',
+                            context.l10n.artistAlbumsInLibrary(
+                                  d.albums.length,
+                                ) +
+                                (a.playCount > 0
+                                    ? ' • ${context.l10n.artistPlays(a.playCount)}'
+                                    : ''),
                             style: const TextStyle(fontSize: 15),
                           ),
                         ],
@@ -205,7 +211,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                     const SizedBox(width: 16),
                     IconBtn(
                       Icons.shuffle,
-                      tooltip: 'Tocar em ordem aleatória',
+                      tooltip: context.l10n.commonShufflePlay,
                       size: 32,
                       onPressed: () async {
                         final all = await api.artistAllTracks(widget.id);
@@ -232,14 +238,16 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                         ref.invalidate(_artistProvider(widget.id));
                       },
                       child: Text(
-                        a.favorite ? 'Seguindo' : 'Seguir',
+                        a.favorite
+                            ? context.l10n.commonFollowing
+                            : context.l10n.commonFollow,
                         style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
                     Builder(
                       builder: (bctx) => IconBtn(
                         Icons.more_horiz,
-                        tooltip: 'Mais opções para ${a.name}',
+                        tooltip: context.l10n.artistMoreOptions(a.name),
                         size: 32,
                         onPressed: () {
                           final box = bctx.findRenderObject() as RenderBox;
@@ -260,7 +268,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (top.isNotEmpty) ...[
-                      const SectionHeader('Populares'),
+                      SectionHeader(context.l10n.artistPopular),
                       TrackTable(
                         tracks: top,
                         contextName: a.name,
@@ -273,7 +281,9 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 8, 0, 24),
                           child: TextLink(
-                            _showMore ? 'Mostrar menos' : 'Ver mais',
+                            _showMore
+                                ? context.l10n.artistShowLess
+                                : context.l10n.artistShowMore,
                             style: const TextStyle(
                               color: Pm.subdued,
                               fontWeight: FontWeight.w700,
@@ -284,7 +294,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                         ),
                     ],
                     if (d.liked.isNotEmpty) ...[
-                      const SectionHeader('Você curtiu'),
+                      SectionHeader(context.l10n.artistYouLiked),
                       Row(
                         children: [
                           Stack(
@@ -310,18 +320,19 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextLink(
-                                '${d.liked.length} músicas',
+                                context.l10n.commonSongCount(d.liked.length),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 15,
                                 ),
                                 onTap: () => player.playList(
                                   d.liked,
-                                  contextName: 'Você curtiu: ${a.name}',
+                                  contextName:
+                                      '${context.l10n.artistYouLiked}: ${a.name}',
                                 ),
                               ),
                               Text(
-                                'De ${a.name}',
+                                context.l10n.artistFrom(a.name),
                                 style: const TextStyle(color: Pm.subdued),
                               ),
                             ],
@@ -331,23 +342,23 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                       const SizedBox(height: 32),
                     ],
                     if (d.albums.isNotEmpty || cloudAlbums.isNotEmpty) ...[
-                      const SectionHeader('Discografia'),
+                      SectionHeader(context.l10n.artistDiscography),
                       ChipBar(
                         padding: const EdgeInsets.only(bottom: 8),
                         children: [
                           Chip2(
-                            'Lançamentos populares',
+                            context.l10n.artistPopularReleases,
                             selected: _disco == _Disco.popular,
                             onTap: () =>
                                 setState(() => _disco = _Disco.popular),
                           ),
                           Chip2(
-                            'Álbuns',
+                            context.l10n.commonAlbums,
                             selected: _disco == _Disco.albums,
                             onTap: () => setState(() => _disco = _Disco.albums),
                           ),
                           Chip2(
-                            'Singles e EPs',
+                            context.l10n.artistSinglesEps,
                             selected: _disco == _Disco.singles,
                             onTap: () =>
                                 setState(() => _disco = _Disco.singles),
@@ -362,9 +373,9 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                           if (x.year != null) '${x.year}',
                           if (x.cloud)
                             switch (x.recordType) {
-                              'single' => 'Single',
+                              'single' => context.l10n.commonSingle,
                               'ep' => 'EP',
-                              _ => 'Álbum',
+                              _ => context.l10n.commonAlbum,
                             }
                           else
                             qualityTag(quality?.of(x.name)) ?? x.artistLine,
@@ -372,11 +383,17 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                       ),
                     ],
                     if (d.similar.isNotEmpty)
-                      Shelf(title: 'Fãs também curtem', items: d.similar),
+                      Shelf(
+                        title: context.l10n.artistFansAlsoLike,
+                        items: d.similar,
+                      ),
                     if (d.appearsOn.isNotEmpty)
-                      Shelf(title: 'Aparece em', items: d.appearsOn),
+                      Shelf(
+                        title: context.l10n.artistAppearsOn,
+                        items: d.appearsOn,
+                      ),
                     if ((a.overview ?? '').isNotEmpty) ...[
-                      const SectionHeader('Sobre'),
+                      SectionHeader(context.l10n.artistAbout),
                       ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 760),
                         child: Text(

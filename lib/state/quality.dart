@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/catalog.dart';
 import 'session.dart';
+import '../l10n/l10n.dart';
 
 /// Qualidade dos álbuns de um artista na biblioteca (FLAC, som fraco, incompleto), pelo nome.
 /// Sem painel ou sem a pasta: vazio (as páginas só não mostram as etiquetas).
@@ -21,7 +22,7 @@ String? qualityTag(AlbumQuality? q) => q == null
     : q.flac
     ? 'FLAC'
     : q.poor
-    ? 'som fraco'
+    ? appL10n.stateQualityPoor
     : q.partial
-    ? 'incompleto'
+    ? appL10n.stateQualityPartial
     : null;

@@ -7,6 +7,7 @@ import '../api/models.dart';
 import 'library.dart';
 import 'session.dart';
 import 'notify.dart';
+import '../l10n/l10n.dart';
 
 class DownloadsState {
   final List<DownloadJob> jobs;
@@ -78,8 +79,8 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
       Notify.progress(
         Notify.libraryId,
         active.length == 1
-            ? 'Baixando ${_name(first)}'
-            : 'Baixando ${active.length} pedidos',
+            ? appL10n.stateDownloadingName(_name(first))
+            : appL10n.stateDownloadingRequests(active.length),
         active.length == 1
             ? first.statusLabel
             : active.map(_name).take(3).join(', '),
@@ -91,10 +92,10 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
       final was = before[j.id];
       if (was == null || !was.active || j.active) continue;
       final title = j.ok
-          ? '${_name(j)} chegou na biblioteca'
+          ? appL10n.stateDownloadArrived(_name(j))
           : j.status == 'parcial'
-          ? '${_name(j)} chegou em parte'
-          : '${_name(j)}: ${j.statusLabel.toLowerCase()}';
+          ? appL10n.stateDownloadPartial(_name(j))
+          : appL10n.stateDownloadEnded(_name(j), j.statusLabel.toLowerCase());
       Notify.show(j.id.hashCode & 0x7fffffff, title, j.summary ?? '');
     }
   }
@@ -135,18 +136,13 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
       ),
       _ => it.deezerId,
     };
-    if (n == null) return 'Esse item não veio do catálogo.';
+    if (n == null) return appL10n.stateNotFromCatalog;
     try {
       final again = await ref.read(catalogProvider).download(kind, n);
       refreshSoon();
-      final what = switch (kind) {
-        'album' => 'o álbum',
-        'artist' => 'a discografia',
-        _ => 'a música',
-      };
       return again
-          ? 'Já está baixando $what.'
-          : 'Baixando $what. Aparece no sino quando chegar.';
+          ? appL10n.stateAlreadyDownloading(kind)
+          : appL10n.stateDownloadRequested(kind);
     } on CatalogException catch (e) {
       return e.message;
     }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/catalog.dart';
 import '../../state/downloads.dart';
+import '../../l10n/l10n.dart';
 import '../responsive.dart';
 import '../theme.dart';
 import 'disk_image.dart';
@@ -19,7 +20,9 @@ class DownloadsBell extends ConsumerWidget {
     final st = ref.watch(downloadsProvider);
     final badge = st.active > 0 ? st.active : st.unseen;
     return IconButton(
-      tooltip: st.active > 0 ? '${st.active} baixando' : 'Downloads',
+      tooltip: st.active > 0
+          ? context.l10n.widgetDownloadsBellDownloading(st.active)
+          : context.l10n.commonDownloads,
       onPressed: () => _open(context, ref),
       icon: Badge(
         isLabelVisible: badge > 0,
@@ -59,7 +62,7 @@ class DownloadsBell extends ConsumerWidget {
     showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
-      barrierLabel: 'Fechar',
+      barrierLabel: context.l10n.commonClose,
       barrierColor: Colors.transparent,
       pageBuilder: (dctx, _, _) => Align(
         alignment: Alignment.topRight,
@@ -91,20 +94,19 @@ class DownloadsPanel extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Text(
-            'Downloads',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+            context.l10n.commonDownloads,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
           ),
         ),
         if (jobs.isEmpty)
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             child: Text(
-              'Nada por aqui. Toque uma música com nuvem ou use "Baixar" no menu ⋯ '
-              'para trazer do catálogo para a biblioteca.',
-              style: TextStyle(color: Pm.subdued),
+              context.l10n.widgetDownloadsBellEmpty,
+              style: const TextStyle(color: Pm.subdued),
             ),
           )
         else
@@ -187,7 +189,7 @@ class _JobTile extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Fechar'),
+            child: Text(ctx.l10n.commonClose),
           ),
         ],
       ),
@@ -199,13 +201,13 @@ class _JobTile extends ConsumerWidget {
     final j = job;
     final cat = ref.read(catalogProvider);
     final what = switch (j.kind) {
-      'album' => 'Álbum',
-      'artist' => 'Discografia',
-      'flac' => 'Em FLAC',
-      'improve' => 'Qualidade',
-      'albums' => 'Álbuns',
-      'playlist' => 'Playlist',
-      _ => 'Música',
+      'album' => context.l10n.commonAlbum,
+      'artist' => context.l10n.widgetDownloadsBellKindDiscography,
+      'flac' => context.l10n.widgetDownloadsBellKindFlac,
+      'improve' => context.l10n.widgetDownloadsBellKindQuality,
+      'albums' => context.l10n.commonAlbums,
+      'playlist' => context.l10n.commonPlaylist,
+      _ => context.l10n.commonSong,
     };
     final color = j.active
         ? Pm.subdued
@@ -267,7 +269,7 @@ class _JobTile extends ConsumerWidget {
       // Controles discretos: só aparecem no ⋮.
       trailing: PopupMenuButton<String>(
         icon: const Icon(Icons.more_vert, size: 18, color: Pm.muted),
-        tooltip: 'Opções',
+        tooltip: context.l10n.widgetDownloadsBellOptions,
         color: Pm.elevated,
         onSelected: (v) => switch (v) {
           'details' => _details(context, ref),
@@ -275,31 +277,40 @@ class _JobTile extends ConsumerWidget {
             context,
             ref,
             () => cat.cancelJob(j.id),
-            'Download cancelado',
+            context.l10n.widgetDownloadsBellCancelled,
           ),
           'retry' => _act(
             context,
             ref,
             () => cat.retryJob(j.id),
-            'Tentando de novo',
+            context.l10n.widgetDownloadsBellRetrying,
           ),
           _ => _act(
             context,
             ref,
             () => cat.deleteJob(j.id),
-            'Removido da lista',
+            context.l10n.widgetDownloadsBellRemovedFromList,
           ),
         },
         itemBuilder: (_) => [
-          const PopupMenuItem(value: 'details', child: Text('Ver detalhes')),
+          PopupMenuItem(
+            value: 'details',
+            child: Text(context.l10n.widgetDownloadsBellDetails),
+          ),
           if (j.active)
-            const PopupMenuItem(value: 'cancel', child: Text('Cancelar')),
+            PopupMenuItem(
+              value: 'cancel',
+              child: Text(context.l10n.commonCancel),
+            ),
           if (!j.active && !j.ok)
-            const PopupMenuItem(value: 'retry', child: Text('Tentar de novo')),
+            PopupMenuItem(
+              value: 'retry',
+              child: Text(context.l10n.commonRetry),
+            ),
           if (!j.active)
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'delete',
-              child: Text('Remover da lista'),
+              child: Text(context.l10n.widgetDownloadsBellRemoveFromList),
             ),
         ],
       ),

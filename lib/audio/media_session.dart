@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import '../api/jellyfin.dart';
 import '../api/models.dart';
 import 'player.dart';
+import '../l10n/l10n.dart';
 
 /// Sessão de mídia do celular: notificação, tela de bloqueio, fones Bluetooth, widget
 /// e Android Auto (navegar pela biblioteca no carro).
@@ -20,9 +21,9 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
   static Future<void> init() async {
     instance = await AudioService.init(
       builder: MediaSession._,
-      config: const AudioServiceConfig(
+      config: AudioServiceConfig(
         androidNotificationChannelId: 'io.github.thiagoslb.pudim.audio',
-        androidNotificationChannelName: 'Reprodução',
+        androidNotificationChannelName: appL10n.audioPlaybackChannel,
         androidNotificationIcon: 'mipmap/ic_launcher',
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
@@ -47,7 +48,9 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     _c = c;
     final a = c.audio;
     _subs
-      ..add(a.playbackEventStream.listen((_) => _broadcast(), onError: (_, _) {}))
+      ..add(
+        a.playbackEventStream.listen((_) => _broadcast(), onError: (_, _) {}),
+      )
       ..add(a.playingStream.listen((_) => _broadcast()))
       ..add(a.speedStream.listen((_) => _broadcast()))
       ..add(a.durationStream.listen((_) => _pushItem()));
@@ -148,14 +151,18 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     'android.media.browse.CONTENT_STYLE_PLAYABLE_HINT': 1,
   };
 
-  MediaItem _folder(String id, String title, {String? art, bool grid = false}) =>
-      MediaItem(
-        id: id,
-        title: title,
-        playable: false,
-        artUri: art == null ? null : Uri.parse(art),
-        extras: grid ? _hintGrid : null,
-      );
+  MediaItem _folder(
+    String id,
+    String title, {
+    String? art,
+    bool grid = false,
+  }) => MediaItem(
+    id: id,
+    title: title,
+    playable: false,
+    artUri: art == null ? null : Uri.parse(art),
+    extras: grid ? _hintGrid : null,
+  );
 
   @override
   Future<List<MediaItem>> getChildren(
@@ -173,12 +180,13 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     try {
       if (parentMediaId == AudioService.browsableRootId) {
         return [
-          _folder('recent', 'Tocadas recentemente'),
-          _folder('liked', 'Músicas curtidas'),
-          _folder('pl', 'Playlists', grid: true),
-          _folder('albums', 'Álbuns recentes', grid: true),
-          _folder('artists', 'Artistas', grid: true),
-          if (c.offlineTracks().isNotEmpty) _folder('offline', 'Baixadas'),
+          _folder('recent', appL10n.commonRecentlyPlayed),
+          _folder('liked', appL10n.commonLikedSongs),
+          _folder('pl', appL10n.commonPlaylists, grid: true),
+          _folder('albums', appL10n.audioRecentAlbums, grid: true),
+          _folder('artists', appL10n.commonArtists, grid: true),
+          if (c.offlineTracks().isNotEmpty)
+            _folder('offline', appL10n.commonDownloaded),
         ];
       }
       switch (parentMediaId) {
@@ -263,10 +271,10 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     return list;
   }
 
-  static const _ctxNames = {
-    'recent': 'Tocadas recentemente',
-    'liked': 'Músicas curtidas',
-    'offline': 'Baixadas',
+  static Map<String, String> get _ctxNames => {
+    'recent': appL10n.commonRecentlyPlayed,
+    'liked': appL10n.commonLikedSongs,
+    'offline': appL10n.commonDownloaded,
   };
 
   @override
@@ -311,10 +319,10 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     if (query.trim().isEmpty) {
       if (c.queue.current != null) return play();
       final liked = await api.favoriteTracks();
-      return c.shufflePlay(liked, contextName: 'Músicas curtidas');
+      return c.shufflePlay(liked, contextName: appL10n.commonLikedSongs);
     }
     final found = await api.search(query, 'Audio', limit: 30);
     if (found.isEmpty) return;
-    await c.playList(found, contextName: 'Busca: $query');
+    await c.playList(found, contextName: appL10n.audioSearchContext(query));
   }
 }

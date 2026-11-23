@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'models.dart';
-
+import '../l10n/l10n.dart';
 
 class CatalogSearch {
   final List<Item> tracks, albums, artists, playlists;
@@ -52,15 +52,15 @@ class DownloadJob {
   bool get failed => !active && !ok && status != 'parcial';
 
   String get statusLabel => switch (status) {
-    'na_fila' => 'Na fila',
-    'rodando' || 'baixando' => step ?? 'Baixando',
-    'concluido' => 'Chegou na biblioteca',
-    'em_dia' => 'Já estava na biblioteca',
-    'parcial' => 'Chegou em parte',
-    'nao_encontrado' => 'Não encontrado',
-    'cancelado' => 'Cancelado',
-    'interrompido' => 'Interrompido',
-    _ => 'Falhou',
+    'na_fila' => appL10n.apiStatusQueued,
+    'rodando' || 'baixando' => step ?? appL10n.apiStatusDownloading,
+    'concluido' => appL10n.apiStatusDone,
+    'em_dia' => appL10n.apiStatusUpToDate,
+    'parcial' => appL10n.apiStatusPartial,
+    'nao_encontrado' => appL10n.apiStatusNotFound,
+    'cancelado' => appL10n.apiStatusCancelled,
+    'interrompido' => appL10n.apiStatusInterrupted,
+    _ => appL10n.apiStatusFailed,
   };
 
   static DateTime _t(num? s) =>
@@ -288,7 +288,7 @@ class Catalog {
       final err = (e.response?.data is Map)
           ? (e.response!.data as Map)['error']
           : null;
-      throw CatalogException(err?.toString() ?? 'O servidor de extras não respondeu.');
+      throw CatalogException(err?.toString() ?? appL10n.apiExtrasNoResponse);
     }
   }
 
@@ -355,7 +355,7 @@ class Catalog {
       final err = (e.response?.data is Map)
           ? (e.response!.data as Map)['error']
           : null;
-      throw CatalogException(err?.toString() ?? 'O servidor de extras não respondeu.');
+      throw CatalogException(err?.toString() ?? appL10n.apiExtrasNoResponse);
     }
   }
 
@@ -375,7 +375,7 @@ class Catalog {
       final err = (e.response?.data is Map)
           ? (e.response!.data as Map)['error']
           : null;
-      throw CatalogException(err?.toString() ?? 'O servidor de extras não respondeu.');
+      throw CatalogException(err?.toString() ?? appL10n.apiExtrasNoResponse);
     }
   }
 
@@ -407,7 +407,7 @@ class Catalog {
       final err = (e.response?.data is Map)
           ? (e.response!.data as Map)['error']
           : null;
-      throw CatalogException(err?.toString() ?? 'O servidor de extras não respondeu.');
+      throw CatalogException(err?.toString() ?? appL10n.apiExtrasNoResponse);
     }
   }
 
@@ -460,9 +460,7 @@ class Catalog {
     final d = await _get('/api/player/albums/plan/$token');
     if (d['status'] == 'buscando') return null;
     if (d['status'] == 'erro' || d['error'] != null) {
-      throw CatalogException(
-        '${d['error'] ?? 'Não consegui listar os álbuns.'}',
-      );
+      throw CatalogException('${d['error'] ?? appL10n.apiAlbumListFailed}');
     }
     return AlbumPlan.fromJson(d['result'] as Map<String, dynamic>);
   }
@@ -511,10 +509,11 @@ class Catalog {
       'cover': ?cover,
     });
     final n = (d['downloading'] as num?)?.toInt() ?? 0;
-    final found = d['found'] ?? 0, total = d['total'] ?? 0;
+    final found = (d['found'] as num?)?.toInt() ?? 0;
+    final total = (d['total'] as num?)?.toInt() ?? 0;
     return n == 0
-        ? 'Playlist na Sua Biblioteca ($found de $total músicas)'
-        : 'Playlist na Sua Biblioteca; baixando mais $n música${n == 1 ? '' : 's'}';
+        ? appL10n.apiPlaylistSaved(found, total)
+        : appL10n.apiPlaylistDownloading(n);
   }
 
   // ---------- descobertas e mistura ----------
@@ -1169,9 +1168,7 @@ extension PudimExtrasApi on Catalog {
 
   // Jam
   Future<JamState?> jam({int? rev}) async {
-    final d = await _get('/api/player/jam', {
-      if (rev != null) 'rev': '$rev',
-    });
+    final d = await _get('/api/player/jam', {if (rev != null) 'rev': '$rev'});
     final j = d['jam'];
     return j is Map<String, dynamic> ? JamState.fromJson(j) : null;
   }
@@ -1201,11 +1198,11 @@ extension PudimExtrasApi on Catalog {
         'items': [for (final i in items) i.toStore()],
       });
 
-  Future<void> jamCmd(String id, String action, {int? index}) =>
-      _send('POST', '/api/player/jam/$id/cmd', {
-        'action': action,
-        'index': ?index,
-      });
+  Future<void> jamCmd(String id, String action, {int? index}) => _send(
+    'POST',
+    '/api/player/jam/$id/cmd',
+    {'action': action, 'index': ?index},
+  );
 
   Future<void> jamInvite(String id, String userId) =>
       _send('POST', '/api/player/jam/$id/invite/$userId');
@@ -1227,9 +1224,7 @@ extension PudimExtrasApi on Catalog {
   }
 
   Future<void> collabInvite(String pid, String userId, String title) =>
-      _send('POST', '/api/player/collab/$pid/invite/$userId', {
-        'title': title,
-      });
+      _send('POST', '/api/player/collab/$pid/invite/$userId', {'title': title});
 
   Future<void> collabAdded(String pid, List<String> ids) =>
       _send('POST', '/api/player/collab/$pid/added', {'ids': ids});
@@ -1250,7 +1245,9 @@ extension PudimExtrasApi on Catalog {
   }
 
   Future<String?> lastfmFinish(String token) async =>
-      (await _send('POST', '/api/player/lastfm/finish', {'token': token}))['name']
+      (await _send('POST', '/api/player/lastfm/finish', {
+            'token': token,
+          }))['name']
           as String?;
 
   Future<void> lastfmDisconnect() => _send('DELETE', '/api/player/lastfm');

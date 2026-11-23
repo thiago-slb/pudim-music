@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../api/response_cache.dart';
+import '../../l10n/l10n.dart';
 import '../theme.dart';
 
 /// Faixa "Sem internet" enquanto o servidor não responde (as telas vêm do aparelho).
@@ -24,16 +25,16 @@ class OfflineBanner extends StatelessWidget {
                   horizontal: 12,
                 ),
                 color: const Color(0xFF2A2A2A),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.cloud_off, size: 15, color: Pm.subdued),
-                    SizedBox(width: 8),
+                    const Icon(Icons.cloud_off, size: 15, color: Pm.subdued),
+                    const SizedBox(width: 8),
                     Flexible(
                       child: Text(
-                        'Sem internet · mostrando o que está guardado no aparelho',
+                        context.l10n.widgetOfflineBanner,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Pm.subdued, fontSize: 12),
+                        style: const TextStyle(color: Pm.subdued, fontSize: 12),
                       ),
                     ),
                   ],

@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n.dart';
+
 import '../../api/models.dart';
 import '../../audio/player.dart';
 import '../../state/library.dart';
@@ -17,16 +19,17 @@ import 'playlist_edit.dart';
 
 /// Rótulo da origem da playlist, a partir do prefixo que o painel usa.
 String playlistOrigin(String name) {
-  if (name.startsWith('Spotify · ')) return 'Do Spotify';
+  final l = appL10n;
+  if (name.startsWith('Spotify · ')) return l.playlistOriginSpotify;
   if (name == 'Descobertas da semana' ||
       name == 'Mistura da semana' ||
       name == 'Radar de Novidades' ||
       name.startsWith('daylist · ')) {
-    return 'Feita para você';
+    return l.playlistOriginMadeForYou;
   }
   if (name.startsWith('Blend · ')) return 'Blend';
-  if (name.endsWith('_automatic')) return 'Mix automático';
-  return 'Playlist';
+  if (name.endsWith('_automatic')) return l.playlistOriginAuto;
+  return l.commonPlaylist;
 }
 
 class PlaylistPage extends ConsumerWidget {
@@ -41,7 +44,7 @@ class PlaylistPage extends ConsumerWidget {
     return data.when(
       loading: () => const LoadingBox(),
       error: (e, _) => off.saved(id)
-          ? _offlineTracks(off, id, '/playlist/$id', userName)
+          ? _offlineTracks(context, off, id, '/playlist/$id', userName)
           : ErrorBox(e, onRetry: () => ref.invalidate(playlistProvider(id))),
       data: (d) {
         Future.microtask(() => ref.read(recentOpenProvider.notifier).touch(id));
@@ -84,11 +87,17 @@ class LikedPage extends ConsumerWidget {
     return data.when(
       loading: () => const LoadingBox(),
       error: (e, _) => off.saved('liked')
-          ? _offlineTracks(off, 'liked', '/collection/tracks', userName)
+          ? _offlineTracks(
+              context,
+              off,
+              'liked',
+              '/collection/tracks',
+              userName,
+            )
           : ErrorBox(e, onRetry: () => ref.invalidate(likedTracksProvider)),
       data: (tracks) => TracksPage(
-        title: 'Músicas curtidas',
-        type: 'Playlist',
+        title: context.l10n.commonLikedSongs,
+        type: context.l10n.commonPlaylist,
         cover: Container(
           width: 232,
           height: 232,
@@ -113,11 +122,17 @@ class LikedPage extends ConsumerWidget {
 }
 
 /// Sem internet: a mesma página com o que foi guardado no aparelho.
-Widget _offlineTracks(OfflineState off, String id, String route, String owner) {
+Widget _offlineTracks(
+  BuildContext context,
+  OfflineState off,
+  String id,
+  String route,
+  String owner,
+) {
   final c = off.collections[id]!;
   return TracksPage(
     title: c.name,
-    type: 'Baixada no aparelho',
+    type: context.l10n.playlistDownloadedOnDevice,
     cover: c.head == null
         ? const OfflineCover(size: 232)
         : Cover(c.head, size: 232),
@@ -139,14 +154,16 @@ class OfflinePage extends ConsumerWidget {
     final tracks = off.tracks.values.toList()
       ..sort((a, b) => a.artistLine.compareTo(b.artistLine));
     return TracksPage(
-      title: 'Baixadas',
-      type: 'No aparelho',
+      title: context.l10n.commonDownloaded,
+      type: context.l10n.playlistOnDevice,
       cover: const OfflineCover(size: 232),
       color: const Color(0xFF1E3A2A),
       owner: userName,
       description: off.pending.isEmpty
-          ? const Text('Tocam sem internet.')
-          : Text('Tocam sem internet. Baixando mais ${off.pending.length}…'),
+          ? Text(context.l10n.playlistPlaysOffline)
+          : Text(
+              context.l10n.playlistPlaysOfflineDownloading(off.pending.length),
+            ),
       tracks: tracks,
       route: '/collection/offline',
     );
@@ -265,20 +282,20 @@ class _TracksPageState extends ConsumerState<TracksPage> {
             children: [
               ?widget.above,
               Text.rich(
-            TextSpan(
-              children: [
                 TextSpan(
-                  text: widget.owner,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
+                  children: [
+                    TextSpan(
+                      text: widget.owner,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    TextSpan(
+                      text:
+                          ' • ${context.l10n.playlistSongsAndTime(widget.tracks.length, formatTotal(total))}',
+                      style: const TextStyle(color: Pm.subdued),
+                    ),
+                  ],
                 ),
-                TextSpan(
-                  text:
-                      ' • ${widget.tracks.length} músicas, ${formatTotal(total)}',
-                  style: const TextStyle(color: Pm.subdued),
-                ),
-              ],
-            ),
-          ),
+              ),
             ],
           ),
         ),
@@ -297,7 +314,7 @@ class _TracksPageState extends ConsumerState<TracksPage> {
             const SizedBox(width: 16),
             IconBtn(
               Icons.shuffle,
-              tooltip: 'Tocar em ordem aleatória',
+              tooltip: context.l10n.commonShufflePlay,
               size: 32,
               onPressed: () => player.shufflePlay(
                 widget.tracks,
@@ -323,7 +340,7 @@ class _TracksPageState extends ConsumerState<TracksPage> {
               Builder(
                 builder: (bctx) => IconBtn(
                   Icons.more_horiz,
-                  tooltip: 'Mais opções para ${widget.title}',
+                  tooltip: context.l10n.playlistMoreOptions(widget.title),
                   size: 32,
                   onPressed: () {
                     final box = bctx.findRenderObject() as RenderBox;
@@ -354,8 +371,8 @@ class _TracksPageState extends ConsumerState<TracksPage> {
                       child: TextField(
                         autofocus: true,
                         style: const TextStyle(fontSize: 14),
-                        decoration: const InputDecoration(
-                          hintText: 'Buscar na playlist',
+                        decoration: InputDecoration(
+                          hintText: context.l10n.playlistSearchHint,
                           isDense: true,
                         ),
                         onChanged: (v) => setState(() => _filter = v),
@@ -367,18 +384,18 @@ class _TracksPageState extends ConsumerState<TracksPage> {
             else
               IconBtn(
                 Icons.search,
-                tooltip: 'Buscar na playlist',
+                tooltip: context.l10n.playlistSearchHint,
                 onPressed: () => setState(() => _searching = true),
               ),
           ],
         ),
         PageBody(
           child: widget.tracks.isEmpty
-              ? const Padding(
-                  padding: EdgeInsets.all(32),
+              ? Padding(
+                  padding: const EdgeInsets.all(32),
                   child: Text(
-                    'Nenhuma música por aqui ainda.',
-                    style: TextStyle(color: Pm.subdued),
+                    context.l10n.playlistEmpty,
+                    style: const TextStyle(color: Pm.subdued),
                   ),
                 )
               : TrackTable(

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../api/models.dart';
 import '../../state/offline.dart';
 import '../../state/session.dart';
+import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'offline_button.dart';
 import 'disk_image.dart';
@@ -214,7 +215,7 @@ class CloudBadge extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(right: 4),
     child: Tooltip(
-      message: 'Do catálogo: ainda não está na biblioteca',
+      message: context.l10n.widgetCommonCatalogBadge,
       child: Icon(Icons.cloud_outlined, size: size, color: Pm.subdued),
     ),
   );
@@ -303,7 +304,7 @@ class SectionHeader extends StatelessWidget {
           ),
           if (onShowAll != null)
             TextLink(
-              'Mostrar tudo',
+              context.l10n.widgetCommonShowAll,
               onTap: onShowAll,
               style: const TextStyle(
                 color: Pm.subdued,
@@ -409,9 +410,9 @@ class ErrorBox extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Algo deu errado',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          Text(
+            context.l10n.widgetCommonSomethingWentWrong,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
           Text(
@@ -423,7 +424,7 @@ class ErrorBox extends ConsumerWidget {
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: onRetry,
-              child: const Text('Tentar de novo'),
+              child: Text(context.l10n.commonRetry),
             ),
           ],
           // Sem internet: o que está no aparelho continua tocando.
@@ -434,7 +435,7 @@ class ErrorBox extends ConsumerWidget {
             TextButton.icon(
               onPressed: () => context.go('/collection/offline'),
               icon: const Icon(Icons.arrow_circle_down, color: Pm.green),
-              label: const Text('Ouvir as músicas baixadas'),
+              label: Text(context.l10n.widgetCommonListenDownloaded),
             ),
           ],
         ],

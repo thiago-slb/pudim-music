@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
 import '../../api/models.dart';
 import '../../audio/player.dart';
 import '../../features/lyrics/lyrics_data.dart';
@@ -53,7 +54,7 @@ class _PanelHeader extends ConsumerWidget {
         ),
         IconBtn(
           Icons.close,
-          tooltip: 'Fechar',
+          tooltip: context.l10n.commonClose,
           size: 18,
           onPressed: () {
             if (isCompact(context)) {
@@ -76,17 +77,17 @@ class _NowPlayingPanel extends ConsumerWidget {
     final q = ref.watch(playerProvider);
     final cur = q.current;
     if (cur == null) {
-      return const Column(
+      return Column(
         children: [
-          _PanelHeader(''),
+          const _PanelHeader(''),
           Expanded(
             child: Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 child: Text(
-                  'Toque alguma coisa para ver aqui o que está tocando.',
+                  context.l10n.rightPanelNothingPlaying,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Pm.subdued),
+                  style: const TextStyle(color: Pm.subdued),
                 ),
               ),
             ),
@@ -136,8 +137,8 @@ class _NowPlayingPanel extends ConsumerWidget {
                         ? Icons.check_circle
                         : Icons.add_circle_outline,
                     tooltip: cur.favorite
-                        ? 'Remover das Músicas curtidas'
-                        : 'Adicionar a Músicas curtidas',
+                        ? context.l10n.commonRemoveFromLiked
+                        : context.l10n.commonAddToLiked,
                     active: cur.favorite,
                     size: 24,
                     onPressed: () => toggleFavorite(context, ref, cur),
@@ -197,9 +198,12 @@ class LyricsPreview extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Prévia da letra',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              Text(
+                context.l10n.rightPanelLyricsPreview,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 12),
               for (var i = 0; i < lines.length; i++)
@@ -268,12 +272,12 @@ class AboutArtistCard extends ConsumerWidget {
                       alignment: Alignment.topCenter,
                       errorBuilder: (_, _, _) => Container(color: Pm.highlight),
                     ),
-                    const Positioned(
+                    Positioned(
                       left: 16,
                       top: 12,
                       child: Text(
-                        'Sobre o artista',
-                        style: TextStyle(
+                        context.l10n.rightPanelAboutArtist,
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           shadows: [Shadow(blurRadius: 8)],
@@ -333,14 +337,17 @@ class NextUpCard extends ConsumerWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'A seguir',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  context.l10n.rightPanelNextUp,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               TextLink(
-                'Abrir fila',
+                context.l10n.rightPanelOpenQueue,
                 style: const TextStyle(
                   color: Pm.subdued,
                   fontSize: 13,
@@ -411,27 +418,30 @@ class QueueView extends ConsumerWidget {
       onPlay: () => c.jumpTo(queueIndex),
     );
     if (cur == null) {
-      return const Column(
+      return Column(
         children: [
-          _PanelHeader('Fila'),
+          _PanelHeader(context.l10n.commonQueue),
           Expanded(
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.queue_music, size: 48, color: Pm.subdued),
-                  SizedBox(height: 12),
+                  const Icon(Icons.queue_music, size: 48, color: Pm.subdued),
+                  const SizedBox(height: 12),
                   Text(
-                    'Adicione à fila',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    context.l10n.rightPanelQueueEmptyTitle,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
-                      'Clique em "Adicionar à fila" no menu de uma faixa para incluí-la aqui',
+                      context.l10n.rightPanelQueueEmptyHint,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Pm.subdued),
+                      style: const TextStyle(color: Pm.subdued),
                     ),
                   ),
                 ],
@@ -446,23 +456,23 @@ class QueueView extends ConsumerWidget {
     final restStart = q.index + 1 + manual.length;
     return Column(
       children: [
-        const _PanelHeader('Fila'),
+        _PanelHeader(context.l10n.commonQueue),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             children: [
-              title('Tocando agora'),
+              title(context.l10n.rightPanelNowPlaying),
               row(cur, q.index),
               if (manual.isNotEmpty) ...[
-                title('A seguir na fila'),
+                title(context.l10n.rightPanelNextInQueue),
                 for (var i = 0; i < manual.length; i++)
                   row(manual[i], q.index + 1 + i),
               ],
               if (rest.isNotEmpty) ...[
                 title(
                   q.contextName.isEmpty
-                      ? 'A seguir'
-                      : 'Próximas de: ${q.contextName}',
+                      ? context.l10n.rightPanelNextUp
+                      : context.l10n.rightPanelNextFrom(q.contextName),
                 ),
                 for (var i = 0; i < rest.length && i < 200; i++)
                   row(rest[i], restStart + i),

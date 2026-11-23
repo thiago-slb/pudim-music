@@ -1,5 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../l10n/l10n.dart';
+
 import 'package:go_router/go_router.dart';
 
 import '../../api/models.dart';
@@ -53,7 +56,7 @@ class AlbumPage extends ConsumerWidget {
       error: (e, _) => off.saved(id)
           ? TracksPage(
               title: off.collections[id]!.name,
-              type: 'Álbum • baixado no aparelho',
+              type: context.l10n.albumDownloadedType,
               cover: Cover(off.collections[id]!.head, size: 232),
               color: const Color(0xFF1E3A2A),
               owner: off.collections[id]!.head?.artistLine ?? '',
@@ -82,7 +85,7 @@ class AlbumPage extends ConsumerWidget {
           children: [
             BigHeader(
               cover: Cover(a, size: 232),
-              type: 'Álbum',
+              type: context.l10n.commonAlbum,
               title: a.name,
               meta: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -106,7 +109,7 @@ class AlbumPage extends ConsumerWidget {
                   ],
                   if (a.year != null) Text(' • ${a.year}'),
                   Text(
-                    ' • ${d.tracks.length} músicas, ${formatTotal(total)}',
+                    ' • ${context.l10n.albumSongsAndTime(d.tracks.length, formatTotal(total))}',
                     style: const TextStyle(color: Pm.subdued),
                   ),
                   if (tag != null) ...[
@@ -133,7 +136,7 @@ class AlbumPage extends ConsumerWidget {
                 const SizedBox(width: 16),
                 IconBtn(
                   Icons.shuffle,
-                  tooltip: 'Tocar em ordem aleatória',
+                  tooltip: context.l10n.commonShufflePlay,
                   size: 32,
                   onPressed: () => ref
                       .read(playerProvider.notifier)
@@ -147,8 +150,8 @@ class AlbumPage extends ConsumerWidget {
                 IconBtn(
                   a.favorite ? Icons.check_circle : Icons.add_circle_outline,
                   tooltip: a.favorite
-                      ? 'Remover da Sua Biblioteca'
-                      : 'Salvar na Sua Biblioteca',
+                      ? context.l10n.albumRemoveFromLibrary
+                      : context.l10n.albumSaveToLibrary,
                   size: 32,
                   active: a.favorite,
                   onPressed: () async {
@@ -159,7 +162,7 @@ class AlbumPage extends ConsumerWidget {
                 Builder(
                   builder: (bctx) => IconBtn(
                     Icons.more_horiz,
-                    tooltip: 'Mais opções para ${a.name}',
+                    tooltip: context.l10n.albumMoreOptions(a.name),
                     size: 32,
                     onPressed: () {
                       final box = bctx.findRenderObject() as RenderBox;
@@ -201,7 +204,7 @@ class AlbumPage extends ConsumerWidget {
                             ),
                             const SizedBox(width: 12),
                             Text(
-                              'Disco $disc',
+                              context.l10n.albumDisc(disc),
                               style: const TextStyle(
                                 color: Pm.subdued,
                                 fontWeight: FontWeight.w700,
@@ -225,7 +228,9 @@ class AlbumPage extends ConsumerWidget {
                   const SizedBox(height: 32),
                   if (d.more.isNotEmpty)
                     Shelf(
-                      title: 'Mais de ${a.mainArtist?.name ?? ''}',
+                      title: context.l10n.albumMoreFrom(
+                        a.mainArtist?.name ?? '',
+                      ),
                       items: d.more,
                       onShowAll: () =>
                           context.go('/artist/${a.mainArtist!.id}'),

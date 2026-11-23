@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../api/catalog.dart';
 import '../../state/library.dart';
 import '../../state/session.dart';
+import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
@@ -48,7 +49,9 @@ Future<void> runMade(BuildContext context, WidgetRef ref, String kind) async {
     if (context.mounted) {
       toast(
         context,
-        kind == 'radar' ? 'Procurando lançamentos…' : 'Montando sua daylist…',
+        kind == 'radar'
+            ? context.l10n.widgetMixSearchingReleases
+            : context.l10n.widgetMixBuildingDaylist,
       );
     }
     ref.invalidate(madeProvider);
@@ -76,23 +79,23 @@ Future<void> runMix(BuildContext context, WidgetRef ref, String kind) async {
     builder: (ctx) => AlertDialog(
       backgroundColor: Pm.elevated,
       title: Text(
-        desc ? 'Novas Descobertas da semana?' : 'Nova Mistura da semana?',
+        desc
+            ? ctx.l10n.widgetMixNewDiscoveriesTitle
+            : ctx.l10n.widgetMixNewMixTitle,
       ),
       content: Text(
         desc
-            ? 'As músicas que você ainda não ouviu saem da playlist e umas 30 novas '
-                  'começam a chegar. Toda segunda isso já acontece sozinho.'
-            : 'Monta de novo com os seus favoritos, o que você mais ouve e músicas '
-                  'parecidas. Toda segunda isso já acontece sozinho.',
+            ? ctx.l10n.widgetMixNewDiscoveriesBody
+            : ctx.l10n.widgetMixNewMixBody,
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, false),
-          child: const Text('Agora não'),
+          child: Text(ctx.l10n.widgetMixNotNow),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, true),
-          child: const Text('Montar agora'),
+          child: Text(ctx.l10n.commonBuildNow),
         ),
       ],
     ),
@@ -103,7 +106,9 @@ Future<void> runMix(BuildContext context, WidgetRef ref, String kind) async {
     if (context.mounted) {
       toast(
         context,
-        desc ? 'Montando suas Descobertas…' : 'Montando sua Mistura…',
+        desc
+            ? context.l10n.widgetMixBuildingDiscoveries
+            : context.l10n.widgetMixBuildingMix,
       );
     }
     ref.invalidate(mixesProvider);
@@ -138,8 +143,8 @@ class MixButton extends ConsumerWidget {
     if (!info.available) return const SizedBox.shrink();
     return Tooltip(
       message: info.generated == null
-          ? 'Montar agora'
-          : 'Montada em ${_date(info.generated!)}',
+          ? context.l10n.commonBuildNow
+          : context.l10n.widgetMixBuiltOn(_date(info.generated!)),
       child: TextButton.icon(
         style: TextButton.styleFrom(foregroundColor: Pm.subdued),
         icon: info.running
@@ -149,7 +154,11 @@ class MixButton extends ConsumerWidget {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : const Icon(Icons.refresh, size: 18),
-        label: Text(info.running ? 'Montando…' : 'Refazer'),
+        label: Text(
+          info.running
+              ? context.l10n.commonBuilding
+              : context.l10n.widgetMixRedo,
+        ),
         onPressed: info.running ? null : () => runMix(context, ref, kind),
       ),
     );
@@ -163,8 +172,8 @@ extension on MixButton {
     final info = kind == 'radar' ? m.radar : m.daylist;
     return Tooltip(
       message: info.generated == null
-          ? 'Montar agora'
-          : 'Montada em ${_date(info.generated!)}',
+          ? context.l10n.commonBuildNow
+          : context.l10n.widgetMixBuiltOn(_date(info.generated!)),
       child: TextButton.icon(
         style: TextButton.styleFrom(foregroundColor: Pm.subdued),
         icon: info.running
@@ -174,7 +183,11 @@ extension on MixButton {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : const Icon(Icons.refresh, size: 18),
-        label: Text(info.running ? 'Montando…' : 'Atualizar'),
+        label: Text(
+          info.running
+              ? context.l10n.commonBuilding
+              : context.l10n.widgetMixRefresh,
+        ),
         onPressed: info.running ? null : () => runMade(context, ref, kind),
       ),
     );
@@ -243,10 +256,10 @@ class _Invite extends ConsumerWidget {
         : const Icon(Icons.auto_awesome, size: 18),
     label: Text(
       info.running
-          ? 'Montando…'
+          ? context.l10n.commonBuilding
           : kind == 'descobertas'
-          ? 'Criar suas Descobertas da semana'
-          : 'Criar sua Mistura da semana',
+          ? context.l10n.widgetMixCreateDiscoveries
+          : context.l10n.widgetMixCreateMix,
     ),
     onPressed: info.running ? null : () => runMix(context, ref, kind),
   );
@@ -270,16 +283,13 @@ class _MadeInvite extends ConsumerWidget {
             height: 14,
             child: CircularProgressIndicator(strokeWidth: 2),
           )
-        : Icon(
-            kind == 'radar' ? Icons.radar : Icons.wb_twilight,
-            size: 18,
-          ),
+        : Icon(kind == 'radar' ? Icons.radar : Icons.wb_twilight, size: 18),
     label: Text(
       running
-          ? 'Montando…'
+          ? context.l10n.commonBuilding
           : kind == 'radar'
-          ? 'Criar seu Radar de Novidades'
-          : 'Criar sua daylist',
+          ? context.l10n.widgetMixCreateRadar
+          : context.l10n.widgetMixCreateDaylist,
     ),
     onPressed: running ? null : () => runMade(context, ref, kind),
   );

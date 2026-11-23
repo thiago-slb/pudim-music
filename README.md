@@ -4,7 +4,8 @@ A music player for [Jellyfin](https://jellyfin.org), built with Flutter for Andr
 It aims for the feel of a modern streaming app: a home page with shelves, fast search, a full-screen "now playing",
 synced lyrics, offline downloads, and an optional extras server for social features.
 
-> The interface is currently in **Brazilian Portuguese**. Translations are welcome.
+The interface is available in **Portuguese (Brazil)**, **English** and **Spanish**. It follows the device language
+(falling back to Portuguese) and can be changed in Settings. See [Translations](#translations) to add another language.
 
 ## Features
 
@@ -70,6 +71,7 @@ Jellyfin token. It is not published yet; the app is a complete Jellyfin player w
 | Auto mixes / smart playlists | ◐¹² | ◐¹⁴ | ◐¹⁵ | ✅ | ? | ❌ | ? | ? |
 | Listen together / social | ◐¹² | ? | ? | ? | ? | ❌¹⁶ | ? | ✅¹⁷ |
 | OS media controls / media keys | ✅ | ? | ✅ | ❌ | ? | ❌ | ✅ | ? |
+| Interface languages | pt, en, es | many | many | many | ? | ? | ? | many |
 
 1. Runs in any browser; the official desktop and mobile apps wrap it.
 2. Builds from the same code, but only Android and Windows are tested regularly.
@@ -103,9 +105,9 @@ Corrections are welcome: open an issue with a link.
 
 Download a build from the [releases](../../releases) (or the latest CI artifact), open the app and type:
 
-- **Servidor Jellyfin**: your server address, e.g. `https://jellyfin.example.com`
-- **Na rede local** (optional): a LAN address, e.g. `http://192.168.0.10:8096`, used whenever it answers
-- **Servidor de extras** (optional): the address of an extras server, if you run one
+- **Jellyfin server**: your server address, e.g. `https://jellyfin.example.com`
+- **On the local network** (optional): a LAN address, e.g. `http://192.168.0.10:8096`, used whenever it answers
+- **Extras server** (optional): the address of an extras server, if you run one
 
 Then sign in with your Jellyfin user name and password. The password goes only to your server; the app keeps
 just the access token (Windows Credential Manager / Android Keystore).
@@ -143,6 +145,24 @@ flutter build apk --release --dart-define-from-file=pudim.local.json
 | `PUDIM_EXTRAS_URL` | Optional extras server |
 
 Everything can also be changed in the app (login screen and Settings).
+
+## Translations
+
+Texts live in [`lib/l10n/`](lib/l10n) as ARB files and are compiled with Flutter's
+[gen-l10n](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization):
+`app_pt.arb` is the template (and the fallback), `app_en.arb` and `app_es.arb` are the translations.
+
+To add a language:
+
+1. Copy `lib/l10n/app_en.arb` to `lib/l10n/app_<code>.arb` (e.g. `app_fr.arb`), set `"@@locale"` to the code and
+   translate the values. Keep the `{placeholders}` and the ICU `plural`/`select` structure; the `@key` entries in
+   `app_pt.arb` describe the placeholders.
+2. Add the code to `appLanguages` in [`lib/l10n/l10n.dart`](lib/l10n/l10n.dart) and to the language picker in
+   [`lib/features/settings/settings_page.dart`](lib/features/settings/settings_page.dart).
+3. Run `flutter gen-l10n` (or just `flutter run`), then `flutter analyze` and `flutter test`.
+
+Names of the auto-generated playlists (e.g. "Descobertas", "Mistura da semana", "Radar de Novidades") are matched by
+the extras server and stay as they are in every language.
 
 ## Privacy
 
