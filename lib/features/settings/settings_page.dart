@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../ui/widgets/accounts.dart';
 
 import '../../audio/player.dart';
 import '../../state/locale.dart';
@@ -69,6 +70,8 @@ class SettingsPage extends ConsumerWidget {
               child: Text(context.l10n.settingsSignOut),
             ),
           ),
+          _Section(context.l10n.accountsTitle),
+          const AccountsList(),
           const _LanguageRow(),
           _Section(context.l10n.settingsSectionServer),
           _Row(title: 'Jellyfin', subtitle: urls.wan.isEmpty ? '-' : urls.wan),

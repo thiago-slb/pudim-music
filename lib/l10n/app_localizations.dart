@@ -1929,6 +1929,42 @@ abstract class L10n {
   /// **'Sair'**
   String get settingsSignOut;
 
+  /// No description provided for @accountsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Contas'**
+  String get accountsTitle;
+
+  /// No description provided for @accountsAdd.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar conta ou servidor'**
+  String get accountsAdd;
+
+  /// No description provided for @accountsSwitch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Trocar'**
+  String get accountsSwitch;
+
+  /// No description provided for @accountsInUse.
+  ///
+  /// In pt, this message translates to:
+  /// **'Em uso'**
+  String get accountsInUse;
+
+  /// No description provided for @accountsOn.
+  ///
+  /// In pt, this message translates to:
+  /// **'{user} em {host}'**
+  String accountsOn(String user, String host);
+
+  /// No description provided for @loginBackToAccount.
+  ///
+  /// In pt, this message translates to:
+  /// **'Voltar para a conta atual'**
+  String get loginBackToAccount;
+
   /// No description provided for @settingsSectionServer.
   ///
   /// In pt, this message translates to:
