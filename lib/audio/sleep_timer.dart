@@ -74,7 +74,9 @@ class SleepTimer extends Notifier<SleepState> {
     if (left < _fadeFor) {
       _player.fade = left.inMilliseconds / _fadeFor.inMilliseconds;
     }
-    state = SleepState(until: state.until); // atualiza o tempo que falta na tela
+    state = SleepState(
+      until: state.until,
+    ); // atualiza o tempo que falta na tela
   }
 }
 

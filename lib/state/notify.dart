@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../l10n/l10n.dart';
+
 /// Notificações do sistema (Android e Windows): downloads no aparelho com barra de progresso,
 /// músicas que chegaram na biblioteca e avisos do servidor (lançamentos, Descobertas, Mistura).
 class Notify {
@@ -37,16 +39,6 @@ class Notify {
     }
   }
 
-  static const _progressChannel = AndroidNotificationDetails(
-    'downloads',
-    'Downloads',
-    channelDescription: 'Progresso das músicas baixando',
-    importance: Importance.low,
-    priority: Priority.low,
-    onlyAlertOnce: true,
-    showWhen: false,
-  );
-
   /// Notificação fixa com barra (só no Android; no Windows fica só o aviso do fim).
   static Future<void> progress(
     int id,
@@ -63,9 +55,9 @@ class Notify {
         body: body,
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
-            _progressChannel.channelId,
-            _progressChannel.channelName,
-            channelDescription: _progressChannel.channelDescription,
+            'downloads',
+            appL10n.stateNotifyDownloadsChannel,
+            channelDescription: appL10n.stateNotifyDownloadsChannelDesc,
             importance: Importance.low,
             priority: Priority.low,
             onlyAlertOnce: true,
@@ -90,14 +82,13 @@ class Notify {
         id: id,
         title: title,
         body: body,
-        notificationDetails: const NotificationDetails(
+        notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             'novidades',
-            'Novidades',
-            channelDescription:
-                'Músicas que chegaram, lançamentos, Descobertas e Mistura',
+            appL10n.stateNotifyNewsChannel,
+            channelDescription: appL10n.stateNotifyNewsChannelDesc,
           ),
-          windows: WindowsNotificationDetails(),
+          windows: const WindowsNotificationDetails(),
         ),
       );
     } catch (_) {}

@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
 import '../../audio/player.dart';
 import '../../features/lyrics/lyrics_page.dart';
 import '../colors.dart';
@@ -196,7 +197,7 @@ class NowPlayingPage extends ConsumerWidget {
                               const SpeedButton(),
                               const Spacer(),
                               IconButton(
-                                tooltip: 'Fila',
+                                tooltip: context.l10n.commonQueue,
                                 icon: const Icon(
                                   Icons.queue_music,
                                   color: Pm.text,
@@ -238,7 +239,7 @@ class _TopRow extends ConsumerWidget {
       children: [
         IconButton(
           icon: const Icon(Icons.keyboard_arrow_down, color: Pm.text, size: 32),
-          tooltip: 'Fechar',
+          tooltip: context.l10n.commonClose,
           onPressed: () => context.pop(),
         ),
         Expanded(
@@ -252,16 +253,16 @@ class _TopRow extends ConsumerWidget {
                   },
             child: Column(
               children: [
-                const Text(
-                  'TOCANDO DE',
-                  style: TextStyle(
+                Text(
+                  context.l10n.nowPlayingPlayingFrom,
+                  style: const TextStyle(
                     fontSize: 11,
                     letterSpacing: 1,
                     color: Colors.white70,
                   ),
                 ),
                 Text(
-                  contextName.isEmpty ? 'Fila' : contextName,
+                  contextName.isEmpty ? context.l10n.commonQueue : contextName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
@@ -277,7 +278,7 @@ class _TopRow extends ConsumerWidget {
         Builder(
           builder: (bctx) => IconButton(
             icon: const Icon(Icons.more_vert, color: Pm.text),
-            tooltip: 'Mais opções',
+            tooltip: context.l10n.nowPlayingMoreOptions,
             onPressed: () => showItemMenu(context, ref, cur, Offset.zero),
           ),
         ),
@@ -365,7 +366,7 @@ class LyricsFullPage extends ConsumerWidget {
                     color: Pm.text,
                     size: 32,
                   ),
-                  tooltip: 'Fechar',
+                  tooltip: context.l10n.commonClose,
                   onPressed: () => context.pop(),
                 ),
                 Expanded(

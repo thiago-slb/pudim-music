@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/legacy.dart';
 
 import '../../state/session.dart';
+import '../../l10n/l10n.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
 
@@ -55,12 +56,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (wan.isEmpty && lan.isEmpty) {
       setState(() {
         _showServer = true;
-        _error = 'Digite o endereço do seu servidor Jellyfin.';
+        _error = context.l10n.loginServerRequired;
       });
       return;
     }
     if (_user.text.trim().isEmpty) {
-      setState(() => _error = 'Digite seu nome de usuário.');
+      setState(() => _error = context.l10n.loginUserRequired);
       return;
     }
     setState(() {
@@ -72,11 +73,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       await ref.read(extrasUrlProvider.notifier).set(_extras.text);
       await ref
           .read(sessionProvider.notifier)
-          .login(
-            ServerUrls(lan, wan),
-            _user.text.trim(),
-            _pass.text,
-          );
+          .login(ServerUrls(lan, wan), _user.text.trim(), _pass.text);
     } catch (e) {
       setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
     } finally {
@@ -92,7 +89,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (wan.isEmpty && lan.isEmpty) {
       setState(() {
         _showServer = true;
-        _error = 'Digite o endereço do seu servidor Jellyfin.';
+        _error = context.l10n.loginServerRequired;
       });
       return;
     }
@@ -149,7 +146,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         size: 18,
                         color: Pm.subdued,
                       ),
-                      tooltip: 'Fechar',
+                      tooltip: context.l10n.commonClose,
                       onPressed: () => windowManager.close(),
                     ),
                   ],
@@ -180,19 +177,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          const Text(
-                            'Entrar no Pudim',
+                          Text(
+                            context.l10n.loginTitle,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
-                            'Use sua conta do Jellyfin.',
+                          Text(
+                            context.l10n.loginSubtitle,
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Pm.subdued),
+                            style: const TextStyle(color: Pm.subdued),
                           ),
                           const SizedBox(height: 32),
                           if (_error != null) ...[
@@ -213,7 +210,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             controller: _user,
                             autofocus: _user.text.isEmpty,
                             autofillHints: const [AutofillHints.username],
-                            decoration: _dec('Nome de usuário'),
+                            decoration: _dec(context.l10n.loginUsername),
                             textInputAction: TextInputAction.next,
                           ),
                           const SizedBox(height: 16),
@@ -223,7 +220,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             obscureText: _obscure,
                             autofillHints: const [AutofillHints.password],
                             decoration: _dec(
-                              'Senha',
+                              context.l10n.loginPassword,
                               suffix: IconButton(
                                 icon: Icon(
                                   _obscure
@@ -232,8 +229,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   color: Pm.subdued,
                                 ),
                                 tooltip: _obscure
-                                    ? 'Mostrar senha'
-                                    : 'Esconder senha',
+                                    ? context.l10n.loginShowPassword
+                                    : context.l10n.loginHidePassword,
                                 onPressed: () =>
                                     setState(() => _obscure = !_obscure),
                               ),
@@ -259,9 +256,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         color: Colors.black,
                                       ),
                                     )
-                                  : const Text(
-                                      'Entrar',
-                                      style: TextStyle(
+                                  : Text(
+                                      context.l10n.loginSubmit,
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w800,
                                         fontSize: 16,
                                       ),
@@ -278,9 +275,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 shape: const StadiumBorder(),
                               ),
                               icon: const Icon(Icons.qr_code_2, size: 20),
-                              label: const Text(
-                                'Entrar com Quick Connect',
-                                style: TextStyle(fontWeight: FontWeight.w700),
+                              label: Text(
+                                context.l10n.loginQuickConnect,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                               onPressed: _busy ? null : _quickConnect,
                             ),
@@ -291,8 +290,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 setState(() => _showServer = !_showServer),
                             child: Text(
                               _showServer
-                                  ? 'Esconder endereços'
-                                  : 'Endereço do servidor',
+                                  ? context.l10n.loginHideAddresses
+                                  : context.l10n.loginServerAddress,
                               style: const TextStyle(color: Pm.subdued),
                             ),
                           ),
@@ -301,34 +300,45 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             TextField(
                               controller: _wan,
                               keyboardType: TextInputType.url,
-                              decoration: _dec('Servidor Jellyfin'),
+                              decoration: _dec(
+                                context.l10n.loginJellyfinServer,
+                              ),
                             ),
                             const SizedBox(height: 4),
-                            const Text(
-                              'Ex.: https://jellyfin.exemplo.com',
-                              style: TextStyle(color: Pm.muted, fontSize: 12),
+                            Text(
+                              context.l10n.loginJellyfinServerExample,
+                              style: const TextStyle(
+                                color: Pm.muted,
+                                fontSize: 12,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             TextField(
                               controller: _lan,
                               keyboardType: TextInputType.url,
-                              decoration: _dec('Na rede local (opcional)'),
+                              decoration: _dec(context.l10n.loginLocalNetwork),
                             ),
                             const SizedBox(height: 4),
-                            const Text(
-                              'Ex.: http://192.168.0.10:8096. Quando responde, o app usa este no lugar do principal.',
-                              style: TextStyle(color: Pm.muted, fontSize: 12),
+                            Text(
+                              context.l10n.loginLocalNetworkExample,
+                              style: const TextStyle(
+                                color: Pm.muted,
+                                fontSize: 12,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             TextField(
                               controller: _extras,
                               keyboardType: TextInputType.url,
-                              decoration: _dec('Servidor de extras (opcional)'),
+                              decoration: _dec(context.l10n.loginExtrasServer),
                             ),
                             const SizedBox(height: 4),
-                            const Text(
-                              'Liga chat, Jam, Blend, mixes e Retrospectiva. Deixe vazio se não tiver.',
-                              style: TextStyle(color: Pm.muted, fontSize: 12),
+                            Text(
+                              context.l10n.loginExtrasServerHint,
+                              style: const TextStyle(
+                                color: Pm.muted,
+                                fontSize: 12,
+                              ),
                             ),
                           ],
                         ],
@@ -351,7 +361,8 @@ class _QuickConnectDialog extends ConsumerStatefulWidget {
   final ServerUrls urls;
   const _QuickConnectDialog(this.urls);
   @override
-  ConsumerState<_QuickConnectDialog> createState() => _QuickConnectDialogState();
+  ConsumerState<_QuickConnectDialog> createState() =>
+      _QuickConnectDialogState();
 }
 
 class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
@@ -383,7 +394,7 @@ class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
         if (DateTime.now().difference(_started) > const Duration(minutes: 5)) {
           _timer?.cancel();
           if (mounted) {
-            Navigator.pop(context, 'O código expirou. Tente de novo.');
+            Navigator.pop(context, appL10n.loginQcExpired);
           }
           return;
         }
@@ -418,10 +429,9 @@ class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Num aparelho em que você já entrou no Jellyfin, abra o seu perfil, '
-              'toque em Quick Connect e digite este código:',
-              style: TextStyle(color: Pm.subdued),
+            Text(
+              context.l10n.loginQcInstructions,
+              style: const TextStyle(color: Pm.subdued),
             ),
             const SizedBox(height: 20),
             Center(
@@ -442,18 +452,18 @@ class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
                     ),
             ),
             const SizedBox(height: 20),
-            const Row(
+            Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Esperando a aprovação…',
-                    style: TextStyle(color: Pm.subdued, fontSize: 13),
+                    context.l10n.loginQcWaiting,
+                    style: const TextStyle(color: Pm.subdued, fontSize: 13),
                   ),
                 ),
               ],
@@ -464,7 +474,7 @@ class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
+          child: Text(context.l10n.commonCancel),
         ),
       ],
     );

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:window_manager/legacy.dart';
 
+import '../../l10n/l10n.dart';
 import '../../state/session.dart';
 import '../theme.dart';
 import '../widgets/downloads_bell.dart';
@@ -65,13 +66,13 @@ class _TopBarState extends ConsumerState<TopBar> {
             _AppMenu(),
             IconBtn(
               Icons.chevron_left,
-              tooltip: 'Voltar',
+              tooltip: context.l10n.commonBack,
               size: 28,
               onPressed: context.canPop() ? () => context.pop() : null,
             ),
             const Spacer(),
             Tooltip(
-              message: 'Início',
+              message: context.l10n.commonHome,
               child: Material(
                 color: Pm.elevated,
                 shape: const CircleBorder(),
@@ -119,8 +120,8 @@ class _TopBarState extends ConsumerState<TopBar> {
                             if (path != '/search') context.go('/search');
                           },
                           style: const TextStyle(fontSize: 16),
-                          decoration: const InputDecoration(
-                            hintText: 'O que você quer ouvir?',
+                          decoration: InputDecoration(
+                            hintText: context.l10n.topBarSearchHint,
                             isDense: true,
                           ),
                         ),
@@ -129,7 +130,7 @@ class _TopBarState extends ConsumerState<TopBar> {
                     if (_search.text.isNotEmpty)
                       IconBtn(
                         Icons.close,
-                        tooltip: 'Limpar campo de busca',
+                        tooltip: context.l10n.topBarClearSearch,
                         onPressed: () {
                           _search.clear();
                           context.go('/search');
@@ -138,7 +139,7 @@ class _TopBarState extends ConsumerState<TopBar> {
                     Container(width: 1, height: 24, color: Pm.muted),
                     IconBtn(
                       Icons.grid_view_rounded,
-                      tooltip: 'Navegar',
+                      tooltip: context.l10n.topBarBrowse,
                       size: 22,
                       active: path == '/search' && q.isEmpty,
                       onPressed: () => context.go('/search'),
@@ -151,13 +152,13 @@ class _TopBarState extends ConsumerState<TopBar> {
             const Spacer(),
             if (ref.watch(hasExtrasProvider))
               IconButton(
-              tooltip: 'Shows',
-              onPressed: () => context.go('/shows'),
-              icon: Icon(
-                path == '/shows' ? Icons.event : Icons.event_outlined,
-                color: path == '/shows' ? Pm.text : Pm.subdued,
+                tooltip: context.l10n.commonShows,
+                onPressed: () => context.go('/shows'),
+                icon: Icon(
+                  path == '/shows' ? Icons.event : Icons.event_outlined,
+                  color: path == '/shows' ? Pm.text : Pm.subdued,
+                ),
               ),
-            ),
             const ChatButton(),
             const DownloadsBell(),
             const SizedBox(width: 4),
@@ -175,7 +176,7 @@ class _AppMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PopupMenuButton<String>(
-      tooltip: 'Menu',
+      tooltip: context.l10n.topBarMenu,
       icon: const Icon(Icons.more_horiz, color: Pm.subdued),
       onSelected: (v) {
         switch (v) {
@@ -187,11 +188,17 @@ class _AppMenu extends ConsumerWidget {
             windowManager.close();
         }
       },
-      itemBuilder: (_) => const [
-        PopupMenuItem(value: 'settings', child: Text('Configurações')),
-        PopupMenuDivider(),
-        PopupMenuItem(value: 'logout', child: Text('Sair da conta')),
-        PopupMenuItem(value: 'quit', child: Text('Fechar o Pudim')),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: 'settings',
+          child: Text(context.l10n.commonSettings),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          value: 'logout',
+          child: Text(context.l10n.topBarLogoutAccount),
+        ),
+        PopupMenuItem(value: 'quit', child: Text(context.l10n.topBarQuit)),
       ],
     );
   }
@@ -215,10 +222,16 @@ class _Avatar extends ConsumerWidget {
           enabled: false,
           child: Text(name, style: const TextStyle(color: Pm.subdued)),
         ),
-        const PopupMenuItem(value: 'profile', child: Text('Perfil')),
-        const PopupMenuItem(value: 'settings', child: Text('Configurações')),
+        PopupMenuItem(
+          value: 'profile',
+          child: Text(context.l10n.commonProfile),
+        ),
+        PopupMenuItem(
+          value: 'settings',
+          child: Text(context.l10n.commonSettings),
+        ),
         const PopupMenuDivider(),
-        const PopupMenuItem(value: 'logout', child: Text('Sair')),
+        PopupMenuItem(value: 'logout', child: Text(context.l10n.topBarLogout)),
       ],
       child: Container(
         width: 48,

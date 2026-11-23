@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import '../api/models.dart';
 import 'session.dart';
 import 'notify.dart';
+import '../l10n/l10n.dart';
 
 /// Álbum, playlist ou "Músicas curtidas" guardado no aparelho (ou as faixas baixadas uma a uma).
 class OfflineCollection {
@@ -208,7 +209,7 @@ class OfflineNotifier extends Notifier<OfflineState> {
     state = state.copyWith(
       collections: {
         ...state.collections,
-        loose: OfflineCollection(loose, 'Baixadas uma a uma', null, ids),
+        loose: OfflineCollection(loose, appL10n.stateOfflineLoose, null, ids),
       },
     );
     _enqueue(ok);
@@ -300,10 +301,8 @@ class OfflineNotifier extends Notifier<OfflineState> {
         await Notify.cancel(Notify.offlineId);
         await Notify.show(
           Notify.offlineId + 100,
-          'Baixadas no aparelho',
-          _batchDone == 1
-              ? '1 música pronta para ouvir sem internet'
-              : '$_batchDone músicas prontas para ouvir sem internet',
+          appL10n.stateOfflineDoneTitle,
+          appL10n.stateOfflineDoneBody(_batchDone),
         );
       }
       _batchDone = 0;
@@ -317,8 +316,8 @@ class OfflineNotifier extends Notifier<OfflineState> {
     final t = _queue.first;
     Notify.progress(
       Notify.offlineId,
-      'Baixando no aparelho',
-      '${_batchDone + 1} de $total • ${t.name}',
+      appL10n.stateOfflineProgressTitle,
+      appL10n.stateOfflineProgressBody(_batchDone + 1, total, t.name),
       done: _batchDone,
       total: total,
     );

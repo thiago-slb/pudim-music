@@ -14,6 +14,7 @@ import '../../ui/widgets/actions.dart';
 import '../../ui/widgets/common.dart';
 import '../../ui/widgets/user_photo.dart';
 import '../../state/jam.dart';
+import '../../l10n/l10n.dart';
 import 'blend.dart';
 
 final contactsProvider = FutureProvider.autoDispose<List<Contact>>(
@@ -50,7 +51,7 @@ class ChatButton extends ConsumerWidget {
     if (!ref.watch(hasExtrasProvider)) return const SizedBox.shrink();
     final n = ref.watch(chatsProvider.select((c) => c.unread));
     return IconButton(
-      tooltip: 'Conversas',
+      tooltip: context.l10n.chatChats,
       onPressed: () => context.push('/chat'),
       icon: Badge(
         isLabelVisible: n > 0,
@@ -93,9 +94,9 @@ class ChatsPage extends ConsumerWidget {
             160,
           ),
           children: [
-            const Text(
-              'Conversas',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
+            Text(
+              context.l10n.chatChats,
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 12),
             for (final c in chats)
@@ -111,8 +112,15 @@ class ChatsPage extends ConsumerWidget {
                   ),
                 ),
                 subtitle: Text(
-                  '${c.last.from == me ? 'Você: ' : ''}'
-                  '${c.last.share != null ? '🎵 ${c.last.share!.title}' : c.last.text}',
+                  c.last.from == me
+                      ? context.l10n.chatYouSaid(
+                          c.last.share != null
+                              ? '🎵 ${c.last.share!.title}'
+                              : c.last.text,
+                        )
+                      : (c.last.share != null
+                            ? '🎵 ${c.last.share!.title}'
+                            : c.last.text),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: c.unread > 0 ? Pm.text : Pm.subdued),
@@ -137,9 +145,9 @@ class ChatsPage extends ConsumerWidget {
               ),
             if (others.isNotEmpty) ...[
               const SizedBox(height: 16),
-              const Text(
-                'Contatos',
-                style: TextStyle(
+              Text(
+                context.l10n.chatContacts,
+                style: const TextStyle(
                   color: Pm.subdued,
                   fontWeight: FontWeight.w700,
                 ),
@@ -156,11 +164,11 @@ class ChatsPage extends ConsumerWidget {
                 ),
             ],
             if (contacts.hasError && chats.isEmpty)
-              const Padding(
-                padding: EdgeInsets.only(top: 24),
+              Padding(
+                padding: const EdgeInsets.only(top: 24),
                 child: Text(
-                  'Não consegui falar com o servidor de extras.',
-                  style: TextStyle(color: Pm.subdued),
+                  context.l10n.chatServerUnreachable,
+                  style: const TextStyle(color: Pm.subdued),
                 ),
               ),
           ],
@@ -354,7 +362,7 @@ class _ChatThreadPageState extends ConsumerState<ChatThreadPage> {
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => _send(),
                       decoration: InputDecoration(
-                        hintText: 'Mensagem',
+                        hintText: context.l10n.chatMessageHint,
                         filled: true,
                         fillColor: Pm.elevated,
                         isDense: true,
@@ -409,7 +417,9 @@ class SharedCard extends ConsumerWidget {
       case 'jam':
         try {
           await ref.read(jamProvider.notifier).join(s.id);
-          if (context.mounted) toast(context, 'Você entrou na ${s.title}');
+          if (context.mounted) {
+            toast(context, context.l10n.chatJoinedJam(s.title));
+          }
         } catch (e) {
           if (context.mounted) toast(context, '$e');
         }
@@ -432,7 +442,9 @@ class SharedCard extends ConsumerWidget {
               : await ref.read(apiProvider).item(s.id);
           await playItem(ref, it);
         } catch (e) {
-          if (context.mounted) toast(context, 'Não consegui tocar: $e');
+          if (context.mounted) {
+            toast(context, context.l10n.chatCouldNotPlay('$e'));
+          }
         }
     }
   }
@@ -467,9 +479,9 @@ class SharedCard extends ConsumerWidget {
                     color: Colors.white,
                   ),
                 ),
-                const Text(
-                  'Ouvir junto, com a mesma fila',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                Text(
+                  context.l10n.chatJamCardSubtitle,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ],
             ),
@@ -482,7 +494,7 @@ class SharedCard extends ConsumerWidget {
               visualDensity: VisualDensity.compact,
             ),
             onPressed: inIt ? null : () => _open(context, ref),
-            child: Text(inIt ? 'Na Jam' : 'Entrar'),
+            child: Text(inIt ? context.l10n.chatInJam : context.l10n.chatJoin),
           ),
         ],
       ),
@@ -492,11 +504,11 @@ class SharedCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final label = switch (s.kind) {
-      'album' => 'Álbum',
-      'artist' => 'Artista',
-      'playlist' => 'Playlist',
+      'album' => context.l10n.commonAlbum,
+      'artist' => context.l10n.commonArtist,
+      'playlist' => context.l10n.commonPlaylist,
       'jam' => 'Jam',
-      _ => 'Música',
+      _ => context.l10n.commonSong,
     };
     if (s.kind == 'jam') return _jamCard(context, ref);
     return InkWell(
@@ -593,9 +605,9 @@ Future<Contact?> pickContact(
                     error: (e, _) =>
                         Text('$e', style: const TextStyle(color: Pm.subdued)),
                     data: (list) => list.isEmpty
-                        ? const Text(
-                            'Nenhuma outra conta no servidor.',
-                            style: TextStyle(color: Pm.subdued),
+                        ? Text(
+                            context.l10n.chatNoOtherAccounts,
+                            style: const TextStyle(color: Pm.subdued),
                           )
                         : ListView(
                             shrinkWrap: true,
@@ -637,7 +649,7 @@ SharedItem sharedOf(Item it) {
   final sub = switch (it.kind) {
     ItemKind.artist => '',
     ItemKind.playlist =>
-      it.childCount != null ? '${it.childCount} músicas' : '',
+      it.childCount != null ? appL10n.chatSongsCount(it.childCount!) : '',
     _ => it.artistLine,
   };
   return SharedItem(kind, it.id, it.name, sub, cover);
@@ -690,7 +702,7 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
       unawaited(ref.read(chatsProvider.notifier).refresh());
       if (mounted) {
         Navigator.of(context).pop();
-        toast(context, 'Enviado para ${c.displayName}');
+        toast(context, context.l10n.chatSentTo(c.displayName));
       }
     } catch (e) {
       if (mounted) {
@@ -720,7 +732,7 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Compartilhar ${widget.share.title}',
+                context.l10n.chatShareTitle(widget.share.title),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -732,7 +744,7 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
               TextField(
                 controller: _note,
                 decoration: InputDecoration(
-                  hintText: 'Recado (opcional)',
+                  hintText: context.l10n.chatNoteHint,
                   filled: true,
                   fillColor: Pm.highlight,
                   isDense: true,
@@ -752,9 +764,9 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
                   error: (e, _) =>
                       Text('$e', style: const TextStyle(color: Pm.subdued)),
                   data: (list) => list.isEmpty
-                      ? const Text(
-                          'Nenhuma outra conta no servidor.',
-                          style: TextStyle(color: Pm.subdued),
+                      ? Text(
+                          context.l10n.chatNoOtherAccounts,
+                          style: const TextStyle(color: Pm.subdued),
                         )
                       : ListView(
                           shrinkWrap: true,

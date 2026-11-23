@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:win32/win32.dart';
 
+import '../l10n/l10n.dart';
+
 /// Guarda o token do Jellyfin cifrado. Senha nunca é guardada.
 ///
 /// - Windows: DPAPI (só a sua conta do Windows, nesta máquina, consegue abrir).
@@ -45,9 +47,7 @@ class TokenStore {
 
   Future<void> write(String token) async {
     if (!Platform.isWindows && !Platform.isAndroid) {
-      throw UnsupportedError(
-        'Por enquanto o Pudim só guarda login no Windows e no Android.',
-      );
+      throw UnsupportedError(appL10n.stateTokenStoreUnsupported);
     }
     final f = await _file();
     await f.parent.create(recursive: true);

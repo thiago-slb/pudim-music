@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../api/models.dart';
 import '../../audio/player.dart';
+import '../../l10n/l10n.dart';
 import '../responsive.dart';
 import '../theme.dart';
 import 'actions.dart';
@@ -34,13 +35,15 @@ class _MediaCardState extends ConsumerState<MediaCard> {
     final it = widget.item;
     if (widget.subtitle != null) return widget.subtitle!;
     return switch (it.kind) {
-      ItemKind.artist => 'Artista',
+      ItemKind.artist => context.l10n.commonArtist,
       ItemKind.album => [
         if (it.year != null) '${it.year}',
         it.artistLine,
       ].join(' • '),
       ItemKind.playlist =>
-        it.childCount != null ? '${it.childCount} músicas' : 'Playlist',
+        it.childCount != null
+            ? context.l10n.commonSongCount(it.childCount!)
+            : context.l10n.commonPlaylist,
       ItemKind.track => it.artistLine,
       ItemKind.other => '',
     };

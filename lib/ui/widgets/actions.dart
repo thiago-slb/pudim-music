@@ -9,6 +9,7 @@ import '../../state/downloads.dart';
 import '../../state/library.dart';
 import '../../state/offline.dart';
 import '../../state/session.dart';
+import '../../l10n/l10n.dart';
 import '../responsive.dart';
 import '../theme.dart';
 import 'common.dart';
@@ -89,9 +90,17 @@ Future<void> toggleFavorite(
   if (context.mounted) {
     final what = switch (it.kind) {
       ItemKind.track =>
-        fav ? 'Adicionada a Músicas curtidas' : 'Removida de Músicas curtidas',
-      ItemKind.artist => fav ? 'Seguindo' : 'Deixou de seguir',
-      _ => fav ? 'Salvo na Sua Biblioteca' : 'Removido da Sua Biblioteca',
+        fav
+            ? context.l10n.widgetActionsAddedToLiked
+            : context.l10n.widgetActionsRemovedFromLiked,
+      ItemKind.artist =>
+        fav
+            ? context.l10n.commonFollowing
+            : context.l10n.widgetActionsUnfollowed,
+      _ =>
+        fav
+            ? context.l10n.widgetActionsSavedToLibrary
+            : context.l10n.widgetActionsRemovedFromLibrary,
     };
     toast(context, what);
   }
@@ -129,40 +138,41 @@ Future<void> showItemMenu(
   }
   final player = ref.read(playerProvider.notifier);
   final go = GoRouter.of(context);
+  final l = context.l10n;
   // Episódio de podcast: só o que faz sentido (fila e ir para o podcast).
   final entries = it.isPodcast
       ? <_MenuEntry?>[
-          _MenuEntry(Icons.queue_music, 'Adicionar à fila', () async {
+          _MenuEntry(Icons.queue_music, l.widgetActionsAddToQueue, () async {
             player.addToQueue([it]);
-            if (context.mounted) toast(context, 'Adicionado à fila');
+            if (context.mounted) toast(context, l.widgetActionsAddedToQueue);
           }),
-          _MenuEntry(Icons.playlist_play, 'Tocar em seguida', () async {
+          _MenuEntry(Icons.playlist_play, l.widgetActionsPlayNext, () async {
             player.playNext([it]);
           }),
           if ((it.albumId ?? '').startsWith('podshow'))
             _MenuEntry(
               Icons.podcasts,
-              'Ir para o podcast',
+              l.widgetActionsGoToPodcast,
               () async => go.push('/podcast/${it.albumId!.substring(7)}'),
             ),
         ]
       : <_MenuEntry?>[
           _MenuEntry(
             Icons.queue_music,
-            'Adicionar à fila',
+            l.widgetActionsAddToQueue,
             shortcut: 'Q',
             () async {
               player.addToQueue(await tracksOf(ref, it));
-              if (context.mounted) toast(context, 'Adicionado à fila');
+              if (context.mounted) toast(context, l.widgetActionsAddedToQueue);
             },
           ),
-          _MenuEntry(Icons.playlist_play, 'Tocar em seguida', () async {
+          _MenuEntry(Icons.playlist_play, l.widgetActionsPlayNext, () async {
             player.playNext(await tracksOf(ref, it));
           }),
           if (queueIndex != null)
             _MenuEntry(
               Icons.remove_circle_outline,
-              'Remover da fila',
+              l.widgetActionsRemoveFromQueue,
               () async => player.removeAt(queueIndex),
             ),
           null,
@@ -172,7 +182,7 @@ Future<void> showItemMenu(
                   it.kind == ItemKind.playlist))
             _MenuEntry(
               Icons.playlist_add,
-              'Adicionar à playlist',
+              l.widgetActionsAddToPlaylist,
               shortcut: 'P',
               () async {
                 final tracks = await tracksOf(ref, it);
@@ -186,7 +196,7 @@ Future<void> showItemMenu(
               it.playlistItemId != null)
             _MenuEntry(
               Icons.delete_outline,
-              'Remover desta playlist',
+              l.widgetActionsRemoveFromThisPlaylist,
               () => removeFromPlaylist(context, ref, playlistId, it),
             ),
           if (it.kind == ItemKind.playlist &&
@@ -195,28 +205,28 @@ Future<void> showItemMenu(
               ref.read(hasExtrasProvider))
             _MenuEntry(
               Icons.group_add_outlined,
-              'Convidar para editar',
+              l.widgetActionsInviteToEdit,
               () => inviteToEdit(context, ref, it),
             ),
           if (queueIndex != null &&
               ref.read(playerProvider).recommended.contains(it.id))
             _MenuEntry(
               Icons.auto_awesome,
-              'Manter na playlist',
+              l.widgetActionsKeepInPlaylist,
               () => keepRecommendation(context, ref, it),
             ),
           // Do catálogo: baixar para a biblioteca (pedido ao servidor de extras; aparece no sino).
           if (it.kind == ItemKind.track && it.cloud)
             _MenuEntry(
               Icons.download_outlined,
-              'Baixar música',
+              l.widgetActionsDownloadTrack,
               () => _download(context, ref, 'track', it),
             ),
           if ((it.kind == ItemKind.track || it.kind == ItemKind.album) &&
               isCatalogId(it.kind == ItemKind.album ? it.id : it.albumId))
             _MenuEntry(
               Icons.album_outlined,
-              'Baixar álbum',
+              l.widgetActionsDownloadAlbum,
               () => _download(context, ref, 'album', it),
             ),
           if (isCatalogId(
@@ -224,13 +234,13 @@ Future<void> showItemMenu(
           ))
             _MenuEntry(
               Icons.library_music_outlined,
-              'Baixar discografia',
+              l.widgetActionsDownloadDiscography,
               () => _download(context, ref, 'artist', it),
             ),
           if (it.kind == ItemKind.artist && ref.read(hasExtrasProvider))
             _MenuEntry(
               Icons.checklist,
-              'Buscar álbuns',
+              l.widgetActionsSearchAlbums,
               () async => go.push(
                 '/artist-albums?name=${Uri.encodeQueryComponent(it.name)}',
               ),
@@ -240,16 +250,13 @@ Future<void> showItemMenu(
                 when q.poor > 0)
               _MenuEntry(
                 Icons.high_quality_outlined,
-                'Melhorar qualidade (${q.poor})',
+                l.widgetActionsImproveQuality(q.poor),
                 () async {
                   try {
                     await ref.read(catalogProvider).improve(q.name);
                     ref.read(downloadsProvider.notifier).refreshSoon();
                     if (context.mounted) {
-                      toast(
-                        context,
-                        'Procurando versões melhores de ${q.poor} álbuns',
-                      );
+                      toast(context, l.widgetActionsImprovingAlbums(q.poor));
                     }
                   } catch (e) {
                     if (context.mounted) toast(context, '$e');
@@ -259,7 +266,7 @@ Future<void> showItemMenu(
           if (it.kind != ItemKind.other)
             _MenuEntry(
               Icons.share_outlined,
-              'Compartilhar',
+              l.widgetActionsShare,
               () => shareItem(context, ref, it),
             ),
           // Álbum da biblioteca ainda em MP3: procurar em FLAC (troca o MP3 se achar o álbum inteiro).
@@ -271,7 +278,7 @@ Future<void> showItemMenu(
                 case final q? when !q.flac && !q.partial)
               _MenuEntry(
                 Icons.high_quality_outlined,
-                'Buscar em FLAC',
+                l.widgetActionsSearchFlac,
                 () async {
                   try {
                     await ref
@@ -279,10 +286,7 @@ Future<void> showItemMenu(
                         .flac(it.mainArtist?.name ?? '', q.folder);
                     ref.read(downloadsProvider.notifier).refreshSoon();
                     if (context.mounted) {
-                      toast(
-                        context,
-                        'Procurando ${it.name} em FLAC; se achar, troca o MP3',
-                      );
+                      toast(context, l.widgetActionsSearchingFlac(it.name));
                     }
                   } catch (e) {
                     if (context.mounted) toast(context, '$e');
@@ -294,26 +298,23 @@ Future<void> showItemMenu(
             ref.read(offlineProvider).has(it.id)
                 ? _MenuEntry(
                     Icons.arrow_circle_down,
-                    'Remover do aparelho',
+                    l.commonRemoveFromDevice,
                     () async {
                       await ref
                           .read(offlineProvider.notifier)
                           .removeTrack(it.id);
                       if (context.mounted) {
-                        toast(context, 'Removida do aparelho');
+                        toast(context, l.widgetActionsTrackRemovedFromDevice);
                       }
                     },
                   )
                 : _MenuEntry(
                     Icons.arrow_circle_down_outlined,
-                    'Baixar no aparelho',
+                    l.commonDownloadToDevice,
                     () async {
                       await ref.read(offlineProvider.notifier).saveTracks([it]);
                       if (context.mounted) {
-                        toast(
-                          context,
-                          'Baixando no aparelho para ouvir sem internet',
-                        );
+                        toast(context, l.widgetActionsDownloadingToDevice);
                       }
                     },
                   ),
@@ -322,29 +323,26 @@ Future<void> showItemMenu(
             ref.read(offlineProvider).saved(it.id)
                 ? _MenuEntry(
                     Icons.arrow_circle_down,
-                    'Remover do aparelho',
+                    l.commonRemoveFromDevice,
                     () async {
                       await ref
                           .read(offlineProvider.notifier)
                           .removeCollection(it.id);
                       if (context.mounted) {
-                        toast(context, 'Removido do aparelho');
+                        toast(context, l.widgetActionsRemovedFromDevice);
                       }
                     },
                   )
                 : _MenuEntry(
                     Icons.arrow_circle_down_outlined,
-                    'Baixar no aparelho',
+                    l.commonDownloadToDevice,
                     () async {
                       final tracks = await tracksOf(ref, it);
                       await ref
                           .read(offlineProvider.notifier)
                           .saveCollection(it.id, it.name, it, tracks);
                       if (context.mounted) {
-                        toast(
-                          context,
-                          'Baixando no aparelho para ouvir sem internet',
-                        );
+                        toast(context, l.widgetActionsDownloadingToDevice);
                       }
                     },
                   ),
@@ -354,14 +352,13 @@ Future<void> showItemMenu(
               it.favorite ? Icons.check_circle : Icons.add_circle_outline,
               switch (it.kind) {
                 ItemKind.track =>
-                  it.favorite
-                      ? 'Remover das Músicas curtidas'
-                      : 'Adicionar a Músicas curtidas',
-                ItemKind.artist => it.favorite ? 'Deixar de seguir' : 'Seguir',
+                  it.favorite ? l.commonRemoveFromLiked : l.commonAddToLiked,
+                ItemKind.artist =>
+                  it.favorite ? l.widgetActionsUnfollow : l.commonFollow,
                 _ =>
                   it.favorite
-                      ? 'Remover da Sua Biblioteca'
-                      : 'Adicionar à Sua Biblioteca',
+                      ? l.widgetActionsRemoveFromLibrary
+                      : l.widgetActionsAddToLibrary,
               },
               shortcut: 'L',
               () => toggleFavorite(context, ref, it),
@@ -370,37 +367,40 @@ Future<void> showItemMenu(
           if (it.kind == ItemKind.track && !it.isCatalog)
             _MenuEntry(
               Icons.sensors,
-              'Ir para a rádio da música',
+              l.widgetActionsGoToSongRadio,
               shortcut: 'R',
               () async {
                 final mix = await ref.read(apiProvider).instantMix(it.id);
                 await player.playList([
                   it,
                   ...mix.where((t) => t.id != it.id),
-                ], contextName: 'Rádio de ${it.name}');
+                ], contextName: l.audioRadioContext(it.name));
               },
             ),
           if (it.kind != ItemKind.track && !it.isCatalog)
-            _MenuEntry(Icons.sensors, 'Ligar mix', () async {
+            _MenuEntry(Icons.sensors, l.widgetActionsStartMix, () async {
               final mix = await ref.read(apiProvider).instantMix(it.id);
-              await player.playList(mix, contextName: 'Mix de ${it.name}');
+              await player.playList(
+                mix,
+                contextName: l.widgetActionsMixOf(it.name),
+              );
             }),
           if (it.mainArtist != null && it.kind != ItemKind.artist)
             _MenuEntry(
               Icons.person_outline,
-              'Ir para o artista',
+              l.widgetActionsGoToArtist,
               shortcut: 'Alt+A',
               () async => go.go('/artist/${it.mainArtist!.id}'),
             ),
           if (it.kind == ItemKind.track && it.albumId != null)
             _MenuEntry(
               Icons.album_outlined,
-              'Ir para o álbum',
+              l.widgetActionsGoToAlbum,
               shortcut: 'A',
               () async => go.go('/album/${it.albumId}'),
             ),
           null,
-          _MenuEntry(Icons.link, 'Copiar nome', () async {
+          _MenuEntry(Icons.link, l.widgetActionsCopyName, () async {
             await Clipboard.setData(
               ClipboardData(
                 text: it.artistLine.isEmpty
@@ -408,7 +408,7 @@ Future<void> showItemMenu(
                     : '${it.name} — ${it.artistLine}',
               ),
             );
-            if (context.mounted) toast(context, 'Copiado');
+            if (context.mounted) toast(context, l.widgetActionsCopied);
           }),
         ];
   // Remove separadores repetidos ou nas pontas.

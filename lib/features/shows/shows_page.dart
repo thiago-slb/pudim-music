@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../api/catalog.dart';
+import '../../l10n/l10n.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
@@ -13,12 +14,6 @@ import '../../ui/widgets/common.dart';
 final showsProvider = FutureProvider.autoDispose<ShowsData>(
   (ref) => ref.watch(catalogProvider).shows(),
 );
-
-const _months = [
-  'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', //
-  'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-];
-const _week = ['seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'dom'];
 
 bool _isBrazil(ShowEvent e) {
   final c = e.country.toLowerCase();
@@ -45,6 +40,7 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final data = ref.watch(showsProvider);
     final compact = isCompact(context);
     final side = compact ? 16.0 : 32.0;
@@ -62,7 +58,10 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
     final rows = <Widget>[];
     String? month;
     for (final e in list) {
-      final m = '${_months[e.day.month - 1]} de ${e.day.year}';
+      final m = l.showsMonthYear(
+        l.showsMonthName('m${e.day.month}'),
+        e.day.year,
+      );
       if (m != month) {
         month = m;
         rows.add(_MonthHeader(m));
@@ -77,16 +76,18 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
         child: ListView(
           padding: EdgeInsets.fromLTRB(side, compact ? 64 : 24, side, 160),
           children: [
-            const Text(
-              'Shows',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
+            Text(
+              l.commonShows,
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 4),
             Text(
               d == null
-                  ? 'Dos artistas que você segue'
-                  : 'Dos ${d.following} artistas que você segue'
-                        '${d.pending > 0 ? ' · procurando shows de ${d.pending}…' : ''}',
+                  ? l.showsFollowingNone
+                  : l.showsFollowingCount(d.following) +
+                        (d.pending > 0
+                            ? ' · ${l.showsSearchingFor(d.pending)}'
+                            : ''),
               style: const TextStyle(color: Pm.subdued),
             ),
             const SizedBox(height: 14),
@@ -95,19 +96,19 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
               runSpacing: 8,
               children: [
                 Chip2(
-                  'Próximos',
+                  l.showsUpcoming,
                   gap: 0,
                   selected: !_past,
                   onTap: () => setState(() => _past = false),
                 ),
                 Chip2(
-                  'Já aconteceram',
+                  l.showsPast,
                   gap: 0,
                   selected: _past,
                   onTap: () => setState(() => _past = true),
                 ),
                 Chip2(
-                  'No Brasil',
+                  l.showsInBrazil,
                   gap: 0,
                   selected: _brazil,
                   onTap: () => setState(() => _brazil = !_brazil),
@@ -126,23 +127,23 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
                 onRetry: () => ref.invalidate(showsProvider),
               )
             else if (d != null && d.following == 0)
-              const _Empty(
-                'Siga artistas (botão Seguir na página do artista) para ver os shows deles aqui.',
-              )
+              _Empty(l.showsEmptyFollow)
             else if (rows.isEmpty)
               _Empty(
                 _past
-                    ? 'Nenhum show registrado ainda.'
-                    : 'Nenhum show marcado por enquanto.'
-                          '${d != null && d.pending > 0 ? ' Ainda procurando…' : ''}',
+                    ? l.showsNonePast
+                    : l.showsNoneUpcoming +
+                          (d != null && d.pending > 0
+                              ? ' ${l.showsStillSearching}'
+                              : ''),
               )
             else
               ...rows,
-            const Padding(
-              padding: EdgeInsets.only(top: 24),
+            Padding(
+              padding: const EdgeInsets.only(top: 24),
               child: Text(
-                'Datas do MusicBrainz (feito por fãs); shows novos podem demorar a aparecer.',
-                style: TextStyle(color: Pm.muted, fontSize: 12),
+                l.showsSource,
+                style: const TextStyle(color: Pm.muted, fontSize: 12),
               ),
             ),
           ],
@@ -210,7 +211,7 @@ class _EventRow extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    _week[day.weekday - 1],
+                    context.l10n.showsWeekdayShort('w${day.weekday}'),
                     style: const TextStyle(color: Pm.subdued, fontSize: 12),
                   ),
                 ],
@@ -272,9 +273,12 @@ class _EventRow extends StatelessWidget {
                               ),
                             ),
                             if (e.cancelled)
-                              const _Tag('cancelado', Colors.redAccent)
+                              _Tag(
+                                context.l10n.showsCancelled,
+                                Colors.redAccent,
+                              )
                             else if (e.type == 'Festival')
-                              const _Tag('festival', Pm.subdued),
+                              _Tag(context.l10n.showsFestival, Pm.subdued),
                           ],
                         ),
                         if (e.name.isNotEmpty)

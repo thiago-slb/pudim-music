@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/catalog.dart';
+import '../../l10n/l10n.dart';
 import '../../state/downloads.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
@@ -11,29 +12,30 @@ import '../../ui/theme.dart';
 import '../../ui/widgets/actions.dart';
 import '../../ui/widgets/disk_image.dart';
 
-const _kind = {
-  'Album': 'Álbum',
-  'EP': 'EP',
-  'Single': 'Single',
-  'Broadcast': 'Transmissão',
-  'Other': 'Outro',
+String _kind(L10n l, String type) => switch (type) {
+  'Album' => l.catalogKindAlbum,
+  'Single' => l.catalogKindSingle,
+  'Broadcast' => l.catalogKindBroadcast,
+  'Other' => l.catalogKindOther,
+  _ => type, // EP e o que não conhecemos
 };
-const _sec = {
-  'Live': 'ao vivo',
-  'Compilation': 'coletânea',
-  'Remix': 'remix',
-  'Demo': 'demo',
-  'DJ-mix': 'DJ-mix',
-  'Soundtrack': 'trilha sonora',
-  'Mixtape/Street': 'mixtape',
-  'Interview': 'entrevista',
-  'Spokenword': 'falado',
+
+String _sec(L10n l, String type) => switch (type) {
+  'Live' => l.catalogSecLive,
+  'Compilation' => l.catalogSecCompilation,
+  'Soundtrack' => l.catalogSecSoundtrack,
+  'Mixtape/Street' => l.catalogSecMixtape,
+  'Interview' => l.catalogSecInterview,
+  'Spokenword' => l.catalogSecSpokenword,
+  'Remix' => 'remix',
+  'Demo' => 'demo',
+  _ => type, // DJ-mix e o que não conhecemos
 };
 
 /// "ao vivo · coletânea" etc. do álbum.
-String planTag(PlanAlbum a) => [
-  if (a.type.isNotEmpty) _kind[a.type] ?? a.type,
-  for (final s in a.secondary) _sec[s] ?? s,
+String planTag(L10n l, PlanAlbum a) => [
+  if (a.type.isNotEmpty) _kind(l, a.type),
+  for (final s in a.secondary) _sec(l, s),
 ].join(' · ');
 
 /// Buscar álbuns: a discografia que falta na biblioteca, com caixinhas para escolher.
@@ -107,11 +109,12 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
       await ref.read(catalogProvider).getAlbums(p, sel);
       ref.read(downloadsProvider.notifier).refreshSoon();
       if (!mounted) return;
+      final l = context.l10n;
       toast(
         context,
         sel.length == 1
-            ? 'Baixando ${sel.first.title}'
-            : 'Baixando ${sel.length} álbuns de ${p.artist}',
+            ? l.catalogDownloadingOne(sel.first.title)
+            : l.catalogDownloadingMany(sel.length, p.artist),
       );
       Navigator.of(context).maybePop();
     } catch (e) {
@@ -124,6 +127,7 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final p = _plan;
     final compact = isCompact(context);
     final side = compact ? 16.0 : 32.0;
@@ -131,12 +135,11 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
     final sub = _error != null
         ? _error!
         : p == null
-        ? 'Conferindo a discografia… ${_seconds}s'
+        ? l.catalogCheckingDiscography(_seconds)
         : [
-            '${p.missing.length} para baixar',
-            '${p.have} já na biblioteca',
-            if (p.skippedOneSong > 0)
-              '${p.skippedOneSong} de 1 música ficam de fora',
+            l.catalogToDownload(p.missing.length),
+            l.catalogInLibraryCount(p.have),
+            if (p.skippedOneSong > 0) l.catalogSkippedOneSong(p.skippedOneSong),
           ].join(' · ');
 
     return Container(
@@ -165,9 +168,12 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                     runSpacing: 8,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      _Chip('Todos', () => _pickAll((_) => true)),
-                      _Chip('Estúdio', () => _pickAll((a) => a.studio)),
-                      _Chip('Nenhum', () => _pickAll((_) => false)),
+                      _Chip(l.catalogPickAll, () => _pickAll((_) => true)),
+                      _Chip(
+                        l.catalogPickStudio,
+                        () => _pickAll((a) => a.studio),
+                      ),
+                      _Chip(l.catalogPickNone, () => _pickAll((_) => false)),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -184,8 +190,8 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                     onPressed: n == 0 || _sending ? null : _send,
                     child: Text(
                       n == 0
-                          ? 'Baixar selecionados'
-                          : 'Baixar $n selecionado${n > 1 ? 's' : ''}',
+                          ? l.catalogDownloadSelected
+                          : l.catalogDownloadNSelected(n),
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -201,9 +207,9 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                 : p.missing.isEmpty
                 ? Padding(
                     padding: EdgeInsets.symmetric(horizontal: side),
-                    child: const Text(
-                      'Nada faltando.',
-                      style: TextStyle(color: Pm.subdued),
+                    child: Text(
+                      l.catalogNothingMissing,
+                      style: const TextStyle(color: Pm.subdued),
                     ),
                   )
                 : ListView.builder(
@@ -211,7 +217,7 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                     itemCount: p.missing.length,
                     itemBuilder: (_, i) {
                       final a = p.missing[i];
-                      final tag = planTag(a);
+                      final tag = planTag(l, a);
                       return CheckboxListTile(
                         value: _picked.contains(i),
                         onChanged: (v) => setState(
@@ -232,7 +238,7 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                           [
                             if (a.year.isNotEmpty) a.year,
                             if (tag.isNotEmpty) tag,
-                            if (a.partial) 'parcial',
+                            if (a.partial) l.catalogPartial,
                           ].join(' · '),
                           style: const TextStyle(color: Pm.subdued),
                         ),

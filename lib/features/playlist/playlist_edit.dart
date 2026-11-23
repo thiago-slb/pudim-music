@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../l10n/l10n.dart';
+
 import 'package:go_router/go_router.dart';
 
 import '../../api/catalog.dart';
@@ -54,9 +57,11 @@ String _err(Object e) {
   if (e is DioException) {
     final code = e.response?.statusCode;
     if (code == 403 || code == 401) {
-      return 'Sem permissão para editar essa playlist.';
+      return appL10n.playlistErrNoPermission;
     }
-    return 'O servidor não aceitou (${code ?? 'sem resposta'}).';
+    return appL10n.playlistErrServer(
+      code?.toString() ?? appL10n.playlistErrNoResponse,
+    );
   }
   return '$e';
 }
@@ -78,12 +83,14 @@ Future<void> addToPlaylistSheet(
       if (!t.isCatalog && !t.isPodcast) t.id,
   ];
   if (ids.isEmpty) {
-    toast(context, 'Baixe a música primeiro para pôr numa playlist');
+    toast(context, context.l10n.playlistDownloadFirst);
     return;
   }
   final lib = await ref.read(libraryProvider.future);
   if (!context.mounted) return;
-  final mine = lib.playlists.where((p) => !isGeneratedPlaylist(p.name)).toList();
+  final mine = lib.playlists
+      .where((p) => !isGeneratedPlaylist(p.name))
+      .toList();
   final picked = await showModalBottomSheet<String>(
     context: context,
     useRootNavigator: true,
@@ -101,11 +108,14 @@ Future<void> addToPlaylistSheet(
           shrinkWrap: true,
           padding: const EdgeInsets.symmetric(vertical: 12),
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 4, 20, 12),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
               child: Text(
-                'Adicionar à playlist',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                sheet.l10n.playlistAddTo,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
             ListTile(
@@ -119,19 +129,26 @@ Future<void> addToPlaylistSheet(
                 ),
                 child: const Icon(Icons.add, color: Pm.text),
               ),
-              title: const Text('Nova playlist'),
+              title: Text(sheet.l10n.playlistNew),
               onTap: () => Navigator.pop(sheet, ''),
             ),
             for (final p in mine)
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 leading: Cover(p, size: 44),
-                title: Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+                title: Text(
+                  p.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 subtitle: p.childCount == null
                     ? null
                     : Text(
-                        '${p.childCount} músicas',
-                        style: const TextStyle(color: Pm.subdued, fontSize: 12.5),
+                        sheet.l10n.commonSongCount(p.childCount!),
+                        style: const TextStyle(
+                          color: Pm.subdued,
+                          fontSize: 12.5,
+                        ),
                       ),
                 onTap: () => Navigator.pop(sheet, p.id),
               ),
@@ -150,7 +167,7 @@ Future<void> addToPlaylistSheet(
     await ref.read(apiProvider).addToPlaylist(picked, ids);
     ref.read(catalogProvider).collabAdded(picked, ids).catchError((_) {});
     _refresh(ref, picked);
-    if (context.mounted) toast(context, 'Adicionada a $name');
+    if (context.mounted) toast(context, context.l10n.playlistAddedTo(name));
   } catch (e) {
     if (context.mounted) toast(context, _err(e));
   }
@@ -167,22 +184,22 @@ Future<void> newPlaylistDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: Pm.elevated,
-      title: const Text('Nova playlist'),
+      title: Text(ctx.l10n.playlistNew),
       content: TextField(
         controller: ctl,
         autofocus: true,
         maxLength: 100,
-        decoration: const InputDecoration(hintText: 'Nome da playlist'),
+        decoration: InputDecoration(hintText: ctx.l10n.playlistNameHint),
         onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancelar'),
+          child: Text(ctx.l10n.commonCancel),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, ctl.text.trim()),
-          child: const Text('Criar'),
+          child: Text(ctx.l10n.playlistCreate),
         ),
       ],
     ),
@@ -199,7 +216,7 @@ Future<void> newPlaylistDialog(
     }
     ref.invalidate(libraryProvider);
     if (context.mounted) {
-      toast(context, 'Playlist $name criada');
+      toast(context, context.l10n.playlistCreated(name));
       context.go('/playlist/$pid');
     }
   } catch (e) {
@@ -218,7 +235,7 @@ Future<void> removeFromPlaylist(
   try {
     await ref.read(apiProvider).removeFromPlaylist(pid, [entry]);
     _refresh(ref, pid);
-    if (context.mounted) toast(context, 'Removida da playlist');
+    if (context.mounted) toast(context, context.l10n.playlistRemoved);
   } catch (e) {
     if (context.mounted) toast(context, _err(e));
   }
@@ -232,18 +249,15 @@ Future<void> inviteToEdit(
 ) async {
   final c = await pickContact(
     context,
-    title: 'Convidar para editar',
-    subtitle:
-        'A pessoa vê a playlist na biblioteca dela e pode adicionar e tirar músicas.',
+    title: context.l10n.playlistInviteTitle,
+    subtitle: context.l10n.playlistInviteSubtitle,
   );
   if (c == null || !context.mounted) return;
   try {
-    await ref
-        .read(apiProvider)
-        .sharePlaylist(playlist.id, c.id, canEdit: true);
+    await ref.read(apiProvider).sharePlaylist(playlist.id, c.id, canEdit: true);
   } catch (e) {
     if (context.mounted) {
-      toast(context, 'Só quem criou a playlist pode convidar');
+      toast(context, context.l10n.playlistInviteOwnerOnly);
     }
     return;
   }
@@ -256,7 +270,7 @@ Future<void> inviteToEdit(
   }
   ref.invalidate(collabProvider(playlist.id));
   if (context.mounted) {
-    toast(context, '${c.displayName} agora pode editar ${playlist.name}');
+    toast(context, context.l10n.playlistInvited(c.displayName, playlist.name));
   }
 }
 
@@ -303,7 +317,9 @@ class CollabMembers extends ConsumerWidget {
           const SizedBox(width: 8),
           Flexible(
             child: Text(
-              'Colaborativa · ${info.members.map((m) => m.displayName).join(', ')}',
+              context.l10n.playlistCollaborative(
+                info.members.map((m) => m.displayName).join(', '),
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: Pm.subdued, fontSize: 13),
@@ -333,14 +349,14 @@ class SmartShuffleButton extends ConsumerWidget {
     );
     return IconBtn(
       Icons.auto_awesome,
-      tooltip: 'Smart Shuffle: aleatório com recomendações',
+      tooltip: context.l10n.playlistSmartShuffleTooltip,
       size: 26,
       active: on,
       onPressed: () {
         ref
             .read(playerProvider.notifier)
             .smartShufflePlay(tracks, contextName: title, contextRoute: route);
-        toast(context, 'Smart Shuffle ligado: recomendações marcadas com ✦');
+        toast(context, context.l10n.playlistSmartShuffleOn);
       },
     );
   }
@@ -359,7 +375,7 @@ Future<void> keepRecommendation(
     ref.read(catalogProvider).collabAdded(pid, [t.id]).catchError((_) {});
     ref.read(playerProvider.notifier).acceptRecommendation(t.id);
     _refresh(ref, pid);
-    if (context.mounted) toast(context, 'Adicionada à playlist');
+    if (context.mounted) toast(context, context.l10n.playlistAddedToThis);
   } catch (e) {
     if (context.mounted) toast(context, _err(e));
   }
@@ -382,15 +398,15 @@ class RecommendationBar extends ConsumerWidget {
       children: [
         const Icon(Icons.auto_awesome, size: 16, color: Pm.green),
         const SizedBox(width: 8),
-        const Expanded(
+        Expanded(
           child: Text(
-            'Recomendação do Smart Shuffle',
-            style: TextStyle(fontSize: 13),
+            context.l10n.playlistRecommendation,
+            style: const TextStyle(fontSize: 13),
           ),
         ),
         TextButton(
           onPressed: () => keepRecommendation(context, ref, track),
-          child: const Text('Pôr na playlist'),
+          child: Text(context.l10n.playlistPutIn),
         ),
       ],
     ),

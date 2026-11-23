@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n.dart';
+
 import '../../api/models.dart';
 import '../../audio/player.dart';
 import '../../state/library.dart';
@@ -120,9 +122,7 @@ final homeProvider = FutureProvider.autoDispose<HomeData>((ref) async {
     ],
     recentAlbums: _distinctAlbums(recent, 12),
     spotify: pls.where((p) => p.name.startsWith('Spotify · ')).toList(),
-    saved: pls
-        .where((p) => !isGeneratedPlaylist(p.name))
-        .toList(),
+    saved: pls.where((p) => !isGeneratedPlaylist(p.name)).toList(),
     latest: r[1].where((i) => i.kind == ItemKind.album).toList(),
     topArtists: _distinctArtists(most, 12),
     topAlbums: _distinctAlbums(most, 12),
@@ -172,7 +172,7 @@ class HomePage extends ConsumerWidget {
             padding: EdgeInsets.fromLTRB(side, 16, side, 48),
             children: [
               Shelf(
-                title: 'Baixadas no aparelho',
+                title: context.l10n.homeDownloadedOnDevice,
                 items: heads,
                 onShowAll: () => context.go('/collection/offline'),
               ),
@@ -191,9 +191,10 @@ class HomePage extends ConsumerWidget {
                     const SizedBox(width: 12),
                   ],
                   for (final (i, label) in [
-                    (0, 'Tudo'),
-                    (1, 'Música'),
-                    if (ref.watch(hasExtrasProvider)) (2, 'Podcasts'),
+                    (0, context.l10n.commonAll),
+                    (1, context.l10n.homeTabMusic),
+                    if (ref.watch(hasExtrasProvider))
+                      (2, context.l10n.commonPodcasts),
                   ])
                     ValueListenableBuilder<int>(
                       valueListenable: homeTab,
@@ -266,36 +267,37 @@ class _HomeMusic extends ConsumerWidget {
           ),
         const SizedBox(height: 28),
         Shelf(
-          overline: 'Feito para',
+          overline: context.l10n.homeMadeFor,
           title: name,
           items: d.madeForYou,
           subtitleOf: (p) => p.name.startsWith('Descobertas')
-              ? 'Músicas novas para você, toda semana'
+              ? context.l10n.homeMixDiscoveries
               : p.name == 'Mistura da semana'
-              ? 'Seus favoritos e parecidos, toda semana'
+              ? context.l10n.homeMixWeekly
               : p.name == 'Radar de Novidades'
-              ? 'Lançamentos de quem você segue, toda sexta'
+              ? context.l10n.homeMixRadar
               : p.name.startsWith('daylist · ')
-              ? 'Muda ao longo do dia'
+              ? context.l10n.homeMixDaylist
               : p.name.startsWith('Blend · ')
-              ? 'O gosto de vocês dois junto'
-              : 'Mix automático',
+              ? context.l10n.homeMixBlend
+              : context.l10n.homeMixAuto,
         ),
         const RecapBanner(),
         MixInvites(playlistNames: [for (final p in d.madeForYou) p.name]),
-        Shelf(title: 'Tocadas recentemente', items: d.recentAlbums),
+        Shelf(title: context.l10n.commonRecentlyPlayed, items: d.recentAlbums),
         _RadioShelf(artists: d.topArtists),
         Shelf(
-          title: 'Suas playlists do Spotify',
+          title: context.l10n.homeSpotifyPlaylists,
           items: d.spotify,
-          subtitleOf: (p) =>
-              _clean(p.name) == p.name ? 'Playlist' : 'Do Spotify',
+          subtitleOf: (p) => _clean(p.name) == p.name
+              ? context.l10n.commonPlaylist
+              : context.l10n.homeFromSpotify,
         ),
-        Shelf(title: 'Suas playlists', items: d.saved),
-        Shelf(title: 'Seus álbuns mais tocados', items: d.topAlbums),
-        Shelf(title: 'Seus artistas favoritos', items: d.topArtists),
-        Shelf(title: 'Adicionados recentemente', items: d.latest),
-        PodcastShelf(title: 'Seus podcasts', shows: subs),
+        Shelf(title: context.l10n.homeYourPlaylists, items: d.saved),
+        Shelf(title: context.l10n.homeTopAlbums, items: d.topAlbums),
+        Shelf(title: context.l10n.homeTopArtists, items: d.topArtists),
+        Shelf(title: context.l10n.homeRecentlyAdded, items: d.latest),
+        PodcastShelf(title: context.l10n.homeYourPodcasts, shows: subs),
       ],
     );
   }
@@ -317,10 +319,9 @@ class _RadioShelf extends ConsumerWidget {
         children: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: compact ? 6 : 12),
-            child: const SectionHeader(
-              'Rádios recomendadas',
-              subtitle:
-                  'Música sem parar com base nos seus artistas favoritos.',
+            child: SectionHeader(
+              context.l10n.homeRadiosTitle,
+              subtitle: context.l10n.homeRadiosSubtitle,
             ),
           ),
           SizedBox(
@@ -360,7 +361,7 @@ class _RadioCardState extends ConsumerState<_RadioCard> {
   Widget build(BuildContext context) {
     final a = widget.artist;
     final color = _colors[a.name.hashCode.abs() % _colors.length];
-    final ctxName = 'Rádio de ${a.name}';
+    final ctxName = context.l10n.audioRadioContext(a.name);
     final q = ref.watch(playerProvider);
     final playingHere = q.contextName == ctxName && q.playing;
     final compact = isCompact(context);
@@ -390,12 +391,12 @@ class _RadioCardState extends ConsumerState<_RadioCard> {
                 ),
                 child: Stack(
                   children: [
-                    const Positioned(
+                    Positioned(
                       right: 8,
                       top: 6,
                       child: Text(
-                        'RÁDIO',
-                        style: TextStyle(
+                        context.l10n.homeRadioBadge,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
@@ -434,7 +435,7 @@ class _RadioCardState extends ConsumerState<_RadioCard> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Com ${a.name} e artistas parecidos',
+                context.l10n.homeRadioWith(a.name),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Pm.subdued, fontSize: 13.5),
@@ -448,7 +449,7 @@ class _RadioCardState extends ConsumerState<_RadioCard> {
 
   Future<void> _play() async {
     final q = ref.read(playerProvider);
-    final ctxName = 'Rádio de ${widget.artist.name}';
+    final ctxName = context.l10n.audioRadioContext(widget.artist.name);
     if (q.contextName == ctxName) {
       await ref.read(playerProvider.notifier).togglePlay();
       return;

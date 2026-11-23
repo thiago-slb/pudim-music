@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
 import '../../api/models.dart';
 import '../../audio/player.dart';
 import '../../state/session.dart';
@@ -103,7 +104,7 @@ class _MobileShellState extends ConsumerState<MobileShell> {
                         shape: const CircleBorder(),
                         child: IconButton(
                           icon: const Icon(Icons.arrow_back, color: Pm.text),
-                          tooltip: 'Voltar',
+                          tooltip: context.l10n.commonBack,
                           onPressed: () =>
                               _stack.length > 1 ? _back() : context.go('/'),
                         ),
@@ -135,6 +136,7 @@ class _NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     Widget item(int i, IconData icon, IconData selIcon, String label) {
       final sel = i == index;
       return Expanded(
@@ -175,15 +177,15 @@ class _NavBar extends StatelessWidget {
       height: 64 + MediaQuery.paddingOf(context).bottom,
       child: Row(
         children: [
-          item(0, Icons.home_outlined, Icons.home_filled, 'Início'),
-          item(1, Icons.search, Icons.manage_search, 'Buscar'),
+          item(0, Icons.home_outlined, Icons.home_filled, l10n.commonHome),
+          item(1, Icons.search, Icons.manage_search, l10n.commonSearch),
           if (tabs.contains('/shows'))
-            item(2, Icons.event_outlined, Icons.event, 'Shows'),
+            item(2, Icons.event_outlined, Icons.event, l10n.commonShows),
           item(
             tabs.indexOf('/library'),
             Icons.library_music_outlined,
             Icons.library_music,
-            'Sua Biblioteca',
+            l10n.commonYourLibrary,
           ),
         ],
       ),
@@ -270,8 +272,8 @@ class MiniPlayer extends ConsumerWidget {
                       color: cur.favorite ? Pm.green : Pm.text,
                     ),
                     tooltip: cur.favorite
-                        ? 'Remover das Músicas curtidas'
-                        : 'Adicionar a Músicas curtidas',
+                        ? context.l10n.commonRemoveFromLiked
+                        : context.l10n.commonAddToLiked,
                     onPressed: () => toggleFavorite(context, ref, cur),
                   ),
                   IconButton(
@@ -291,7 +293,9 @@ class MiniPlayer extends ConsumerWidget {
                             color: Pm.text,
                             size: 32,
                           ),
-                    tooltip: q.playing ? 'Pausar' : 'Play',
+                    tooltip: q.playing
+                        ? context.l10n.commonPause
+                        : context.l10n.playerBarPlay,
                     onPressed: c.togglePlay,
                   ),
                   const SizedBox(width: 4),

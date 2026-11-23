@@ -1,8 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../audio/player.dart';
+import '../../l10n/l10n.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
@@ -10,6 +12,7 @@ import '../../ui/widgets/common.dart';
 import '../../ui/widgets/disk_image.dart';
 
 import 'package:file_picker/file_picker.dart';
+
 import 'recap_share.dart';
 
 /// A Retrospectiva só aparece na Início em novembro e dezembro (a página abre o ano todo).
@@ -55,7 +58,7 @@ class RecapBanner extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Sua Retrospectiva ${recap['year']}',
+                      context.l10n.recapTitle(recap['year'] as int),
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -63,7 +66,7 @@ class RecapBanner extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${_n(recap['minutes'])} minutos de música este ano. Veja o que mais tocou.',
+                      context.l10n.recapBannerBody(_n(recap['minutes'])),
                       style: const TextStyle(color: Colors.white70),
                     ),
                   ],
@@ -78,10 +81,9 @@ class RecapBanner extends ConsumerWidget {
   }
 }
 
-String _n(Object? v) {
-  final s = '${(v as num?)?.round() ?? 0}';
-  return s.replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => '.');
-}
+String _n(Object? v) =>
+    NumberFormat.decimalPattern(appL10n.localeName)
+        .format((v as num?)?.round() ?? 0);
 
 class RecapPage extends ConsumerStatefulWidget {
   const RecapPage({super.key});
@@ -106,14 +108,14 @@ class _RecapPageState extends ConsumerState<RecapPage> {
           if (r == null || (r['plays'] as num? ?? 0) == 0) {
             return ListView(
               padding: const EdgeInsets.all(32),
-              children: const [
+              children: [
                 Text(
-                  'Ainda não tem reproduções para montar a Retrospectiva.',
+                  context.l10n.recapEmpty,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Pm.subdued),
+                  style: const TextStyle(color: Pm.subdued),
                 ),
-                SizedBox(height: 24),
-                SpotifyHistoryCard(),
+                const SizedBox(height: 24),
+                const SpotifyHistoryCard(),
               ],
             );
           }
@@ -161,7 +163,7 @@ class _Recap extends ConsumerWidget {
       padding: EdgeInsets.fromLTRB(pad, 24, pad, 48),
       children: [
         Text(
-          'Sua Retrospectiva ${r['year']}',
+          context.l10n.recapTitle(r['year'] as int),
           style: TextStyle(
             fontSize: compact ? 32 : 56,
             fontWeight: FontWeight.w900,
@@ -194,7 +196,7 @@ class _Recap extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             ),
             icon: const Icon(Icons.ios_share, size: 18),
-            label: const Text('Compartilhar cartões'),
+            label: Text(context.l10n.recapShareCards),
             onPressed: () => showRecapShare(context, r),
           ),
         ),
@@ -206,17 +208,17 @@ class _Recap extends ConsumerWidget {
             spacing: 32,
             runSpacing: 16,
             children: [
-              _Big(_n(r['minutes']), 'minutos ouvindo'),
-              _Big(_n(r['songs']), 'músicas diferentes'),
-              _Big(_n(r['artists']), 'artistas'),
-              _Big(_n(r['days']), 'dias com música'),
+              _Big(_n(r['minutes']), context.l10n.recapBigMinutes),
+              _Big(_n(r['songs']), context.l10n.recapBigSongs),
+              _Big(_n(r['artists']), context.l10n.recapBigArtists),
+              _Big(_n(r['days']), context.l10n.recapBigDays),
               if ((r['streak'] as num? ?? 0) > 1)
-                _Big(_n(r['streak']), 'dias seguidos, seu recorde'),
+                _Big(_n(r['streak']), context.l10n.recapBigStreak),
             ],
           ),
         ),
         if (artists.isNotEmpty) ...[
-          const _Title('Seus artistas do ano'),
+          _Title(context.l10n.recapTopArtists),
           _Card(
             color: const Color(0xFF7A2BD6),
             child: Column(
@@ -227,7 +229,7 @@ class _Recap extends ConsumerWidget {
                     image: photo('${a['name']}'),
                     round: true,
                     title: '${a['name']}',
-                    subtitle: '${_n(a['minutes'])} minutos',
+                    subtitle: context.l10n.recapMinutesValue(_n(a['minutes'])),
                     big: i == 0,
                   ),
               ],
@@ -235,7 +237,7 @@ class _Recap extends ConsumerWidget {
           ),
         ],
         if (songs.isNotEmpty) ...[
-          const _Title('Suas músicas do ano'),
+          _Title(context.l10n.recapTopSongs),
           _Card(
             color: const Color(0xFF148A08),
             child: Column(
@@ -245,22 +247,23 @@ class _Recap extends ConsumerWidget {
                     rank: i + 1,
                     image: cover(s),
                     title: '${s['title']}',
-                    subtitle: '${s['artist']} • ${_n(s['plays'])} vezes',
+                    subtitle: context.l10n.recapPlaysLine(
+                      '${s['artist']}',
+                      _n(s['plays']),
+                    ),
                     onTap: s['item_id'] == null
                         ? null
                         : () async {
                             try {
                               final api = ref.read(apiProvider);
+                              final recapName = context.l10n.recapShort;
                               final t = await api.item('${s['item_id']}');
                               await ref.read(playerProvider.notifier).playList([
                                 t,
-                              ], contextName: 'Retrospectiva');
+                              ], contextName: recapName);
                             } catch (_) {
                               if (context.mounted) {
-                                toastMsg(
-                                  context,
-                                  'Essa música não está mais na biblioteca',
-                                );
+                                toastMsg(context, context.l10n.recapSongGone);
                               }
                             }
                           },
@@ -270,7 +273,7 @@ class _Recap extends ConsumerWidget {
           ),
         ],
         if (albums.isNotEmpty) ...[
-          const _Title('Seus álbuns do ano'),
+          _Title(context.l10n.recapTopAlbums),
           LayoutBuilder(
             builder: (_, c) {
               final cols = c.maxWidth > 900 ? 5 : (c.maxWidth > 500 ? 4 : 3);
@@ -324,7 +327,7 @@ class _Recap extends ConsumerWidget {
           ),
         ],
         if (genres.isNotEmpty) ...[
-          const _Title('Gêneros que mais tocaram'),
+          _Title(context.l10n.recapTopGenres),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -339,39 +342,56 @@ class _Recap extends ConsumerWidget {
                     color: Pm.highlight,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text('${g['name']} • ${_n(g['minutes'])} min'),
+                  child: Text(
+                    context.l10n.recapGenreLine(
+                      '${g['name']}',
+                      _n(g['minutes']),
+                    ),
+                  ),
                 ),
             ],
           ),
         ],
         if (months.any((m) => (m['minutes'] as num? ?? 0) > 0)) ...[
-          const _Title('Mês a mês'),
+          _Title(context.l10n.recapMonthly),
           _Months(months),
         ],
-        const _Title('Seu jeito de ouvir'),
+        _Title(context.l10n.recapListeningStyle),
         _Card(
           color: const Color(0xFF2A2A2A),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (r['top_hour'] != null)
-                _Fact(Icons.schedule, 'Hora favorita: ${r['top_hour']}h'),
+                _Fact(
+                  Icons.schedule,
+                  context.l10n.recapFavHour('${r['top_hour']}'),
+                ),
               if (r['top_weekday'] != null)
                 _Fact(
                   Icons.today,
-                  'Dia da semana favorito: ${r['top_weekday']}',
+                  context.l10n.recapFavWeekday(
+                    _weekday(context, '${r['top_weekday']}'),
+                  ),
                 ),
               if (r['top_day'] is Map)
                 _Fact(
                   Icons.local_fire_department,
-                  'Seu maior dia: ${_date('${(r['top_day'] as Map)['date']}')}, '
-                  '${_n((r['top_day'] as Map)['minutes'])} minutos',
+                  context.l10n.recapBiggestDay(
+                    _date(context, '${(r['top_day'] as Map)['date']}'),
+                    _n((r['top_day'] as Map)['minutes']),
+                  ),
                 ),
               if ((r['new_artists'] as num? ?? 0) > 0)
                 _Fact(
                   Icons.person_add_alt,
-                  '${_n(r['new_artists'])} artistas novos para você'
-                  '${(r['new_artists_top'] as List? ?? const []).isEmpty ? '' : ': ${(r['new_artists_top'] as List).take(3).join(', ')}'}',
+                  context.l10n.recapNewArtists(
+                        (r['new_artists'] as num).toInt(),
+                        _n(r['new_artists']),
+                      ) +
+                      ((r['new_artists_top'] as List? ?? const []).isEmpty
+                          ? ''
+                          : ': ${(r['new_artists_top'] as List).take(3).join(', ')}'),
                 ),
             ],
           ),
@@ -415,8 +435,9 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
       if (mounted) {
         toastMsg(
           context,
-          '${_n(d['added'])} reproduções do Spotify entraram'
-          '${dup > 0 ? ' (${_n(dup)} já estavam pelo Pudim)' : ''}.',
+          dup > 0
+              ? context.l10n.recapSpotifyAddedDup(_n(d['added']), _n(dup))
+              : context.l10n.recapSpotifyAdded(_n(d['added'])),
         );
       }
     } catch (e) {
@@ -431,18 +452,16 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Pm.elevated,
-        title: const Text('Tirar o histórico do Spotify?'),
-        content: const Text(
-          'A Retrospectiva volta a contar só o que tocou no Pudim/Jellyfin. Dá para importar de novo depois.',
-        ),
+        title: Text(ctx.l10n.recapSpotifyRemoveTitle),
+        content: Text(ctx.l10n.recapSpotifyRemoveBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+            child: Text(ctx.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Tirar'),
+            child: Text(ctx.l10n.recapSpotifyRemoveConfirm),
           ),
         ],
       ),
@@ -454,7 +473,7 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
       ref.invalidate(recapProvider);
       ref.invalidate(_spotifyHistoryProvider);
       if (mounted) {
-        toastMsg(context, '${_n(n)} reproduções do Spotify removidas');
+        toastMsg(context, context.l10n.recapSpotifyRemoved(_n(n)));
       }
     } catch (e) {
       if (mounted) toastMsg(context, '$e');
@@ -473,19 +492,19 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Histórico do Spotify',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+          Text(
+            context.l10n.recapSpotifyTitle,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 6),
           Text(
             n > 0
-                ? '${_n(n)} reproduções do Spotify na sua Retrospectiva '
-                      '(${year(h?['from'])} a ${year(h?['to'])}). Pode mandar um arquivo mais novo: '
-                      'o que já entrou não repete.'
-                : 'Traga os anos de antes do Pudim. No Spotify, vá em Conta > Privacidade > '
-                      'Baixe seus dados e marque "Histórico de streaming estendido". Quando o e-mail '
-                      'chegar, escolha aqui o my_spotify_data.zip.',
+                ? context.l10n.recapSpotifyHasData(
+                    _n(n),
+                    year(h?['from']),
+                    year(h?['to']),
+                  )
+                : context.l10n.recapSpotifyIntro,
             style: const TextStyle(color: Colors.white70, height: 1.4),
           ),
           const SizedBox(height: 12),
@@ -508,7 +527,9 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
                       )
                     : const Icon(Icons.upload_file, size: 18),
                 label: Text(
-                  n > 0 ? 'Importar outro arquivo' : 'Importar histórico',
+                  n > 0
+                      ? context.l10n.recapSpotifyImportAnother
+                      : context.l10n.recapSpotifyImport,
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
               ),
@@ -516,7 +537,7 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
                 TextButton(
                   style: TextButton.styleFrom(foregroundColor: Colors.white70),
                   onPressed: _busy ? null : _remove,
-                  child: const Text('Tirar da Retrospectiva'),
+                  child: Text(context.l10n.recapSpotifyRemoveBtn),
                 ),
             ],
           ),
@@ -526,10 +547,64 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
   }
 }
 
-String _date(String iso) {
+String _date(BuildContext context, String iso) {
   final d = DateTime.tryParse(iso);
   if (d == null) return iso;
-  return '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}';
+  try {
+    return DateFormat.MMMd(Localizations.localeOf(context).toString())
+        .format(d);
+  } catch (_) {
+    return '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}';
+  }
+}
+
+const _ptMonths = [
+  'janeiro',
+  'fevereiro',
+  'março',
+  'abril',
+  'maio',
+  'junho',
+  'julho',
+  'agosto',
+  'setembro',
+  'outubro',
+  'novembro',
+  'dezembro',
+];
+const _ptWeekdays = [
+  'segunda',
+  'terça',
+  'quarta',
+  'quinta',
+  'sexta',
+  'sábado',
+  'domingo',
+];
+
+/// O servidor manda o mês em português; mostra no idioma da interface.
+String _month(BuildContext context, String pt, {bool short = false}) {
+  final i = _ptMonths.indexOf(pt);
+  if (i < 0) return short && pt.length > 3 ? pt.substring(0, 3) : pt;
+  try {
+    final f = Localizations.localeOf(context).toString();
+    final d = DateTime(2024, i + 1);
+    return (short ? DateFormat.MMM(f) : DateFormat.MMMM(f)).format(d);
+  } catch (_) {
+    return short ? pt.substring(0, 3) : pt;
+  }
+}
+
+/// O servidor manda o dia da semana em português; mostra no idioma da interface.
+String _weekday(BuildContext context, String pt) {
+  final i = _ptWeekdays.indexOf(pt);
+  if (i < 0) return pt;
+  try {
+    return DateFormat.EEEE(Localizations.localeOf(context).toString())
+        .format(DateTime(2024, 1, 1 + i));
+  } catch (_) {
+    return pt;
+  }
 }
 
 void toastMsg(BuildContext context, String msg) => ScaffoldMessenger.of(context)
@@ -673,8 +748,11 @@ class _Months extends StatelessWidget {
             Expanded(
               child: Tooltip(
                 message:
-                    '${m['month']}: ${_n(m['minutes'])} min'
-                    '${m['artist'] == null ? '' : ' • ${m['artist']}'}',
+                    context.l10n.recapMonthTooltip(
+                      _month(context, '${m['month']}'),
+                      _n(m['minutes']),
+                    ) +
+                    (m['artist'] == null ? '' : ' • ${m['artist']}'),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -689,7 +767,7 @@ class _Months extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      '${m['month']}'.substring(0, 3),
+                      _month(context, '${m['month']}', short: true),
                       style: const TextStyle(color: Pm.subdued, fontSize: 11),
                     ),
                   ],

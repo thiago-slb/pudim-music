@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/l10n.dart';
 import '../../audio/player.dart';
 import '../../state/ui.dart';
 import '../theme.dart';
@@ -68,8 +69,8 @@ class PlayerBar extends ConsumerWidget {
                             ? Icons.check_circle
                             : Icons.add_circle_outline,
                         tooltip: cur.favorite
-                            ? 'Remover das Músicas curtidas'
-                            : 'Adicionar a Músicas curtidas',
+                            ? context.l10n.commonRemoveFromLiked
+                            : context.l10n.commonAddToLiked,
                         active: cur.favorite,
                         size: 18,
                         onPressed: () => toggleFavorite(context, ref, cur),
@@ -95,6 +96,7 @@ class _Controls extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = ref.read(playerProvider.notifier);
     final hasTrack = q.current != null;
+    final l10n = context.l10n;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -104,25 +106,25 @@ class _Controls extends ConsumerWidget {
             IconBtn(
               q.smart ? Icons.auto_awesome : Icons.shuffle,
               tooltip: q.smart
-                  ? 'Desativar o Smart Shuffle'
+                  ? l10n.playerBarSmartShuffleOff
                   : q.shuffle
                   ? (q.contextPlaylistId != null
-                        ? 'Ativar o Smart Shuffle'
-                        : 'Desativar a ordem aleatória')
-                  : 'Ativar a ordem aleatória',
+                        ? l10n.playerBarSmartShuffleOn
+                        : l10n.playerBarShuffleOff)
+                  : l10n.playerBarShuffleOn,
               active: q.shuffle,
               size: 18,
               onPressed: c.toggleShuffle,
             ),
             IconBtn(
               Icons.skip_previous_rounded,
-              tooltip: 'Voltar',
+              tooltip: l10n.commonBack,
               size: 26,
               onPressed: hasTrack ? c.previous : null,
             ),
             const SizedBox(width: 8),
             Tooltip(
-              message: q.playing ? 'Pausar' : 'Play',
+              message: q.playing ? l10n.commonPause : l10n.playerBarPlay,
               child: Material(
                 color: Pm.text,
                 shape: const CircleBorder(),
@@ -154,16 +156,16 @@ class _Controls extends ConsumerWidget {
             const SizedBox(width: 8),
             IconBtn(
               Icons.skip_next_rounded,
-              tooltip: 'Avançar',
+              tooltip: l10n.playerBarForward,
               size: 26,
               onPressed: hasTrack ? c.next : null,
             ),
             IconBtn(
               q.repeat == RepeatMode.one ? Icons.repeat_one : Icons.repeat,
               tooltip: switch (q.repeat) {
-                RepeatMode.off => 'Ativar a repetição',
-                RepeatMode.all => 'Ativar a repetição de uma faixa',
-                RepeatMode.one => 'Desativar a repetição',
+                RepeatMode.off => l10n.playerBarRepeatOn,
+                RepeatMode.all => l10n.playerBarRepeatOne,
+                RepeatMode.one => l10n.playerBarRepeatOff,
               },
               active: q.repeat != RepeatMode.off,
               size: 18,
@@ -262,12 +264,13 @@ class _ExtrasState extends ConsumerState<_Extras> {
     final loc = GoRouterState.of(context).uri.path;
     final vol = ref.watch(volumeProvider).value ?? 0.8;
     final c = ref.read(playerProvider.notifier);
+    final l10n = context.l10n;
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         IconBtn(
           Icons.slideshow_outlined,
-          tooltip: 'Tela Tocando agora',
+          tooltip: l10n.playerBarNowPlayingView,
           size: 18,
           active: panel == RightPanel.nowPlaying,
           onPressed: () => ref
@@ -276,7 +279,7 @@ class _ExtrasState extends ConsumerState<_Extras> {
         ),
         IconBtn(
           Icons.mic_none_rounded,
-          tooltip: 'Letra',
+          tooltip: l10n.playerBarLyrics,
           size: 18,
           active: loc == '/lyrics',
           onPressed: () {
@@ -292,7 +295,7 @@ class _ExtrasState extends ConsumerState<_Extras> {
         const JamButton(),
         IconBtn(
           Icons.queue_music,
-          tooltip: 'Fila',
+          tooltip: l10n.commonQueue,
           size: 18,
           active: panel == RightPanel.queue,
           onPressed: () =>
@@ -304,7 +307,7 @@ class _ExtrasState extends ConsumerState<_Extras> {
               : vol < 0.5
               ? Icons.volume_down_outlined
               : Icons.volume_up_outlined,
-          tooltip: vol == 0 ? 'Com som' : 'Mudo',
+          tooltip: vol == 0 ? l10n.playerBarUnmute : l10n.playerBarMute,
           size: 18,
           onPressed: () {
             if (vol == 0) {

@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../state/updater.dart';
+import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
@@ -27,8 +28,8 @@ class UpdateBanner extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       u.notes.isEmpty
-                          ? 'Nova versão do Pudim pronta'
-                          : 'Nova versão do Pudim · ${u.notes}',
+                          ? context.l10n.widgetUpdateReady
+                          : context.l10n.widgetUpdateReadyNotes(u.notes),
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Pm.text, fontSize: 12),
                     ),
@@ -44,9 +45,9 @@ class UpdateBanner extends ConsumerWidget {
                           .install();
                       if (err != null && context.mounted) toast(context, err);
                     },
-                    child: const Text(
-                      'Atualizar',
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                    child: Text(
+                      context.l10n.widgetUpdateAction,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ),
                 ],

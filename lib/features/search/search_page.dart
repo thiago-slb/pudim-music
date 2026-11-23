@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../l10n/l10n.dart';
+
 import 'package:go_router/go_router.dart';
 
 import '../../api/catalog.dart';
@@ -119,21 +122,21 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Nenhum resultado encontrado para "$q"',
+                  context.l10n.searchNoResults(q),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Verifique a ortografia ou use menos palavras ou palavras diferentes.',
+                Text(
+                  context.l10n.searchNoResultsHint,
                   style: TextStyle(color: Pm.subdued),
                 ),
                 if (cat.hasError) ...[
                   const SizedBox(height: 8),
                   Text(
-                    'O catálogo não respondeu: ${cat.error}',
+                    context.l10n.searchCatalogNoResponse('${cat.error}'),
                     style: const TextStyle(color: Pm.muted, fontSize: 12),
                   ),
                 ],
@@ -149,33 +152,33 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             ChipBar(
               padding: const EdgeInsets.only(top: 4, bottom: 12),
               children: [
-                  for (final t in _Tab.values)
-                    Chip2(
-                      switch (t) {
-                        _Tab.all => 'Tudo',
-                        _Tab.artists => 'Artistas',
-                        _Tab.tracks => 'Músicas',
-                        _Tab.albums => 'Álbuns',
-                        _Tab.playlists => 'Playlists',
-                      },
-                      selected: _tab == t,
-                      onTap: () => setState(() => _tab = t),
-                    ),
+                for (final t in _Tab.values)
+                  Chip2(
+                    switch (t) {
+                      _Tab.all => context.l10n.commonAll,
+                      _Tab.artists => context.l10n.commonArtists,
+                      _Tab.tracks => context.l10n.commonSongs,
+                      _Tab.albums => context.l10n.commonAlbums,
+                      _Tab.playlists => context.l10n.commonPlaylists,
+                    },
+                    selected: _tab == t,
+                    onTap: () => setState(() => _tab = t),
+                  ),
               ],
             ),
             if (cat.isLoading)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  'Buscando também no catálogo…',
-                  style: TextStyle(color: Pm.muted, fontSize: 12),
+                  context.l10n.searchAlsoCatalog,
+                  style: const TextStyle(color: Pm.muted, fontSize: 12),
                 ),
               )
             else if (cat.hasError)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  'Só a biblioteca: o catálogo não respondeu (${cat.error}).',
+                  context.l10n.searchLibraryOnly('${cat.error}'),
                   style: const TextStyle(color: Pm.muted, fontSize: 12),
                 ),
               ),
@@ -186,7 +189,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               _Tab.albums => [_grid(r.albums)],
               _Tab.playlists => [_grid(r.playlists)],
               _Tab.tracks => [
-                TrackTable(tracks: r.tracks, contextName: 'Busca: $q'),
+                TrackTable(
+                  tracks: r.tracks,
+                  contextName: context.l10n.audioSearchContext(q),
+                ),
               ],
             },
           ],
@@ -205,7 +211,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           final songs = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader('Músicas'),
+              SectionHeader(context.l10n.commonSongs),
               for (var i = 0; i < r.tracks.length && i < 4; i++)
                 TrackRow(
                   track: r.tracks[i],
@@ -213,7 +219,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   showAlbum: false,
                   onPlay: () => ref
                       .read(playerProvider.notifier)
-                      .playList(r.tracks, start: i, contextName: 'Busca: $q'),
+                      .playList(
+                        r.tracks,
+                        start: i,
+                        contextName: context.l10n.audioSearchContext(q),
+                      ),
                 ),
             ],
           );
@@ -236,9 +246,9 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         },
       ),
       const SizedBox(height: 32),
-      Shelf(title: 'Artistas', items: r.artists),
-      Shelf(title: 'Álbuns', items: r.albums),
-      Shelf(title: 'Playlists', items: r.playlists),
+      Shelf(title: context.l10n.commonArtists, items: r.artists),
+      Shelf(title: context.l10n.commonAlbums, items: r.albums),
+      Shelf(title: context.l10n.commonPlaylists, items: r.playlists),
     ];
   }
 
@@ -262,7 +272,7 @@ class _TopResultState extends ConsumerState<_TopResult> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeader('Melhor resultado'),
+        SectionHeader(context.l10n.searchTopResult),
         MouseRegion(
           cursor: SystemMouseCursors.click,
           onEnter: (_) => setState(() => _hover = true),
@@ -297,7 +307,7 @@ class _TopResultState extends ConsumerState<_TopResult> {
                       const SizedBox(height: 4),
                       Text(
                         it.kind == ItemKind.artist
-                            ? 'Artista'
+                            ? context.l10n.commonArtist
                             : '${it.typeLabel} • ${it.artistLine}',
                         style: const TextStyle(color: Pm.subdued),
                       ),
@@ -332,7 +342,7 @@ class _Browse extends ConsumerWidget {
     final pls = lib?.playlists ?? const <Item>[];
     final tiles = <(String, Color, VoidCallback)>[
       (
-        'Músicas curtidas',
+        context.l10n.commonLikedSongs,
         const Color(0xFF5038A0),
         () => context.go('/collection/tracks'),
       ),
@@ -343,11 +353,11 @@ class _Browse extends ConsumerWidget {
           () => context.go('/playlist/${p.id}'),
         ),
       (
-        'Playlists do Spotify',
+        context.l10n.searchSpotifyPlaylists,
         const Color(0xFF1E3264),
         () => context.go('/search?q=${Uri.encodeQueryComponent('Spotify ·')}'),
       ),
-      ('Início', const Color(0xFFE8115B), () => context.go('/')),
+      (context.l10n.commonHome, const Color(0xFFE8115B), () => context.go('/')),
     ];
     final compact = isCompact(context);
     final tileW = compact
@@ -361,9 +371,9 @@ class _Browse extends ConsumerWidget {
         if (recent.isNotEmpty) ...[
           Row(
             children: [
-              const Expanded(child: SectionHeader('Buscas recentes')),
+              Expanded(child: SectionHeader(context.l10n.searchRecent)),
               TextLink(
-                'Limpar',
+                context.l10n.searchClear,
                 style: const TextStyle(
                   color: Pm.subdued,
                   fontWeight: FontWeight.w700,
@@ -388,7 +398,7 @@ class _Browse extends ConsumerWidget {
           ),
           const SizedBox(height: 32),
         ],
-        const SectionHeader('Navegar por todas as seções'),
+        SectionHeader(context.l10n.searchBrowseAll),
         Wrap(
           spacing: compact ? 12 : 16,
           runSpacing: compact ? 12 : 16,
@@ -456,13 +466,16 @@ class _MobileSearchFieldState extends State<_MobileSearchField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              UserAvatar(),
-              SizedBox(width: 12),
+              const UserAvatar(),
+              const SizedBox(width: 12),
               Text(
-                'Buscar',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+                context.l10n.commonSearch,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ],
           ),
@@ -484,9 +497,9 @@ class _MobileSearchFieldState extends State<_MobileSearchField> {
                     textInputAction: TextInputAction.search,
                     style: const TextStyle(color: Colors.black, fontSize: 15),
                     cursorColor: Colors.black,
-                    decoration: const InputDecoration(
-                      hintText: 'O que você quer ouvir?',
-                      hintStyle: TextStyle(color: Colors.black54),
+                    decoration: InputDecoration(
+                      hintText: context.l10n.searchHint,
+                      hintStyle: const TextStyle(color: Colors.black54),
                       isDense: true,
                     ),
                     onChanged: (v) {

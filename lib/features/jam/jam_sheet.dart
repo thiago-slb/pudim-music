@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/catalog.dart';
 import '../../audio/player.dart';
+import '../../l10n/l10n.dart';
 import '../../state/jam.dart';
 import '../../state/session.dart';
 import '../../ui/theme.dart';
@@ -21,7 +22,7 @@ class JamButton extends ConsumerWidget {
     final jam = ref.watch(jamProvider);
     final n = jam?.members.length ?? 0;
     return IconButton(
-      tooltip: jam == null ? 'Iniciar uma Jam' : 'Jam ($n pessoas)',
+      tooltip: jam == null ? context.l10n.jamStart : context.l10n.jamTooltip(n),
       onPressed: () => showJamSheet(context),
       icon: Badge(
         isLabelVisible: jam != null,
@@ -108,10 +109,10 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
                       ),
                       Text(
                         jam == null
-                            ? 'Ouça junto com outras contas, na mesma fila.'
+                            ? context.l10n.jamSubIdle
                             : jam.isHost
-                            ? 'Você está no comando. Todos podem pedir músicas.'
-                            : 'Seus botões e músicas vão para a fila de todos.',
+                            ? context.l10n.jamSubHost
+                            : context.l10n.jamSubGuest,
                         style: const TextStyle(color: Pm.subdued),
                       ),
                     ],
@@ -125,14 +126,12 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
                 width: double.infinity,
                 child: FilledButton.icon(
                   icon: const Icon(Icons.play_arrow_rounded),
-                  label: const Text('Iniciar uma Jam'),
+                  label: Text(context.l10n.jamStart),
                   onPressed: _busy
                       ? null
                       : () => _run(() async {
                           if (ref.read(playerProvider).current == null) {
-                            throw CatalogException(
-                              'Toque alguma coisa antes de começar a Jam.',
-                            );
+                            throw CatalogException(context.l10n.jamPlayFirst);
                           }
                           await ctl.start();
                         }),
@@ -140,7 +139,7 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
               ),
             ] else ...[
               Text(
-                'Na Jam (${jam.members.length})',
+                context.l10n.jamMembers(jam.members.length),
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   color: Pm.subdued,
@@ -162,7 +161,9 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          m.id == me ? '${m.displayName} (você)' : m.displayName,
+                          m.id == me
+                              ? context.l10n.jamYouSuffix(m.displayName)
+                              : m.displayName,
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -176,9 +177,9 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
                             color: Pm.highlight,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text(
-                            'Anfitrião',
-                            style: TextStyle(fontSize: 12),
+                          child: Text(
+                            context.l10n.jamHost,
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ),
                     ],
@@ -195,20 +196,23 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       icon: const Icon(Icons.person_add_alt, size: 18),
-                      label: const Text('Convidar'),
+                      label: Text(context.l10n.jamInvite),
                       onPressed: _busy
                           ? null
                           : () async {
                               final c = await pickContact(
                                 context,
-                                title: 'Convidar para a Jam',
-                                subtitle: 'O convite chega no chat da pessoa.',
+                                title: context.l10n.jamInviteTitle,
+                                subtitle: context.l10n.jamInviteSubtitle,
                               );
                               if (c == null) return;
                               await _run(() async {
                                 await ctl.invite(c.id);
                                 if (context.mounted) {
-                                  toast(context, 'Convite enviado para ${c.displayName}');
+                                  toast(
+                                    context,
+                                    context.l10n.jamInviteSent(c.displayName),
+                                  );
                                 }
                               });
                             },
@@ -228,7 +232,11 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
                               await ctl.leave();
                               if (context.mounted) Navigator.pop(context);
                             }),
-                      child: Text(jam.isHost ? 'Encerrar a Jam' : 'Sair da Jam'),
+                      child: Text(
+                        jam.isHost
+                            ? context.l10n.jamEnd
+                            : context.l10n.jamLeave,
+                      ),
                     ),
                   ),
                 ],

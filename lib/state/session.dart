@@ -10,7 +10,7 @@ import '../config.dart';
 import '../api/jellyfin.dart';
 import 'token_store.dart';
 import '../api/response_cache.dart';
-
+import '../l10n/l10n.dart';
 
 class Session {
   final Jellyfin api;
@@ -119,8 +119,8 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     if (base == null) {
       throw JellyfinException(
         u.lan.isEmpty
-            ? 'O servidor não respondeu. Confira o endereço.'
-            : 'O servidor não respondeu em nenhum dos dois endereços.',
+            ? appL10n.stateServerNoReply
+            : appL10n.stateServerNoReplyBoth,
       );
     }
     return Jellyfin(
@@ -140,14 +140,18 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   Future<(Jellyfin, String, String)> quickConnectStart(ServerUrls u) async {
     final api = await _connect(u);
     if (!await api.quickConnectEnabled()) {
-      throw JellyfinException('O Quick Connect está desligado neste servidor.');
+      throw JellyfinException(appL10n.apiQuickConnectOff);
     }
     final (secret, code) = await api.quickConnectStart();
     return (api, secret, code);
   }
 
   /// Quick Connect, passo 2: true quando o código foi aprovado e a conta entrou.
-  Future<bool> quickConnectPoll(ServerUrls u, Jellyfin api, String secret) async {
+  Future<bool> quickConnectPoll(
+    ServerUrls u,
+    Jellyfin api,
+    String secret,
+  ) async {
     if (!await api.quickConnectApproved(secret)) return false;
     await _finish(u, api, await api.loginQuickConnect(secret));
     return true;

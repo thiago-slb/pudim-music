@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../api/models.dart';
 import '../../audio/player.dart';
+import '../../l10n/l10n.dart';
 import '../responsive.dart';
 import '../theme.dart';
 import 'actions.dart';
@@ -104,11 +105,17 @@ class _Header extends StatelessWidget {
             child: Text('#', style: st, textAlign: TextAlign.center),
           ),
           const SizedBox(width: 16),
-          const Expanded(flex: 4, child: Text('Título', style: st)),
+          Expanded(
+            flex: 4,
+            child: Text(context.l10n.widgetTracksTitle, style: st),
+          ),
           if (showAlbum)
-            const Expanded(flex: 3, child: Text('Álbum', style: st)),
+            Expanded(flex: 3, child: Text(context.l10n.commonAlbum, style: st)),
           if (showDate)
-            const Expanded(flex: 2, child: Text('Adicionada em', style: st)),
+            Expanded(
+              flex: 2,
+              child: Text(context.l10n.widgetTracksDateAdded, style: st),
+            ),
           const SizedBox(width: 40),
           const SizedBox(
             width: 56,
@@ -247,7 +254,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                               if (widget.addedBy != null)
                                 Flexible(
                                   child: Text(
-                                    '  •  por ${widget.addedBy}',
+                                    '  •  ${context.l10n.widgetTracksAddedBy(widget.addedBy!)}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
@@ -279,7 +286,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    _date(t.dateCreated),
+                    _date(context, t.dateCreated),
                     style: const TextStyle(color: Pm.subdued, fontSize: 14),
                   ),
                 ),
@@ -411,7 +418,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                         child: Text(
                           widget.addedBy == null
                               ? t.artistLine
-                              : '${t.artistLine}  •  por ${widget.addedBy}',
+                              : '${t.artistLine}  •  ${context.l10n.widgetTracksAddedBy(widget.addedBy!)}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -427,7 +434,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
             ),
             IconButton(
               icon: const Icon(Icons.more_vert, color: Pm.subdued, size: 20),
-              tooltip: 'Mais opções',
+              tooltip: context.l10n.widgetTracksMoreOptions,
               onPressed: () => showItemMenu(
                 context,
                 ref,
@@ -443,23 +450,9 @@ class _TrackRowState extends ConsumerState<TrackRow> {
     );
   }
 
-  String _date(DateTime? d) {
+  String _date(BuildContext context, DateTime? d) {
     if (d == null) return '';
-    const m = [
-      'jan',
-      'fev',
-      'mar',
-      'abr',
-      'mai',
-      'jun',
-      'jul',
-      'ago',
-      'set',
-      'out',
-      'nov',
-      'dez',
-    ];
-    return '${d.day} de ${m[d.month - 1]}. de ${d.year}';
+    return context.l10n.widgetTracksAddedDate(d);
   }
 }
 

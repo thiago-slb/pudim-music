@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../api/catalog.dart';
 import 'notify.dart';
 import 'session.dart';
+import '../l10n/l10n.dart';
 
 /// Conversas desta conta (do painel), consultadas a cada 15 s (4 s com uma conversa aberta).
 /// Mensagem nova de outra pessoa vira notificação, menos a da conversa que está aberta.
@@ -39,7 +40,7 @@ class ChatsNotifier extends Notifier<ChatList> {
             final m = c.last;
             if (m.id > _lastId && m.from != me && c.user.id != openWith) {
               final what = m.share != null
-                  ? 'Compartilhou ${m.share!.title}'
+                  ? appL10n.stateChatShared(m.share!.title)
                   : m.text;
               Notify.show(
                 0x40000000 + (c.user.id.hashCode & 0xFFFF),

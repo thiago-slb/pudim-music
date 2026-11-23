@@ -1,6 +1,8 @@
 // Modelos mínimos do Jellyfin usados pelo PudimMusic.
 // Só os campos que o app usa; o resto do JSON é ignorado.
 
+import '../l10n/l10n.dart';
+
 const int ticksPerSecond = 10000000;
 
 Duration ticksToDuration(num? ticks) =>
@@ -290,10 +292,10 @@ class Item {
   }
 
   String get typeLabel => switch (kind) {
-    ItemKind.track => 'Música',
-    ItemKind.album => 'Álbum',
-    ItemKind.artist => 'Artista',
-    ItemKind.playlist => 'Playlist',
+    ItemKind.track => appL10n.commonSong,
+    ItemKind.album => appL10n.commonAlbum,
+    ItemKind.artist => appL10n.commonArtist,
+    ItemKind.playlist => appL10n.commonPlaylist,
     ItemKind.other => '',
   };
 }

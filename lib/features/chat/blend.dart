@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../api/catalog.dart';
+import '../../l10n/l10n.dart';
 import '../../state/library.dart';
 import '../../state/session.dart';
 import '../../ui/theme.dart';
@@ -46,10 +47,10 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
             : const Icon(Icons.join_inner, size: 18),
         label: Text(
           busy
-              ? 'Misturando…'
+              ? context.l10n.blendWorking
               : b?.affinity != null
-              ? 'Blend ${b!.affinity}%'
-              : 'Criar Blend',
+              ? context.l10n.blendAffinityButton(b!.affinity!)
+              : context.l10n.blendCreate,
         ),
         onPressed: busy
             ? null
@@ -63,19 +64,16 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Pm.elevated,
-        title: Text('Blend com ${widget.other.displayName}'),
-        content: const Text(
-          'Uma playlist igual para vocês dois, com o que os dois ouvem, os artistas em comum '
-          'e um pouco do que cada um mais gosta. Mostra a afinidade de vocês e se atualiza todo dia.',
-        ),
+        title: Text(context.l10n.blendWith(widget.other.displayName)),
+        content: Text(ctx.l10n.blendExplain),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Agora não'),
+            child: Text(ctx.l10n.blendNotNow),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Criar Blend'),
+            child: Text(ctx.l10n.blendCreate),
           ),
         ],
       ),
@@ -140,14 +138,17 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Vocês têm ${b.affinity ?? 0}% de afinidade',
+                ctx.l10n.blendAffinityTitle(b.affinity ?? 0),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               if (b.common.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Em comum: ${b.common.join(', ')}',
+                  ctx.l10n.blendInCommon(b.common.join(', ')),
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Pm.subdued),
                 ),
@@ -157,7 +158,7 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () => Navigator.pop(ctx, 'open'),
-                  child: Text('Abrir o Blend (${b.tracks} músicas)'),
+                  child: Text(ctx.l10n.blendOpen(b.tracks)),
                 ),
               ),
               const SizedBox(height: 4),
@@ -166,12 +167,12 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(ctx, 'refresh'),
-                    child: const Text('Atualizar agora'),
+                    child: Text(ctx.l10n.blendRefreshNow),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(foregroundColor: Pm.subdued),
                     onPressed: () => Navigator.pop(ctx, 'delete'),
-                    child: const Text('Desfazer Blend'),
+                    child: Text(ctx.l10n.blendUndo),
                   ),
                 ],
               ),
@@ -189,7 +190,7 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
         try {
           await cat.makeBlend(widget.other.id);
           ref.invalidate(madeProvider);
-          if (mounted) toast(context, 'Atualizando o Blend…');
+          if (mounted) toast(context, context.l10n.blendRefreshing);
           Timer(const Duration(seconds: 30), () {
             try {
               ref.invalidate(madeProvider);
@@ -204,18 +205,16 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
           context: context,
           builder: (ctx) => AlertDialog(
             backgroundColor: Pm.elevated,
-            title: const Text('Desfazer o Blend?'),
-            content: Text(
-              'A playlist some para você e para ${widget.other.displayName}.',
-            ),
+            title: Text(ctx.l10n.blendUndoTitle),
+            content: Text(ctx.l10n.blendUndoBody(widget.other.displayName)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancelar'),
+                child: Text(ctx.l10n.commonCancel),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Desfazer'),
+                child: Text(ctx.l10n.blendUndoConfirm),
               ),
             ],
           ),
@@ -225,7 +224,7 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
           await cat.deleteBlend(widget.other.id);
           ref.invalidate(madeProvider);
           ref.invalidate(libraryProvider);
-          if (mounted) toast(context, 'Blend desfeito');
+          if (mounted) toast(context, context.l10n.blendUndone);
         } catch (e) {
           if (mounted) toast(context, '$e');
         }
