@@ -63,7 +63,7 @@ discovery, which depend on a separate download pipeline. The app is a complete J
 | Sleep timer | ✅ | ✅ | ✅ | ✅ | ? | ? | ? | ? |
 | Playback speed | ✅ | ✅ | ✅ | ✅ | ? | ? | ? | ? |
 | Android Auto | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | ? |
-| CarPlay | ◐¹⁸ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ? |
+| CarPlay | ✅¹⁸ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ? |
 | Chromecast / casting | ❌ | ◐⁸ | ◐⁹ | ✅ | ? | ◐¹⁰ | ◐⁹ | ✅ |
 | Quick Connect login | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ? | ✅ |
 | Instant mix / radio | ✅ | ✅ | ✅ | ✅ | ? | ✅ | ◐¹¹ | ✅ |
@@ -92,7 +92,7 @@ discovery, which depend on a separate download pipeline. The app is a complete J
 15. The smart playlist editor is Navidrome-only.
 16. On the roadmap.
 17. SyncPlay, built into the Jellyfin server.
-18. Same folders as Android Auto. Compiles in CI but has not been tried in a car yet; a real car needs Apple's CarPlay audio entitlement (see Building).
+18. Same folders as Android Auto. A real car needs Apple's CarPlay audio entitlement (see Building).
 
 As of November 2026. Other clients' features come from each project's README, website, store page or release notes:
 [Finamp](https://github.com/finamp-app/finamp) ·
