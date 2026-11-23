@@ -155,7 +155,7 @@ class JamController extends Notifier<JamState?> {
     final sig = '$_from:${window.map((t) => t.id).join(',')}';
     final out = <String, dynamic>{
       'index': q.index - _from,
-      'pos_ms': _player.audio.position.inMilliseconds,
+      'pos_ms': _player.position.inMilliseconds,
       'playing': q.playing,
       'context': q.contextName,
     };

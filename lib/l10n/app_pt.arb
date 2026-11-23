@@ -774,6 +774,22 @@
     }
   },
   "settingsSignOut": "Sair",
+  "accountsTitle": "Contas",
+  "accountsAdd": "Adicionar conta ou servidor",
+  "accountsSwitch": "Trocar",
+  "accountsInUse": "Em uso",
+  "accountsOn": "{user} em {host}",
+  "@accountsOn": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "loginBackToAccount": "Voltar para a conta atual",
   "settingsSectionServer": "Servidor",
   "settingsLocalNetwork": "Na rede local",
   "settingsServerNote": "Para trocar os endereços do Jellyfin, saia da conta e abra \"Endereço do servidor\" na tela de entrada.",
@@ -1462,6 +1478,29 @@
       "date": {
         "type": "DateTime",
         "format": "yMMMd"
+      }
+    }
+  },
+  "castTooltip": "Transmitir",
+  "castTitle": "Tocar em",
+  "castThisDevice": "Este aparelho",
+  "castSearching": "Procurando aparelhos na rede…",
+  "castNone": "Nenhum Chromecast achado. Ele precisa estar no mesmo Wi-Fi.",
+  "castSearchAgain": "Procurar de novo",
+  "castStop": "Parar de transmitir",
+  "castPlayingOn": "Tocando em {name}",
+  "@castPlayingOn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "castFailed": "Não deu para conectar em {name}",
+  "@castFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
       }
     }
   }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -26,6 +27,57 @@ class ServerUrls {
   const ServerUrls(this.lan, this.wan);
 }
 
+/// Conta salva no aparelho: um usuário num servidor Jellyfin. O token fica no [TokenStore]
+/// da conta (cifrado); aqui só o que aparece na lista.
+class Account {
+  final String userId;
+  final String userName;
+  final String lan;
+  final String wan;
+  final String extras;
+  const Account({
+    required this.userId,
+    required this.userName,
+    required this.lan,
+    required this.wan,
+    this.extras = '',
+  });
+
+  String get id => userId;
+
+  /// Endereço para mostrar na lista ("music.exemplo.com").
+  String get host {
+    final u = Uri.tryParse(wan.isNotEmpty ? wan : lan);
+    return u == null || u.host.isEmpty ? (wan.isNotEmpty ? wan : lan) : u.host;
+  }
+
+  ServerUrls get urls => ServerUrls(lan, wan);
+
+  Map<String, dynamic> toJson() => {
+    'u': userId,
+    'n': userName,
+    'l': lan,
+    'w': wan,
+    if (extras.isNotEmpty) 'x': extras,
+  };
+
+  factory Account.fromJson(Map<String, dynamic> j) => Account(
+    userId: j['u'] as String,
+    userName: j['n'] as String? ?? '',
+    lan: j['l'] as String? ?? '',
+    wan: j['w'] as String? ?? '',
+    extras: j['x'] as String? ?? '',
+  );
+
+  Account copyWith({String? userName}) => Account(
+    userId: userId,
+    userName: userName ?? this.userName,
+    lan: lan,
+    wan: wan,
+    extras: extras,
+  );
+}
+
 /// Completa o endereço digitado: sem esquema vira https (ou http na rede local), sem barra no fim.
 String normalizeUrl(String raw, {bool local = false}) {
   var s = raw.trim();
@@ -41,10 +93,70 @@ final prefsProvider = Provider<SharedPreferences>(
   (ref) => throw UnimplementedError('prefsProvider é sobrescrito no main'),
 );
 
-final _secure = TokenStore();
-
 class SessionNotifier extends AsyncNotifier<Session?> {
   SharedPreferences get _prefs => ref.read(prefsProvider);
+
+  static const _accountsKey = 'accounts';
+  static const _activeKey = 'account';
+
+  /// Conta para onde voltar se a pessoa desistir de adicionar outra.
+  String? _returnTo;
+
+  /// Contas salvas neste aparelho (a primeira é a mais antiga).
+  List<Account> get accounts {
+    final raw = _prefs.getString(_accountsKey);
+    if (raw == null) return const [];
+    try {
+      return [
+        for (final j in jsonDecode(raw) as List)
+          Account.fromJson(j as Map<String, dynamic>),
+      ];
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  String? get activeId => _prefs.getString(_activeKey);
+
+  /// Está na tela de entrar só para adicionar outra conta (dá para voltar).
+  bool get adding => _returnTo != null;
+
+  Future<void> _saveAccounts(List<Account> list) => _prefs.setString(
+    _accountsKey,
+    jsonEncode([for (final a in list) a.toJson()]),
+  );
+
+  /// As chaves antigas (uma conta só) continuam valendo para a conta em uso.
+  Future<void> _mirror(Account a) async {
+    await _prefs.setString(_activeKey, a.id);
+    await _prefs.setString('userId', a.userId);
+    await _prefs.setString('userName', a.userName);
+    await _prefs.setString('lanUrl', a.lan);
+    await _prefs.setString('wanUrl', a.wan);
+    if (_prefs.getString('extrasUrl') != a.extras) {
+      await _prefs.setString('extrasUrl', a.extras);
+      ref.invalidate(extrasUrlProvider);
+    }
+  }
+
+  /// Versões antigas guardavam uma conta só: vira a primeira da lista.
+  Future<void> _migrate() async {
+    if (_prefs.getString(_accountsKey) != null) return;
+    final userId = _prefs.getString('userId');
+    final token = await const TokenStore().read();
+    if (userId == null || token == null) return;
+    final a = Account(
+      userId: userId,
+      userName: _prefs.getString('userName') ?? '',
+      lan: _prefs.getString('lanUrl') ?? defaultLanUrl,
+      wan: _prefs.getString('wanUrl') ?? defaultServerUrl,
+      extras: _prefs.getString('extrasUrl') ?? defaultExtrasUrl,
+    );
+    await TokenStore(a.id).write(token);
+    await _saveAccounts([a]);
+    await _prefs.setString(_activeKey, a.id);
+    await const TokenStore().delete();
+  }
 
   String get deviceId {
     var id = _prefs.getString('deviceId');
@@ -82,10 +194,16 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   @override
   Future<Session?> build() async {
-    final token = await _secure.read();
-    final userId = _prefs.getString('userId');
-    final userName = _prefs.getString('userName');
-    if (token == null || userId == null) return null;
+    await _migrate();
+    final all = accounts;
+    final active =
+        all.where((a) => a.id == activeId).firstOrNull ?? all.firstOrNull;
+    if (active == null) return null;
+    final token = await TokenStore(active.id).read();
+    if (token == null) return null;
+    await _mirror(active);
+    final userId = active.userId;
+    final userName = active.userName;
     final picked = await pickServer(urls);
     // Sem resposta de nenhum: o de fora funciona em qualquer rede quando a internet voltar.
     final base = picked ?? (urls.wan.isNotEmpty ? urls.wan : urls.lan);
@@ -111,7 +229,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
       if (picked == null) cache.markOffline();
     }
     api.reportCapabilities();
-    return Session(api, userName ?? '');
+    return Session(api, userName);
   }
 
   Future<Jellyfin> _connect(ServerUrls u) async {
@@ -158,11 +276,21 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   }
 
   Future<void> _finish(ServerUrls u, Jellyfin api, AuthResult r) async {
-    await _secure.write(r.token);
-    await _prefs.setString('userId', r.userId);
-    await _prefs.setString('userName', r.userName);
-    await _prefs.setString('lanUrl', u.lan);
-    await _prefs.setString('wanUrl', u.wan);
+    final a = Account(
+      userId: r.userId,
+      userName: r.userName,
+      lan: u.lan,
+      wan: u.wan,
+      extras: _prefs.getString('extrasUrl') ?? defaultExtrasUrl,
+    );
+    await TokenStore(a.id).write(r.token);
+    await _saveAccounts([
+      for (final x in accounts)
+        if (x.id != a.id) x,
+      a,
+    ]);
+    await _mirror(a);
+    _returnTo = null;
     api.reportCapabilities();
     state = AsyncData(Session(api, r.userName));
   }
@@ -172,15 +300,57 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     final s = state.value;
     if (s == null) return;
     await _prefs.setString('userName', name);
+    await _saveAccounts([
+      for (final a in accounts)
+        a.id == s.userId ? a.copyWith(userName: name) : a,
+    ]);
     state = AsyncData(Session(s.api, name));
   }
 
+  /// Troca para outra conta salva (outro usuário ou outro servidor).
+  Future<void> switchTo(String id) async {
+    final a = accounts.where((x) => x.id == id).firstOrNull;
+    if (a == null || (id == activeId && state.value != null)) return;
+    _returnTo = null;
+    await _mirror(a);
+    ResponseCache.instance?.markOnline();
+    state = const AsyncLoading();
+    ref.invalidateSelf();
+  }
+
+  /// Abre a tela de entrar para adicionar outra conta, sem sair da atual.
+  void beginAdd() {
+    if (state.value == null) return;
+    _returnTo = activeId;
+    state = const AsyncData(null);
+  }
+
+  /// Desistiu de adicionar: volta para a conta de antes.
+  Future<void> cancelAdd() async {
+    final back = _returnTo;
+    _returnTo = null;
+    if (back != null) await switchTo(back);
+  }
+
+  /// Sai da conta em uso (e esquece o token). Se houver outras, entra na próxima.
   Future<void> logout() async {
     final s = state.value;
+    final id = activeId;
     await s?.api.logout();
-    await _secure.delete();
+    if (id != null) await TokenStore(id).delete();
+    final rest = [
+      for (final a in accounts)
+        if (a.id != id) a,
+    ];
+    await _saveAccounts(rest);
     await _prefs.remove('userId');
     await _prefs.remove('userName');
+    await _prefs.remove(_activeKey);
+    _returnTo = null;
+    if (rest.isNotEmpty) {
+      await switchTo(rest.last.id);
+      return;
+    }
     state = const AsyncData(null);
   }
 }

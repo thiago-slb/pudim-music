@@ -14,6 +14,7 @@ import 'mobile_shell.dart';
 import '../../features/jam/jam_sheet.dart';
 import '../../features/playlist/playlist_edit.dart';
 import '../widgets/sleep_speed.dart';
+import '../widgets/cast_button.dart';
 
 /// "Tocando agora" do celular: fundo na cor da capa, capa grande, controles,
 /// e abaixo os cartões de letra, artista e "A seguir".
@@ -193,6 +194,7 @@ class NowPlayingPage extends ConsumerWidget {
                           Row(
                             children: [
                               const JamButton(size: 24),
+                              const CastButton(size: 24),
                               const SleepTimerButton(size: 24),
                               const SpeedButton(),
                               const Spacer(),

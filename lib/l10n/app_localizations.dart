@@ -1953,6 +1953,42 @@ abstract class L10n {
   /// **'Sair'**
   String get settingsSignOut;
 
+  /// No description provided for @accountsTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Contas'**
+  String get accountsTitle;
+
+  /// No description provided for @accountsAdd.
+  ///
+  /// In pt, this message translates to:
+  /// **'Adicionar conta ou servidor'**
+  String get accountsAdd;
+
+  /// No description provided for @accountsSwitch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Trocar'**
+  String get accountsSwitch;
+
+  /// No description provided for @accountsInUse.
+  ///
+  /// In pt, this message translates to:
+  /// **'Em uso'**
+  String get accountsInUse;
+
+  /// No description provided for @accountsOn.
+  ///
+  /// In pt, this message translates to:
+  /// **'{user} em {host}'**
+  String accountsOn(String user, String host);
+
+  /// No description provided for @loginBackToAccount.
+  ///
+  /// In pt, this message translates to:
+  /// **'Voltar para a conta atual'**
+  String get loginBackToAccount;
+
   /// No description provided for @settingsSectionServer.
   ///
   /// In pt, this message translates to:
@@ -3536,6 +3572,60 @@ abstract class L10n {
   /// In pt, this message translates to:
   /// **'{date}'**
   String widgetTracksAddedDate(DateTime date);
+
+  /// No description provided for @castTooltip.
+  ///
+  /// In pt, this message translates to:
+  /// **'Transmitir'**
+  String get castTooltip;
+
+  /// No description provided for @castTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tocar em'**
+  String get castTitle;
+
+  /// No description provided for @castThisDevice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este aparelho'**
+  String get castThisDevice;
+
+  /// No description provided for @castSearching.
+  ///
+  /// In pt, this message translates to:
+  /// **'Procurando aparelhos na rede…'**
+  String get castSearching;
+
+  /// No description provided for @castNone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum Chromecast achado. Ele precisa estar no mesmo Wi-Fi.'**
+  String get castNone;
+
+  /// No description provided for @castSearchAgain.
+  ///
+  /// In pt, this message translates to:
+  /// **'Procurar de novo'**
+  String get castSearchAgain;
+
+  /// No description provided for @castStop.
+  ///
+  /// In pt, this message translates to:
+  /// **'Parar de transmitir'**
+  String get castStop;
+
+  /// No description provided for @castPlayingOn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tocando em {name}'**
+  String castPlayingOn(String name);
+
+  /// No description provided for @castFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não deu para conectar em {name}'**
+  String castFailed(String name);
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

@@ -17,13 +17,18 @@ import '../l10n/l10n.dart';
 ///   `pudim/token`); o arquivo cifrado fica na pasta privada do app.
 /// - iOS/macOS entram na fase da Apple (Keychain).
 class TokenStore {
+  /// Conta dona do token (vazio = arquivo antigo, de quando só cabia uma conta).
+  final String account;
+  const TokenStore([this.account = '']);
+
   static const _entropy = 'PudimMusic/token/v1';
   static const _uiForbidden = 0x1; // CRYPTPROTECT_UI_FORBIDDEN
   static const _android = MethodChannel('pudim/token');
 
   Future<File> _file() async {
     final dir = await getApplicationSupportDirectory();
-    final name = Platform.isAndroid ? 'token.enc' : 'token.bin';
+    final suffix = account.isEmpty ? '' : '-$account';
+    final name = Platform.isAndroid ? 'token$suffix.enc' : 'token$suffix.bin';
     return File('${dir.path}${Platform.pathSeparator}$name');
   }
 

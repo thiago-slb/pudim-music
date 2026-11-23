@@ -491,6 +491,14 @@ class Jellyfin {
   String streamUrl(String trackId) =>
       '$baseUrl/Audio/$trackId/stream?static=true&deviceId=$deviceId&api_key=$token';
 
+  /// Para o Chromecast: o arquivo como está quando ele toca o formato (MP3, AAC, FLAC,
+  /// Opus, Vorbis, WAV); senão, convertido para MP3 320 kbps.
+  String castUrl(String trackId) =>
+      '$baseUrl/Audio/$trackId/universal?userId=$userId&deviceId=$deviceId'
+      '&api_key=$token&container=mp3,aac,m4a|aac,flac,opus,webm|opus,ogg|vorbis,wav'
+      '&transcodingContainer=mp3&transcodingProtocol=http&audioCodec=mp3'
+      '&maxStreamingBitrate=320000';
+
   /// Versão mais leve, convertida pelo Jellyfin para AAC em [kbps] (HLS, dá para avançar na música).
   String transcodeUrl(String trackId, int kbps) {
     final bps = kbps * 1000;
