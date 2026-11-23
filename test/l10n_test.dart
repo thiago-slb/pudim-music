@@ -6,18 +6,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pudim_music/l10n/l10n.dart';
 
 void main() {
-  test('os três idiomas carregam', () {
+  test('os idiomas carregam', () {
     expect(lookupL10n(const Locale('pt')).commonLikedSongs, 'Músicas curtidas');
     expect(lookupL10n(const Locale('en')).commonLikedSongs, 'Liked Songs');
     expect(
       lookupL10n(const Locale('es')).commonLikedSongs,
       'Canciones que te gustan',
     );
-    expect(L10n.supportedLocales.map((l) => l.languageCode).toSet(), {
-      'pt',
-      'en',
-      'es',
-    });
+    expect(
+      L10n.supportedLocales.map((l) => l.languageCode).toSet(),
+      appLanguages.toSet(),
+    );
+    for (final code in appLanguages) {
+      expect(appLanguageNames[code], isNotNull, reason: code);
+      expect(lookupL10n(Locale(code)).commonLikedSongs, isNotEmpty);
+    }
   });
 
   test('plural das músicas', () {
@@ -29,10 +32,11 @@ void main() {
   test('segue o idioma do aparelho, senão português', () {
     expect(resolveAppLocale(const [Locale('es', 'MX')]), const Locale('es'));
     expect(
-      resolveAppLocale(const [Locale('fr'), Locale('en', 'US')]),
+      resolveAppLocale(const [Locale('hi'), Locale('en', 'US')]),
       const Locale('en'),
     );
-    expect(resolveAppLocale(const [Locale('de')]), const Locale('pt'));
+    expect(resolveAppLocale(const [Locale('ja', 'JP')]), const Locale('ja'));
+    expect(resolveAppLocale(const [Locale('hi')]), const Locale('pt'));
     expect(resolveAppLocale(null), const Locale('pt'));
   });
 
@@ -45,7 +49,8 @@ void main() {
     }
 
     final pt = keys('pt');
-    expect(keys('en'), pt);
-    expect(keys('es'), pt);
+    for (final code in appLanguages) {
+      expect(keys(code), pt, reason: code);
+    }
   });
 }

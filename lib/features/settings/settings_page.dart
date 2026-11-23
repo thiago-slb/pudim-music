@@ -441,16 +441,18 @@ class _LanguageRow extends ConsumerWidget {
       title: context.l10n.languageTitle,
       subtitle: context.l10n.languageSubtitle,
       trailing: DropdownButton<String>(
-        value: const ['pt', 'en', 'es'].contains(current) ? current : '',
+        value: appLanguages.contains(current) ? current : '',
         dropdownColor: Pm.elevated,
         underline: const SizedBox.shrink(),
         borderRadius: BorderRadius.circular(8),
         items: [
           DropdownMenuItem(value: '', child: Text(context.l10n.languageSystem)),
           // nomes dos idiomas ficam na própria língua
-          const DropdownMenuItem(value: 'pt', child: Text('Português')),
-          const DropdownMenuItem(value: 'en', child: Text('English')),
-          const DropdownMenuItem(value: 'es', child: Text('Español')),
+          for (final code in appLanguages)
+            DropdownMenuItem(
+              value: code,
+              child: Text(appLanguageNames[code] ?? code),
+            ),
         ],
         onChanged: (v) {
           if (v == null) return;
