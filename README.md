@@ -63,7 +63,7 @@ discovery, which depend on a separate download pipeline. The app is a complete J
 | Sleep timer | ✅ | ✅ | ✅ | ✅ | ? | ? | ? | ? |
 | Playback speed | ✅ | ✅ | ✅ | ✅ | ? | ? | ? | ? |
 | Android Auto | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | ? |
-| CarPlay | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ? |
+| CarPlay | ◐¹⁸ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ? |
 | Chromecast / casting | ❌ | ◐⁸ | ◐⁹ | ✅ | ? | ◐¹⁰ | ◐⁹ | ✅ |
 | Quick Connect login | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ? | ✅ |
 | Instant mix / radio | ✅ | ✅ | ✅ | ✅ | ? | ✅ | ◐¹¹ | ✅ |
@@ -92,6 +92,7 @@ discovery, which depend on a separate download pipeline. The app is a complete J
 15. The smart playlist editor is Navidrome-only.
 16. On the roadmap.
 17. SyncPlay, built into the Jellyfin server.
+18. Same folders as Android Auto. Compiles in CI but has not been tried in a car yet; a real car needs Apple's CarPlay audio entitlement (see Building).
 
 As of November 2026. Other clients' features come from each project's README, website, store page or release notes:
 [Finamp](https://github.com/finamp-app/finamp) ·
@@ -130,6 +131,11 @@ flutter test
 - **Windows**: `flutter build windows --release`. The media controls plugin needs [rustup](https://rustup.rs).
   `windows/installer.iss` builds an installer with [Inno Setup 6](https://jrsoftware.org/isinfo.php).
 - **macOS / iOS / Linux / web**: the standard `flutter build <platform>`. These targets compile but get less testing.
+- **CarPlay** (`ios/Runner/CarPlaySceneDelegate.swift`): simulator builds already include the CarPlay entitlement,
+  so it shows up in Xcode's CarPlay simulator (I/O → External Displays → CarPlay). For a real car, ask Apple for the
+  [CarPlay audio entitlement](https://developer.apple.com/carplay/), add it to your provisioning profile and set
+  `CODE_SIGN_ENTITLEMENTS = Runner/CarPlay.entitlements` for device builds. Open the app on the iPhone once before
+  connecting: the car lists come from the Flutter side.
 
 ### Default addresses for your own builds
 
