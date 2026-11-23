@@ -77,6 +77,7 @@ discovery, which depend on a separate download pipeline. The app is a complete J
 | Instant mix / radio | ✅ | ✅ | ✅ | ✅ | ? | ✅ | ◐¹¹ | ✅ |
 | Multiple servers | ✅ | ? | ✅ | ✅ | ? | ? | ✅ | ❌ |
 | Android home-screen widget | ✅ | ? | ❌ | ✅ | ❌ | ? | ❌ | ❌ |
+| Automatic app updates | ◐²⁰ | ◐²¹ | ✅ | ◐²¹ | ◐²¹ | ◐²¹ | ? | ✅ |
 | Last.fm scrobbling | ◐¹² | ? | ◐¹³ | ? | ◐¹³ | ◐¹³ | ? | ? |
 | Auto mixes / smart playlists | ◐¹² | ◐¹⁴ | ◐¹⁵ | ✅ | ? | ❌ | ? | ? |
 | Listen together / social | ◐¹² | ? | ? | ? | ? | ❌¹⁶ | ? | ✅¹⁷ |
@@ -102,6 +103,8 @@ discovery, which depend on a separate download pipeline. The app is a complete J
 17. SyncPlay, built into the Jellyfin server.
 18. Same folders as Android Auto. A real car needs Apple's CarPlay audio entitlement (see Building).
 19. Google Cast from every platform (phone and desktop): the queue stays in the app and each track streams from Jellyfin straight to the Chromecast. Not tried on a real Chromecast yet.
+20. Android and Windows download and install new builds from the extras server. Other platforms: get the new build from [Releases](https://github.com/thiago-slb/pudim-music/releases).
+21. Through the app stores.
 
 As of November 2026. Other clients' features come from each project's README, website, store page or release notes:
 [Finamp](https://github.com/finamp-app/finamp) ·
@@ -125,6 +128,10 @@ Then sign in with your Jellyfin user name and password. The password goes only t
 just the access token (Windows Credential Manager / Android Keystore).
 
 ## Building
+
+Pushing a tag like `v1.0.0` runs the [Release workflow](.github/workflows/release.yml), which builds Android,
+Windows, macOS and Linux and attaches them to the GitHub release (macOS builds are not signed: open with right
+click > Open the first time).
 
 Requirements: [Flutter](https://flutter.dev) 3.50 or newer.
 
