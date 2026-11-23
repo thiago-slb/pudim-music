@@ -216,7 +216,11 @@ class PlayerController extends Notifier<QueueState> {
       }
       MediaSession.instance?.update(prev, next);
     });
-    MediaSession.instance?.attach(this);
+    // Only after build() returns: attach reads the queue, and reading state inside build throws
+    // ("uninitialized provider"), which left the whole phone screen gray.
+    Future.microtask(() {
+      if (ref.mounted) MediaSession.instance?.attach(this);
+    });
     // Saves the resume point every 5 s while playing (closing the app loses at most that).
     _saveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (isPlaying) {
@@ -741,8 +745,18 @@ class PlayerController extends Notifier<QueueState> {
   }
 
   /// The player moved on by itself to the preloaded track (no gap between the two).
-  Future<void> _autoAdvanced() async {
-    if (_busy) return;
+  Future<void> _autoAdvanced([int tries = 0]) async {
+    if (_busy) {
+      // Busy preparing the next track (e.g. the queue just changed): try again shortly instead of
+      // dropping the advance, which left the queue, the notification and Android Auto on the old track.
+      if (tries < 20) {
+        Timer(
+          const Duration(milliseconds: 250),
+          () => unawaited(_autoAdvanced(tries + 1)),
+        );
+      }
+      return;
+    }
     final i = audio.currentIndex;
     final seq = audio.sequence;
     if (i == null || i >= seq.length) return;

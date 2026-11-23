@@ -13,8 +13,10 @@ import 'package:window_manager/legacy.dart';
 import 'audio/windows_media_controls.dart';
 import 'router.dart';
 import 'l10n/l10n.dart';
+import 'l10n/delegates.dart';
 import 'state/locale.dart';
 import 'state/session.dart';
+import 'state/legacy_data.dart';
 import 'ui/responsive.dart';
 import 'ui/theme.dart';
 
@@ -31,6 +33,8 @@ import 'audio/media_session.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Before reading settings: an older Windows build may have kept them in another folder.
+  await migrateLegacyData();
   final prefs = await SharedPreferences.getInstance();
   // Notification and Android Auto strings before the first screen.
   final saved = prefs.getString('locale');
@@ -108,7 +112,7 @@ class PudimMusicApp extends ConsumerWidget {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         locale: locale,
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: L10n.supportedLocales,
         localeListResolutionCallback: (device, _) => resolveAppLocale(device),
         builder: _keepL10n,
@@ -124,7 +128,7 @@ class PudimMusicApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
       locale: locale,
-      localizationsDelegates: L10n.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: L10n.supportedLocales,
       localeListResolutionCallback: (device, _) => resolveAppLocale(device),
       builder: _keepL10n,

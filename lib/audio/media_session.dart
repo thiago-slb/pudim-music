@@ -24,7 +24,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
       config: AudioServiceConfig(
         androidNotificationChannelId: 'io.github.thiagoslb.pudim.audio',
         androidNotificationChannelName: appL10n.audioPlaybackChannel,
-        androidNotificationIcon: 'mipmap/ic_launcher',
+        androidNotificationIcon: 'drawable/ic_stat_pudim',
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
         fastForwardInterval: Duration(seconds: 15),
@@ -53,7 +53,9 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
       )
       ..add(a.playingStream.listen((_) => _broadcast()))
       ..add(a.speedStream.listen((_) => _broadcast()))
-      ..add(a.durationStream.listen((_) => _pushItem()));
+      ..add(a.durationStream.listen((_) => _pushItem()))
+      // Gapless advance changes the playing source before the queue catches up.
+      ..add(a.currentIndexStream.listen((_) => _pushItem()));
     _pushItem();
     _broadcast();
   }
@@ -72,7 +74,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
 
   void _pushItem() {
     final c = _c;
-    final t = c?.queue.current;
+    final t = c == null ? null : _nowPlaying(c);
     if (c == null || t == null) {
       if (mediaItem.value != null) mediaItem.add(null);
       return;
@@ -82,6 +84,20 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     } catch (_) {
       // no session yet: the cover and the rest arrive on the next change
     }
+  }
+
+  /// The track the car and the notification should show: the queue's current one, unless the player
+  /// already moved on by itself to the next one and the queue has not caught up yet.
+  Item? _nowPlaying(PlayerController c) {
+    final st = c.queue;
+    final cur = st.current;
+    if (st.casting) return cur;
+    final i = c.audio.currentIndex;
+    final seq = c.audio.sequence;
+    if (i == null || i >= seq.length) return cur;
+    final tag = seq[i].tag;
+    if (tag is Item && tag.id != cur?.id && tag.id == st.next?.id) return tag;
+    return cur;
   }
 
   void _broadcast() {

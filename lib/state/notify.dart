@@ -18,7 +18,7 @@ class Notify {
     try {
       await _p.initialize(
         settings: const InitializationSettings(
-          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          android: AndroidInitializationSettings('@drawable/ic_stat_pudim'),
           windows: WindowsInitializationSettings(
             appName: 'Pudim',
             appUserModelId: 'io.github.thiagoslb.pudim',
