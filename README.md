@@ -171,6 +171,12 @@ flutter build apk --release --dart-define-from-file=pudim.local.json
 
 Everything can also be changed in the app (login screen and Settings).
 
+## Updates, changelog and lessons
+
+How the in-app updater works and what a release must keep (same application id and signing key):
+[docs/updates.md](docs/updates.md). Changes per build: [CHANGELOG.md](CHANGELOG.md). Bugs that reached
+real devices and the guards against them: [docs/lessons.md](docs/lessons.md).
+
 ## Translations
 
 Texts live in [`lib/l10n/`](lib/l10n) as ARB files and are compiled with Flutter's

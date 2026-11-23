@@ -69,7 +69,7 @@ class Updater extends Notifier<UpdateReady?> {
       final build = (info['build'] as num?)?.toInt() ?? 0;
       final file = info[kind];
       // A newer build than the one already downloaded also counts (it was never installed).
-      if (build <= appBuild || build == state?.build || file is! Map) return;
+      if (!updateWanted(build, appBuild, state?.build) || file is! Map) return;
       final want = '${file['sha256'] ?? ''}'.toLowerCase();
       final dir = await getTemporaryDirectory();
       final path =
@@ -125,3 +125,8 @@ class Updater extends Notifier<UpdateReady?> {
     return null;
   }
 }
+
+/// Whether the server's [remote] build should be downloaded: newer than the running one and not the
+/// one already downloaded. A newer build than the downloaded one still counts (it was never installed).
+bool updateWanted(int remote, int running, int? downloaded) =>
+    remote > running && remote != downloaded;

@@ -13,6 +13,7 @@ import 'package:window_manager/legacy.dart';
 import 'audio/windows_media_controls.dart';
 import 'router.dart';
 import 'l10n/l10n.dart';
+import 'l10n/delegates.dart';
 import 'state/locale.dart';
 import 'state/session.dart';
 import 'state/legacy_data.dart';
@@ -135,15 +136,6 @@ class PudimMusicApp extends ConsumerWidget {
     );
   }
 }
-
-/// The widgets come from package:material_ui, so the Material texts must come from its delegates
-/// too. L10n.localizationsDelegates brings flutter_localizations' Material delegate, which material_ui's
-/// TextField does not see: every language other than English failed with "No MaterialLocalizations"
-/// and the screens went gray.
-const appLocalizationsDelegates = <LocalizationsDelegate<dynamic>>[
-  L10n.delegate,
-  ...GlobalMaterialLocalizations.delegates,
-];
 
 /// Keeps the current language's strings at hand for code that has no [BuildContext].
 Widget _keepL10n(BuildContext context, Widget? child) {
