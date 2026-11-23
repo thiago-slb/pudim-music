@@ -26,6 +26,7 @@ import 'state/notify.dart';
 import 'state/android_widget.dart';
 import 'state/jam.dart';
 import 'audio/player.dart';
+import 'audio/carplay_bridge.dart';
 import 'audio/media_session.dart';
 
 Future<void> main() async {
@@ -47,6 +48,8 @@ Future<void> main() async {
     // Notificação, tela de bloqueio e fones Bluetooth.
     // Também é o que aparece no Android Auto.
     await MediaSession.init();
+    // CarPlay (iOS): as listas do carro pedem as pastas por este canal.
+    if (Platform.isIOS) CarPlayBridge.init();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
