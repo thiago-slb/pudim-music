@@ -10,6 +10,7 @@ import '../widgets/actions.dart';
 import '../widgets/common.dart';
 import '../../features/jam/jam_sheet.dart';
 import '../widgets/sleep_speed.dart';
+import '../widgets/cast_button.dart';
 
 /// Barra do player no rodapé: faixa à esquerda, controles no centro, extras à direita.
 class PlayerBar extends ConsumerWidget {
@@ -293,6 +294,7 @@ class _ExtrasState extends ConsumerState<_Extras> {
         const SpeedButton(),
         const SleepTimerButton(),
         const JamButton(),
+        const CastButton(),
         IconBtn(
           Icons.queue_music,
           tooltip: l10n.commonQueue,

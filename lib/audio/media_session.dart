@@ -64,6 +64,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     if (a?.id != b?.id || a?.favorite != b?.favorite) _pushItem();
     if (prev?.playing != next.playing ||
         prev?.buffering != next.buffering ||
+        prev?.castingTo != next.castingTo ||
         prev?.index != next.index) {
       _broadcast();
     }
@@ -77,7 +78,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
       return;
     }
     try {
-      mediaItem.add(c.mediaItemOf(t, duration: c.audio.duration));
+      mediaItem.add(c.mediaItemOf(t, duration: c.duration));
     } catch (_) {
       // sem sessão ainda: a capa e o resto chegam na próxima mudança
     }
@@ -88,7 +89,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     if (c == null) return;
     final a = c.audio;
     final st = c.queue;
-    final playing = a.playing;
+    final playing = c.isPlaying;
     playbackState.add(
       playbackState.value.copyWith(
         controls: [
@@ -104,15 +105,19 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
         androidCompactActionIndices: const [0, 1, 2],
         processingState: st.current == null || !c.sourceReady
             ? AudioProcessingState.idle
+            : st.casting
+            ? (st.buffering
+                  ? AudioProcessingState.buffering
+                  : AudioProcessingState.ready)
             : switch (a.processingState) {
                 ProcessingState.loading => AudioProcessingState.loading,
                 ProcessingState.buffering => AudioProcessingState.buffering,
                 _ => AudioProcessingState.ready,
               },
         playing: playing,
-        updatePosition: a.position,
-        bufferedPosition: a.bufferedPosition,
-        speed: a.speed,
+        updatePosition: c.position,
+        bufferedPosition: st.casting ? c.position : a.bufferedPosition,
+        speed: st.casting ? 1.0 : a.speed,
         queueIndex: st.index < 0 ? null : st.index,
       ),
     );
@@ -123,7 +128,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
   @override
   Future<void> play() async {
     final c = _c;
-    if (c != null && !c.audio.playing) await c.togglePlay();
+    if (c != null && !c.isPlaying) await c.togglePlay();
   }
 
   @override

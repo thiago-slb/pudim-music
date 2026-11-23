@@ -27,6 +27,24 @@ typedef JamRemote = bool Function(
   List<Item>? items,
 });
 
+/// Outro aparelho tocando no lugar deste (Chromecast). A fila continua no app; cada
+/// música é mandada para lá por endereço.
+abstract class RemoteOutput {
+  Future<void> load(
+    Item item,
+    String url,
+    MediaItem meta, {
+    required Duration at,
+    required bool play,
+  });
+  Future<void> play();
+  Future<void> pause();
+  Future<void> seek(Duration d);
+  Future<void> setVolume(double v);
+  bool get playing;
+  Duration get position;
+}
+
 /// Estado da fila, no estilo do Spotify:
 /// "Tocando agora", "A seguir na fila" (adicionadas à mão) e "Próximas de: `<contexto>`".
 class QueueState {
@@ -39,6 +57,10 @@ class QueueState {
   final RepeatMode repeat;
   final bool playing;
   final bool buffering;
+
+  /// Nome do aparelho que está tocando (Chromecast); vazio = este aparelho.
+  final String castingTo;
+  bool get casting => castingTo.isNotEmpty;
 
   /// Smart Shuffle: aleatório com recomendações no meio (só em playlist).
   final bool smart;
@@ -56,6 +78,7 @@ class QueueState {
     this.repeat = RepeatMode.off,
     this.playing = false,
     this.buffering = false,
+    this.castingTo = '',
     this.smart = false,
     this.recommended = const {},
   });
@@ -84,6 +107,7 @@ class QueueState {
     RepeatMode? repeat,
     bool? playing,
     bool? buffering,
+    String? castingTo,
     bool? smart,
     Set<String>? recommended,
   }) => QueueState(
@@ -96,6 +120,7 @@ class QueueState {
     repeat: repeat ?? this.repeat,
     playing: playing ?? this.playing,
     buffering: buffering ?? this.buffering,
+    castingTo: castingTo ?? this.castingTo,
     smart: smart ?? this.smart,
     recommended: recommended ?? this.recommended,
   );
@@ -115,6 +140,17 @@ class PlayerController extends Notifier<QueueState> {
 
   /// Jam (convidado): next/previous/play/fila viram pedidos para o anfitrião.
   JamRemote? remote;
+
+  /// Chromecast: quando ligado, o som sai lá e o player deste aparelho fica parado.
+  RemoteOutput? _out;
+  final _remotePos = StreamController<Duration>.broadcast();
+
+  /// Posição, tocando e duração de onde o som está saindo (aqui ou no Chromecast).
+  Duration get position => _out?.position ?? audio.position;
+  bool get isPlaying => _out?.playing ?? audio.playing;
+  Duration? get duration =>
+      _out == null ? audio.duration : state.current?.duration;
+  Stream<Duration> get remotePositionStream => _remotePos.stream;
 
   // Last.fm: "tocando agora" e scrobble (metade da música ou 4 min).
   bool _npSent = false, _scrobbled = false;
@@ -138,7 +174,7 @@ class PlayerController extends Notifier<QueueState> {
 
   /// Guarda no painel onde parou no episódio (e na memória, para voltar nele sem esperar o painel).
   void _podcastSave(Item c) {
-    final pos = audio.position;
+    final pos = position;
     podcastResume[c.id] = pos;
     final show = c.albumId ?? '';
     unawaited(
@@ -148,7 +184,7 @@ class PlayerController extends Notifier<QueueState> {
             c.id.substring(3),
             show.startsWith('podshow') ? show.substring(7) : '',
             pos,
-            audio.duration ?? c.duration,
+            duration ?? c.duration,
           )
           .catchError((_) {}),
     );
@@ -181,7 +217,7 @@ class PlayerController extends Notifier<QueueState> {
     MediaSession.instance?.attach(this);
     // Guarda onde parou a cada 5 s tocando (fechar o app perde no máximo isso).
     _saveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      if (audio.playing) {
+      if (isPlaying) {
         _save();
         _scrobbleTick();
       }
@@ -194,6 +230,7 @@ class PlayerController extends Notifier<QueueState> {
       _saveTimer?.cancel();
       _syncSoon?.cancel();
       _volume.close();
+      _remotePos.close();
       audio.dispose();
     });
     return _restore(prefs.getString(_saveKey));
@@ -214,7 +251,7 @@ class PlayerController extends Notifier<QueueState> {
     // Guarda até 300 faixas em volta da atual (filas de rádio podem crescer muito).
     final from = max(0, st.index - 50);
     final items = st.queue.skip(from).take(300).toList();
-    final pos = _sourceReady ? audio.position : _resumeAt;
+    final pos = _sourceReady ? position : _resumeAt;
     prefs.setString(
       _saveKey,
       jsonEncode({
@@ -282,6 +319,7 @@ class PlayerController extends Notifier<QueueState> {
       ref.read(offlineProvider).tracks.values.toList();
 
   void _onPlayerState(PlayerState s) {
+    if (_out != null) return; // tocando no Chromecast: o player daqui está parado
     final buffering =
         s.processingState == ProcessingState.loading ||
         s.processingState == ProcessingState.buffering;
@@ -313,12 +351,15 @@ class PlayerController extends Notifier<QueueState> {
         );
         await _load(play: false);
       } else {
-        await audio.pause();
-        await audio.seek(Duration.zero);
+        await _pauseAt(Duration.zero);
       }
       return;
     }
     if (state.repeat == RepeatMode.one) {
+      if (_out != null) {
+        await _load(play: true, at: Duration.zero);
+        return;
+      }
       await audio.seek(Duration.zero);
       await audio.play();
       return;
@@ -486,10 +527,10 @@ class PlayerController extends Notifier<QueueState> {
       _npSent = true;
       unawaited(cat.scrobble(c, nowPlaying: true).catchError((_) {}));
     }
-    final dur = audio.duration ?? c.duration;
+    final dur = duration ?? c.duration;
     if (_scrobbled || dur < const Duration(seconds: 30)) return;
     final need = Duration(milliseconds: min(dur.inMilliseconds ~/ 2, 240000));
-    if (audio.position >= need) {
+    if (position >= need) {
       _scrobbled = true;
       unawaited(
         cat.scrobble(c, nowPlaying: false, at: _startedAt).catchError((_) {}),
@@ -568,6 +609,7 @@ class PlayerController extends Notifier<QueueState> {
     if (cur == null ||
         cur.isPodcast ||
         remote != null ||
+        _out != null ||
         _stopAfterCurrent ||
         st.repeat == RepeatMode.one) {
       return null;
@@ -588,6 +630,22 @@ class PlayerController extends Notifier<QueueState> {
     _preId = null;
     try {
       await _reportStop();
+      final out = _out;
+      if (out != null) {
+        final at0 =
+            at ?? (cur.streamUrl != null ? podcastResume[cur.id] : null);
+        await out.load(
+          cur,
+          _castUrl(cur),
+          mediaItemOf(cur),
+          at: at0 ?? Duration.zero,
+          play: play,
+        );
+        _sourceReady = true;
+        _resumeAt = Duration.zero;
+        _started(cur, play: play, at: at0 ?? Duration.zero);
+        return;
+      }
       final src = await _sourceFor(cur);
       if (src == null) {
         // Sem internet: pula direto para a próxima faixa baixada no aparelho.
@@ -651,14 +709,16 @@ class PlayerController extends Notifier<QueueState> {
     _scrobbled = false;
     _startedAt = DateTime.now();
     _applyVolume();
-    unawaited(audio.setSpeed(cur.isPodcast ? podcastSpeed : 1.0));
+    if (_out == null) {
+      unawaited(audio.setSpeed(cur.isPodcast ? podcastSpeed : 1.0));
+    }
     _save();
     _progressTimer?.cancel();
     if (cur.streamUrl != null) {
       // Podcast: guarda no painel onde parou (continua do mesmo ponto no outro aparelho).
       _progressTimer = Timer.periodic(const Duration(seconds: 15), (_) {
         final c = state.current;
-        if (c != null && c.isPodcast && audio.playing) _podcastSave(c);
+        if (c != null && c.isPodcast && isPlaying) _podcastSave(c);
       });
       return;
     }
@@ -670,8 +730,8 @@ class PlayerController extends Notifier<QueueState> {
     _api.reportStart(cur.id, at, paused: !play);
     _progressTimer = Timer.periodic(const Duration(seconds: 10), (_) {
       final c = state.current;
-      if (c != null && audio.playing) {
-        _api.reportProgress(c.id, audio.position, paused: false);
+      if (c != null && isPlaying) {
+        _api.reportProgress(c.id, position, paused: false);
       }
     });
   }
@@ -781,6 +841,7 @@ class PlayerController extends Notifier<QueueState> {
   }
 
   void _applyVolume() {
+    if (_out != null) return; // no Chromecast, só quando a pessoa mexe
     unawaited(audio.setVolume((_userVol * _gain * _fade).clamp(0.0, 1.0)));
   }
 
@@ -788,6 +849,8 @@ class PlayerController extends Notifier<QueueState> {
   set fade(double f) {
     _fade = f.clamp(0.0, 1.0);
     _applyVolume();
+    final out = _out;
+    if (out != null && _fade < 1) unawaited(out.setVolume(_userVol * _fade));
   }
 
   /// Timer "fim da música": a próxima não emenda e o player para quando esta acabar.
@@ -806,9 +869,14 @@ class PlayerController extends Notifier<QueueState> {
   }
 
   Future<void> pause() async {
-    if (!audio.playing) return;
+    if (!isPlaying) return;
     if (remote?.call('toggle') ?? false) return;
-    await audio.pause();
+    final out = _out;
+    if (out != null) {
+      await out.pause();
+    } else {
+      await audio.pause();
+    }
     final c = state.current;
     if (c != null && c.isPodcast) _podcastSave(c);
   }
@@ -831,7 +899,7 @@ class PlayerController extends Notifier<QueueState> {
     final r = _reported;
     if (r != null) {
       _reported = null;
-      await _api.reportStopped(r.id, audio.position);
+      await _api.reportStopped(r.id, position);
     }
   }
 
@@ -843,10 +911,11 @@ class PlayerController extends Notifier<QueueState> {
       await _load(play: true, at: _resumeAt);
       return;
     }
-    if (audio.playing) {
-      await audio.pause();
-      final c = state.current;
-      if (c != null && c.isPodcast) _podcastSave(c);
+    final out = _out;
+    if (isPlaying) {
+      await pause();
+    } else if (out != null) {
+      await out.play();
     } else {
       await audio.play();
     }
@@ -891,8 +960,19 @@ class PlayerController extends Notifier<QueueState> {
         return;
       }
     }
+    await _pauseAt(Duration.zero);
+  }
+
+  /// Para no ponto [d] (aqui ou no Chromecast).
+  Future<void> _pauseAt(Duration d) async {
+    final out = _out;
+    if (out != null) {
+      await out.pause();
+      await out.seek(d);
+      return;
+    }
     await audio.pause();
-    await audio.seek(Duration.zero);
+    await audio.seek(d);
   }
 
   /// Quando a fila acaba, continua com o Mix instantâneo da última faixa.
@@ -915,8 +995,8 @@ class PlayerController extends Notifier<QueueState> {
 
   Future<void> previous() async {
     if (remote?.call('previous') ?? false) return;
-    if (audio.position > const Duration(seconds: 3) || state.index <= 0) {
-      await audio.seek(Duration.zero);
+    if (position > const Duration(seconds: 3) || state.index <= 0) {
+      await seek(Duration.zero);
       return;
     }
     state = state.copyWith(index: state.index - 1, manualCount: 0);
@@ -940,6 +1020,11 @@ class PlayerController extends Notifier<QueueState> {
       if (state.current != null) await _load(play: false, at: d);
       return;
     }
+    final out = _out;
+    if (out != null) {
+      await out.seek(d);
+      return;
+    }
     await audio.seek(d);
   }
 
@@ -947,7 +1032,67 @@ class PlayerController extends Notifier<QueueState> {
     _userVol = v;
     _volume.add(v);
     _applyVolume();
+    final out = _out;
+    if (out != null) unawaited(out.setVolume(v * _fade));
     ref.read(prefsProvider).setDouble('volume', v);
+  }
+
+  // ---------- Chromecast ----------
+
+  /// Endereço que o Chromecast baixa sozinho (sem os cabeçalhos do app).
+  String _castUrl(Item t) {
+    final direct = t.streamUrl;
+    if (direct != null) return direct; // podcast
+    final dz = t.isCatalog ? t.deezerId : null;
+    if (dz != null) return ref.read(catalogProvider).playUrl(dz);
+    return _api.castUrl(t.id);
+  }
+
+  /// Liga ([out]) ou desliga (null) o Chromecast. Ao ligar, continua de onde estava,
+  /// tocando se estava tocando; ao desligar, volta para cá pausado em [at].
+  Future<void> setOutput(
+    RemoteOutput? out, {
+    String name = '',
+    Duration? at,
+  }) async {
+    final pos = at ?? position;
+    final wasPlaying = isPlaying;
+    if (out != null) {
+      await audio.pause();
+      _out = out;
+      state = state.copyWith(castingTo: name, buffering: false);
+      if (state.current != null) await _load(play: wasPlaying, at: pos);
+      return;
+    }
+    if (_out == null) return;
+    _out = null;
+    state = state.copyWith(castingTo: '', playing: false, buffering: false);
+    if (state.current != null) await _load(play: false, at: pos);
+  }
+
+  /// O Chromecast avisou que está tocando/pausado/carregando.
+  void remoteStatus({required bool playing, required bool buffering}) {
+    if (_out == null) return;
+    if (playing == state.playing && buffering == state.buffering) return;
+    if (playing != state.playing) _save();
+    state = state.copyWith(playing: playing, buffering: buffering);
+    final cur = state.current;
+    if (cur != null && _reported?.id == cur.id) {
+      _api.reportProgress(cur.id, position, paused: !playing);
+    }
+  }
+
+  /// Posição estimada do Chromecast (a barra de progresso anda com ela).
+  void remotePosition(Duration p) {
+    if (_out != null && !_remotePos.isClosed) _remotePos.add(p);
+  }
+
+  /// A música acabou no Chromecast.
+  void remoteEnded() {
+    if (_out == null) return;
+    final c = state.current;
+    if (c != null && c.isPodcast) _podcastSave(c);
+    unawaited(_onTrackEnded());
   }
 
   // ---------- fila ----------
@@ -1085,11 +1230,18 @@ final positionProvider = StreamProvider<Duration>((ref) {
   final c = ref.watch(playerProvider.notifier);
   // Antes de carregar a fila guardada, mostra onde tinha parado (e o arrastar da barra).
   ref.watch(playerProvider.select((s) => (s.index, s.queue.length)));
+  if (ref.watch(playerProvider.select((s) => s.casting))) {
+    return c.remotePositionStream;
+  }
   return c.audio.positionStream.map((p) => c.pendingPosition ?? p);
 });
 
 final durationProvider = StreamProvider<Duration?>((ref) {
   final c = ref.watch(playerProvider.notifier);
+  if (ref.watch(playerProvider.select((s) => s.casting))) {
+    final d = ref.watch(playerProvider.select((s) => s.current?.duration));
+    return Stream.value(d == Duration.zero ? null : d);
+  }
   return c.audio.durationStream;
 });
 

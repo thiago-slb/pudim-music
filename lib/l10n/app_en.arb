@@ -574,5 +574,14 @@
   "widgetTracksDateAdded": "Date added",
   "widgetTracksAddedBy": "by {name}",
   "widgetTracksMoreOptions": "More options",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "Cast",
+  "castTitle": "Play on",
+  "castThisDevice": "This device",
+  "castSearching": "Looking for devices on the network…",
+  "castNone": "No Chromecast found. It needs to be on the same Wi-Fi.",
+  "castSearchAgain": "Search again",
+  "castStop": "Stop casting",
+  "castPlayingOn": "Playing on {name}",
+  "castFailed": "Couldn't connect to {name}"
 }

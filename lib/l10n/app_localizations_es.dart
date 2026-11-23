@@ -2178,4 +2178,36 @@ class L10nEs extends L10n {
 
     return '$dateString';
   }
+
+  @override
+  String get castTooltip => 'Transmitir';
+
+  @override
+  String get castTitle => 'Reproducir en';
+
+  @override
+  String get castThisDevice => 'Este dispositivo';
+
+  @override
+  String get castSearching => 'Buscando dispositivos en la red…';
+
+  @override
+  String get castNone =>
+      'No se encontró ningún Chromecast. Tiene que estar en la misma red Wi-Fi.';
+
+  @override
+  String get castSearchAgain => 'Buscar de nuevo';
+
+  @override
+  String get castStop => 'Dejar de transmitir';
+
+  @override
+  String castPlayingOn(String name) {
+    return 'Reproduciendo en $name';
+  }
+
+  @override
+  String castFailed(String name) {
+    return 'No se pudo conectar con $name';
+  }
 }

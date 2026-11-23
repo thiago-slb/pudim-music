@@ -2170,4 +2170,36 @@ class L10nEn extends L10n {
 
     return '$dateString';
   }
+
+  @override
+  String get castTooltip => 'Cast';
+
+  @override
+  String get castTitle => 'Play on';
+
+  @override
+  String get castThisDevice => 'This device';
+
+  @override
+  String get castSearching => 'Looking for devices on the network…';
+
+  @override
+  String get castNone =>
+      'No Chromecast found. It needs to be on the same Wi-Fi.';
+
+  @override
+  String get castSearchAgain => 'Search again';
+
+  @override
+  String get castStop => 'Stop casting';
+
+  @override
+  String castPlayingOn(String name) {
+    return 'Playing on $name';
+  }
+
+  @override
+  String castFailed(String name) {
+    return 'Couldn\'t connect to $name';
+  }
 }
