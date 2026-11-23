@@ -6,8 +6,7 @@ synced lyrics, offline downloads, and an optional extras server for social featu
 
 The interface is available in **Portuguese (Brazil)**, **English**, **Spanish**, **French**, **German**, **Italian**,
 **Dutch**, **Swedish**, **Polish**, **Turkish**, **Russian**, **Ukrainian**, **Japanese**, **Korean** and
-**Simplified Chinese**. It follows the device language
-(falling back to Portuguese) and can be changed in Settings. See [Translations](#translations) to add another language.
+**Simplified Chinese**. It follows the device language (falling back to Portuguese) and can be changed in Settings. See [Translations](#translations) to add another language.
 
 ## Features
 
@@ -21,9 +20,16 @@ The interface is available in **Portuguese (Brazil)**, **English**, **Spanish**,
 - Synced lyrics (from Jellyfin), full screen or in the side panel
 - Offline downloads of albums and playlists, with automatic offline mode when the connection drops
 - Create, edit and add to playlists; favorites
+- Gapless playback, volume normalization (Jellyfin's analysis) and streaming quality per connection (original or
+  transcoded, separate for Wi-Fi and mobile data)
+- Sleep timer (minutes or end of track, with fade out) and podcast playback speed
 - Playback reporting to Jellyfin (play counts, resume, "recently played")
 - OS media controls: Android notification and lock screen, Windows media keys and overlay (SMTC)
 - Android home-screen widget
+- Android Auto and CarPlay: browse your library and play from the car
+- Chromecast: cast from phone or desktop to any Google Cast device on the same Wi-Fi
+- Sign in with password or Quick Connect
+- Several accounts and servers saved on the device, switch in one tap
 - Separate local and remote server addresses (uses the local one when it answers)
 - Desktop layout with three columns and keyboard shortcuts; phone layout with bottom navigation and mini player
 
