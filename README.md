@@ -37,7 +37,9 @@ The interface is available in **Portuguese (Brazil)**, **English** and **Spanish
 - Requesting downloads into the library and automatic app updates
 
 The extras server is a separate service that speaks the `/api/player/*` HTTP API and authenticates with the same
-Jellyfin token. It is not published yet; the app is a complete Jellyfin player without it.
+Jellyfin token. The open-source implementation is **[pudim-server](https://github.com/thiago-slb/pudim-server)**
+(GPL-3.0, Python, Docker image included); it covers everything above except downloads into the library and weekly
+discovery, which depend on a separate download pipeline. The app is a complete Jellyfin player without it.
 
 ## Comparison with other Jellyfin music clients
 
@@ -107,7 +109,7 @@ Download a build from the [releases](../../releases) (or the latest CI artifact)
 
 - **Jellyfin server**: your server address, e.g. `https://jellyfin.example.com`
 - **On the local network** (optional): a LAN address, e.g. `http://192.168.0.10:8096`, used whenever it answers
-- **Extras server** (optional): the address of an extras server, if you run one
+- **Extras server** (optional): the address of a [pudim-server](https://github.com/thiago-slb/pudim-server), if you run one
 
 Then sign in with your Jellyfin user name and password. The password goes only to your server; the app keeps
 just the access token (Windows Credential Manager / Android Keystore).
