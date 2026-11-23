@@ -305,6 +305,12 @@
   "settingsProfileSubtitle": "昵称、用户名和密码",
   "settingsConnectedAt": "已连接到 {url}",
   "settingsSignOut": "退出登录",
+  "accountsTitle": "账户",
+  "accountsAdd": "添加账户或服务器",
+  "accountsSwitch": "切换",
+  "accountsInUse": "使用中",
+  "accountsOn": "{host} 上的 {user}",
+  "loginBackToAccount": "返回当前账户",
   "settingsSectionServer": "服务器",
   "settingsLocalNetwork": "局域网",
   "settingsServerNote": "如需更改 Jellyfin 地址，请退出登录，然后在登录界面打开“服务器地址”。",
@@ -568,5 +574,14 @@
   "widgetTracksDateAdded": "添加日期",
   "widgetTracksAddedBy": "添加者：{name}",
   "widgetTracksMoreOptions": "更多选项",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "投放",
+  "castTitle": "播放到",
+  "castThisDevice": "此设备",
+  "castSearching": "正在搜索网络中的设备…",
+  "castNone": "未找到 Chromecast。它需要连接同一个 Wi-Fi。",
+  "castSearchAgain": "重新搜索",
+  "castStop": "停止投放",
+  "castPlayingOn": "正在 {name} 上播放",
+  "castFailed": "无法连接到 {name}"
 }

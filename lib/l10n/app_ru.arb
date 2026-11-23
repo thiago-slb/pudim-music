@@ -305,6 +305,12 @@
   "settingsProfileSubtitle": "Имя, имя пользователя и пароль",
   "settingsConnectedAt": "Подключено к {url}",
   "settingsSignOut": "Выйти",
+  "accountsTitle": "Аккаунты",
+  "accountsAdd": "Добавить аккаунт или сервер",
+  "accountsSwitch": "Сменить",
+  "accountsInUse": "Используется",
+  "accountsOn": "{user} на {host}",
+  "loginBackToAccount": "Вернуться к текущему аккаунту",
   "settingsSectionServer": "Сервер",
   "settingsLocalNetwork": "В локальной сети",
   "settingsServerNote": "Чтобы изменить адреса Jellyfin, выйдите из аккаунта и откройте «Адрес сервера» на экране входа.",
@@ -568,5 +574,14 @@
   "widgetTracksDateAdded": "Дата добавления",
   "widgetTracksAddedBy": "добавил(а): {name}",
   "widgetTracksMoreOptions": "Ещё",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "Трансляция",
+  "castTitle": "Воспроизвести на",
+  "castThisDevice": "Это устройство",
+  "castSearching": "Поиск устройств в сети…",
+  "castNone": "Chromecast не найден. Он должен быть в той же сети Wi-Fi.",
+  "castSearchAgain": "Искать снова",
+  "castStop": "Остановить трансляцию",
+  "castPlayingOn": "Играет на {name}",
+  "castFailed": "Не удалось подключиться к {name}"
 }

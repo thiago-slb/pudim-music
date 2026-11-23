@@ -1181,6 +1181,26 @@ class L10nTr extends L10n {
   String get settingsSignOut => 'Çıkış yap';
 
   @override
+  String get accountsTitle => 'Hesaplar';
+
+  @override
+  String get accountsAdd => 'Hesap veya sunucu ekle';
+
+  @override
+  String get accountsSwitch => 'Geç';
+
+  @override
+  String get accountsInUse => 'Kullanımda';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$host üzerinde $user';
+  }
+
+  @override
+  String get loginBackToAccount => 'Geçerli hesaba dön';
+
+  @override
   String get settingsSectionServer => 'Sunucu';
 
   @override
@@ -2147,5 +2167,36 @@ class L10nTr extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => 'Yayınla';
+
+  @override
+  String get castTitle => 'Şurada çal';
+
+  @override
+  String get castThisDevice => 'Bu cihaz';
+
+  @override
+  String get castSearching => 'Ağdaki cihazlar aranıyor…';
+
+  @override
+  String get castNone => 'Chromecast bulunamadı. Aynı Wi-Fi ağında olmalı.';
+
+  @override
+  String get castSearchAgain => 'Tekrar ara';
+
+  @override
+  String get castStop => 'Yayını durdur';
+
+  @override
+  String castPlayingOn(String name) {
+    return '$name üzerinde çalıyor';
+  }
+
+  @override
+  String castFailed(String name) {
+    return '$name cihazına bağlanılamadı';
   }
 }

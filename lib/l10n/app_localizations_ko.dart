@@ -1170,6 +1170,26 @@ class L10nKo extends L10n {
   String get settingsSignOut => '로그아웃';
 
   @override
+  String get accountsTitle => '계정';
+
+  @override
+  String get accountsAdd => '계정 또는 서버 추가';
+
+  @override
+  String get accountsSwitch => '전환';
+
+  @override
+  String get accountsInUse => '사용 중';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$host의 $user';
+  }
+
+  @override
+  String get loginBackToAccount => '현재 계정으로 돌아가기';
+
+  @override
   String get settingsSectionServer => '서버';
 
   @override
@@ -2124,5 +2144,36 @@ class L10nKo extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => '전송';
+
+  @override
+  String get castTitle => '재생할 기기';
+
+  @override
+  String get castThisDevice => '이 기기';
+
+  @override
+  String get castSearching => '네트워크에서 기기 찾는 중…';
+
+  @override
+  String get castNone => 'Chromecast를 찾을 수 없습니다. 같은 Wi-Fi에 있어야 합니다.';
+
+  @override
+  String get castSearchAgain => '다시 찾기';
+
+  @override
+  String get castStop => '전송 중지';
+
+  @override
+  String castPlayingOn(String name) {
+    return '$name에서 재생 중';
+  }
+
+  @override
+  String castFailed(String name) {
+    return '$name에 연결할 수 없습니다';
   }
 }

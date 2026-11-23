@@ -305,6 +305,12 @@
   "settingsProfileSubtitle": "Naam, gebruikersnaam en wachtwoord",
   "settingsConnectedAt": "Verbonden met {url}",
   "settingsSignOut": "Uitloggen",
+  "accountsTitle": "Accounts",
+  "accountsAdd": "Account of server toevoegen",
+  "accountsSwitch": "Wisselen",
+  "accountsInUse": "In gebruik",
+  "accountsOn": "{user} op {host}",
+  "loginBackToAccount": "Terug naar huidig account",
   "settingsSectionServer": "Server",
   "settingsLocalNetwork": "Op het lokale netwerk",
   "settingsServerNote": "Om de Jellyfin-adressen te wijzigen, log je uit en open je \"Serveradres\" op het inlogscherm.",
@@ -568,5 +574,14 @@
   "widgetTracksDateAdded": "Datum toegevoegd",
   "widgetTracksAddedBy": "door {name}",
   "widgetTracksMoreOptions": "Meer opties",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "Casten",
+  "castTitle": "Afspelen op",
+  "castThisDevice": "Dit apparaat",
+  "castSearching": "Zoeken naar apparaten in het netwerk…",
+  "castNone": "Geen Chromecast gevonden. Hij moet op hetzelfde wifi-netwerk zitten.",
+  "castSearchAgain": "Opnieuw zoeken",
+  "castStop": "Stoppen met casten",
+  "castPlayingOn": "Speelt op {name}",
+  "castFailed": "Kan geen verbinding maken met {name}"
 }

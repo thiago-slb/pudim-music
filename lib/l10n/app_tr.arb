@@ -305,6 +305,12 @@
   "settingsProfileSubtitle": "Ad, kullanıcı adı ve parola",
   "settingsConnectedAt": "{url} adresine bağlı",
   "settingsSignOut": "Çıkış yap",
+  "accountsTitle": "Hesaplar",
+  "accountsAdd": "Hesap veya sunucu ekle",
+  "accountsSwitch": "Geç",
+  "accountsInUse": "Kullanımda",
+  "accountsOn": "{host} üzerinde {user}",
+  "loginBackToAccount": "Geçerli hesaba dön",
   "settingsSectionServer": "Sunucu",
   "settingsLocalNetwork": "Yerel ağda",
   "settingsServerNote": "Jellyfin adreslerini değiştirmek için çıkış yap ve giriş ekranında \"Sunucu adresi\"ni aç.",
@@ -568,5 +574,14 @@
   "widgetTracksDateAdded": "Eklenme tarihi",
   "widgetTracksAddedBy": "{name} tarafından",
   "widgetTracksMoreOptions": "Daha fazla seçenek",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "Yayınla",
+  "castTitle": "Şurada çal",
+  "castThisDevice": "Bu cihaz",
+  "castSearching": "Ağdaki cihazlar aranıyor…",
+  "castNone": "Chromecast bulunamadı. Aynı Wi-Fi ağında olmalı.",
+  "castSearchAgain": "Tekrar ara",
+  "castStop": "Yayını durdur",
+  "castPlayingOn": "{name} üzerinde çalıyor",
+  "castFailed": "{name} cihazına bağlanılamadı"
 }

@@ -1187,6 +1187,26 @@ class L10nNl extends L10n {
   String get settingsSignOut => 'Uitloggen';
 
   @override
+  String get accountsTitle => 'Accounts';
+
+  @override
+  String get accountsAdd => 'Account of server toevoegen';
+
+  @override
+  String get accountsSwitch => 'Wisselen';
+
+  @override
+  String get accountsInUse => 'In gebruik';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$user op $host';
+  }
+
+  @override
+  String get loginBackToAccount => 'Terug naar huidig account';
+
+  @override
   String get settingsSectionServer => 'Server';
 
   @override
@@ -2160,5 +2180,37 @@ class L10nNl extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => 'Casten';
+
+  @override
+  String get castTitle => 'Afspelen op';
+
+  @override
+  String get castThisDevice => 'Dit apparaat';
+
+  @override
+  String get castSearching => 'Zoeken naar apparaten in het netwerk…';
+
+  @override
+  String get castNone =>
+      'Geen Chromecast gevonden. Hij moet op hetzelfde wifi-netwerk zitten.';
+
+  @override
+  String get castSearchAgain => 'Opnieuw zoeken';
+
+  @override
+  String get castStop => 'Stoppen met casten';
+
+  @override
+  String castPlayingOn(String name) {
+    return 'Speelt op $name';
+  }
+
+  @override
+  String castFailed(String name) {
+    return 'Kan geen verbinding maken met $name';
   }
 }

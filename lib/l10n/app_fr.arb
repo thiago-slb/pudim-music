@@ -305,6 +305,12 @@
   "settingsProfileSubtitle": "Nom, nom d’utilisateur et mot de passe",
   "settingsConnectedAt": "Connecté à {url}",
   "settingsSignOut": "Se déconnecter",
+  "accountsTitle": "Comptes",
+  "accountsAdd": "Ajouter un compte ou un serveur",
+  "accountsSwitch": "Changer",
+  "accountsInUse": "Actif",
+  "accountsOn": "{user} sur {host}",
+  "loginBackToAccount": "Revenir au compte actuel",
   "settingsSectionServer": "Serveur",
   "settingsLocalNetwork": "Sur le réseau local",
   "settingsServerNote": "Pour changer les adresses Jellyfin, déconnecte-toi et ouvre « Adresse du serveur » sur l’écran de connexion.",
@@ -568,5 +574,14 @@
   "widgetTracksDateAdded": "Date d’ajout",
   "widgetTracksAddedBy": "par {name}",
   "widgetTracksMoreOptions": "Plus d’options",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "Caster",
+  "castTitle": "Lire sur",
+  "castThisDevice": "Cet appareil",
+  "castSearching": "Recherche d’appareils sur le réseau…",
+  "castNone": "Aucun Chromecast trouvé. Il doit être sur le même Wi-Fi.",
+  "castSearchAgain": "Rechercher à nouveau",
+  "castStop": "Arrêter de caster",
+  "castPlayingOn": "Lecture sur {name}",
+  "castFailed": "Impossible de se connecter à {name}"
 }

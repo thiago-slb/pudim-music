@@ -1204,6 +1204,26 @@ class L10nRu extends L10n {
   String get settingsSignOut => 'Выйти';
 
   @override
+  String get accountsTitle => 'Аккаунты';
+
+  @override
+  String get accountsAdd => 'Добавить аккаунт или сервер';
+
+  @override
+  String get accountsSwitch => 'Сменить';
+
+  @override
+  String get accountsInUse => 'Используется';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$user на $host';
+  }
+
+  @override
+  String get loginBackToAccount => 'Вернуться к текущему аккаунту';
+
+  @override
   String get settingsSectionServer => 'Сервер';
 
   @override
@@ -2186,5 +2206,37 @@ class L10nRu extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => 'Трансляция';
+
+  @override
+  String get castTitle => 'Воспроизвести на';
+
+  @override
+  String get castThisDevice => 'Это устройство';
+
+  @override
+  String get castSearching => 'Поиск устройств в сети…';
+
+  @override
+  String get castNone =>
+      'Chromecast не найден. Он должен быть в той же сети Wi-Fi.';
+
+  @override
+  String get castSearchAgain => 'Искать снова';
+
+  @override
+  String get castStop => 'Остановить трансляцию';
+
+  @override
+  String castPlayingOn(String name) {
+    return 'Играет на $name';
+  }
+
+  @override
+  String castFailed(String name) {
+    return 'Не удалось подключиться к $name';
   }
 }

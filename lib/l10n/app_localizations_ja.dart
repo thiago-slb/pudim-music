@@ -1169,6 +1169,26 @@ class L10nJa extends L10n {
   String get settingsSignOut => 'サインアウト';
 
   @override
+  String get accountsTitle => 'アカウント';
+
+  @override
+  String get accountsAdd => 'アカウントまたはサーバーを追加';
+
+  @override
+  String get accountsSwitch => '切り替え';
+
+  @override
+  String get accountsInUse => '使用中';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$host の $user';
+  }
+
+  @override
+  String get loginBackToAccount => '現在のアカウントに戻る';
+
+  @override
   String get settingsSectionServer => 'サーバー';
 
   @override
@@ -2121,5 +2141,36 @@ class L10nJa extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => 'キャスト';
+
+  @override
+  String get castTitle => '再生するデバイス';
+
+  @override
+  String get castThisDevice => 'このデバイス';
+
+  @override
+  String get castSearching => 'ネットワーク上のデバイスを検索中…';
+
+  @override
+  String get castNone => 'Chromecast が見つかりません。同じ Wi-Fi に接続してください。';
+
+  @override
+  String get castSearchAgain => '再検索';
+
+  @override
+  String get castStop => 'キャストを停止';
+
+  @override
+  String castPlayingOn(String name) {
+    return '$name で再生中';
+  }
+
+  @override
+  String castFailed(String name) {
+    return '$name に接続できませんでした';
   }
 }

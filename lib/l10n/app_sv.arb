@@ -305,6 +305,12 @@
   "settingsProfileSubtitle": "Namn, användarnamn och lösenord",
   "settingsConnectedAt": "Ansluten till {url}",
   "settingsSignOut": "Logga ut",
+  "accountsTitle": "Konton",
+  "accountsAdd": "Lägg till konto eller server",
+  "accountsSwitch": "Byt",
+  "accountsInUse": "Används",
+  "accountsOn": "{user} på {host}",
+  "loginBackToAccount": "Tillbaka till nuvarande konto",
   "settingsSectionServer": "Server",
   "settingsLocalNetwork": "På det lokala nätverket",
   "settingsServerNote": "Om du vill ändra Jellyfin-adresserna loggar du ut och öppnar \"Serveradress\" på inloggningsskärmen.",
@@ -568,5 +574,14 @@
   "widgetTracksDateAdded": "Datum tillagd",
   "widgetTracksAddedBy": "av {name}",
   "widgetTracksMoreOptions": "Fler alternativ",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "Casta",
+  "castTitle": "Spela på",
+  "castThisDevice": "Den här enheten",
+  "castSearching": "Söker efter enheter i nätverket…",
+  "castNone": "Ingen Chromecast hittades. Den måste vara på samma wifi.",
+  "castSearchAgain": "Sök igen",
+  "castStop": "Sluta casta",
+  "castPlayingOn": "Spelas på {name}",
+  "castFailed": "Kunde inte ansluta till {name}"
 }

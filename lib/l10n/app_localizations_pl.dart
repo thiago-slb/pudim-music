@@ -1204,6 +1204,26 @@ class L10nPl extends L10n {
   String get settingsSignOut => 'Wyloguj się';
 
   @override
+  String get accountsTitle => 'Konta';
+
+  @override
+  String get accountsAdd => 'Dodaj konto lub serwer';
+
+  @override
+  String get accountsSwitch => 'Przełącz';
+
+  @override
+  String get accountsInUse => 'W użyciu';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$user na $host';
+  }
+
+  @override
+  String get loginBackToAccount => 'Wróć do bieżącego konta';
+
+  @override
   String get settingsSectionServer => 'Serwer';
 
   @override
@@ -2184,5 +2204,37 @@ class L10nPl extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => 'Przesyłaj';
+
+  @override
+  String get castTitle => 'Odtwarzaj na';
+
+  @override
+  String get castThisDevice => 'To urządzenie';
+
+  @override
+  String get castSearching => 'Szukam urządzeń w sieci…';
+
+  @override
+  String get castNone =>
+      'Nie znaleziono Chromecasta. Musi być w tej samej sieci Wi-Fi.';
+
+  @override
+  String get castSearchAgain => 'Szukaj ponownie';
+
+  @override
+  String get castStop => 'Zatrzymaj przesyłanie';
+
+  @override
+  String castPlayingOn(String name) {
+    return 'Odtwarzanie na $name';
+  }
+
+  @override
+  String castFailed(String name) {
+    return 'Nie udało się połączyć z $name';
   }
 }

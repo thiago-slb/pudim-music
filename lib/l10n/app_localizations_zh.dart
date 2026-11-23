@@ -1153,6 +1153,26 @@ class L10nZh extends L10n {
   String get settingsSignOut => '退出登录';
 
   @override
+  String get accountsTitle => '账户';
+
+  @override
+  String get accountsAdd => '添加账户或服务器';
+
+  @override
+  String get accountsSwitch => '切换';
+
+  @override
+  String get accountsInUse => '使用中';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$host 上的 $user';
+  }
+
+  @override
+  String get loginBackToAccount => '返回当前账户';
+
+  @override
   String get settingsSectionServer => '服务器';
 
   @override
@@ -2097,5 +2117,36 @@ class L10nZh extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => '投放';
+
+  @override
+  String get castTitle => '播放到';
+
+  @override
+  String get castThisDevice => '此设备';
+
+  @override
+  String get castSearching => '正在搜索网络中的设备…';
+
+  @override
+  String get castNone => '未找到 Chromecast。它需要连接同一个 Wi-Fi。';
+
+  @override
+  String get castSearchAgain => '重新搜索';
+
+  @override
+  String get castStop => '停止投放';
+
+  @override
+  String castPlayingOn(String name) {
+    return '正在 $name 上播放';
+  }
+
+  @override
+  String castFailed(String name) {
+    return '无法连接到 $name';
   }
 }

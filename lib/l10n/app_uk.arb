@@ -305,6 +305,12 @@
   "settingsProfileSubtitle": "Ім’я, ім’я користувача та пароль",
   "settingsConnectedAt": "Підключено до {url}",
   "settingsSignOut": "Вийти",
+  "accountsTitle": "Облікові записи",
+  "accountsAdd": "Додати обліковий запис або сервер",
+  "accountsSwitch": "Змінити",
+  "accountsInUse": "Використовується",
+  "accountsOn": "{user} на {host}",
+  "loginBackToAccount": "Повернутися до поточного облікового запису",
   "settingsSectionServer": "Сервер",
   "settingsLocalNetwork": "У локальній мережі",
   "settingsServerNote": "Щоб змінити адреси Jellyfin, вийдіть і відкрийте «Адреса сервера» на екрані входу.",
@@ -568,5 +574,14 @@
   "widgetTracksDateAdded": "Дата додавання",
   "widgetTracksAddedBy": "додав(ла): {name}",
   "widgetTracksMoreOptions": "Більше опцій",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "Трансляція",
+  "castTitle": "Відтворити на",
+  "castThisDevice": "Цей пристрій",
+  "castSearching": "Пошук пристроїв у мережі…",
+  "castNone": "Chromecast не знайдено. Він має бути в тій самій мережі Wi-Fi.",
+  "castSearchAgain": "Шукати знову",
+  "castStop": "Зупинити трансляцію",
+  "castPlayingOn": "Грає на {name}",
+  "castFailed": "Не вдалося підключитися до {name}"
 }

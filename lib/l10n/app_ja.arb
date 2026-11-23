@@ -305,6 +305,12 @@
   "settingsProfileSubtitle": "名前、ユーザー名、パスワード",
   "settingsConnectedAt": "{url}に接続中",
   "settingsSignOut": "サインアウト",
+  "accountsTitle": "アカウント",
+  "accountsAdd": "アカウントまたはサーバーを追加",
+  "accountsSwitch": "切り替え",
+  "accountsInUse": "使用中",
+  "accountsOn": "{host} の {user}",
+  "loginBackToAccount": "現在のアカウントに戻る",
   "settingsSectionServer": "サーバー",
   "settingsLocalNetwork": "ローカルネットワーク",
   "settingsServerNote": "Jellyfinのアドレスを変更するには、サインアウトしてサインイン画面の「サーバーアドレス」を開いてください。",
@@ -568,5 +574,14 @@
   "widgetTracksDateAdded": "追加日",
   "widgetTracksAddedBy": "{name}が追加",
   "widgetTracksMoreOptions": "その他のオプション",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "キャスト",
+  "castTitle": "再生するデバイス",
+  "castThisDevice": "このデバイス",
+  "castSearching": "ネットワーク上のデバイスを検索中…",
+  "castNone": "Chromecast が見つかりません。同じ Wi-Fi に接続してください。",
+  "castSearchAgain": "再検索",
+  "castStop": "キャストを停止",
+  "castPlayingOn": "{name} で再生中",
+  "castFailed": "{name} に接続できませんでした"
 }

@@ -1186,6 +1186,26 @@ class L10nSv extends L10n {
   String get settingsSignOut => 'Logga ut';
 
   @override
+  String get accountsTitle => 'Konton';
+
+  @override
+  String get accountsAdd => 'Lägg till konto eller server';
+
+  @override
+  String get accountsSwitch => 'Byt';
+
+  @override
+  String get accountsInUse => 'Används';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$user på $host';
+  }
+
+  @override
+  String get loginBackToAccount => 'Tillbaka till nuvarande konto';
+
+  @override
   String get settingsSectionServer => 'Server';
 
   @override
@@ -2153,5 +2173,37 @@ class L10nSv extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => 'Casta';
+
+  @override
+  String get castTitle => 'Spela på';
+
+  @override
+  String get castThisDevice => 'Den här enheten';
+
+  @override
+  String get castSearching => 'Söker efter enheter i nätverket…';
+
+  @override
+  String get castNone =>
+      'Ingen Chromecast hittades. Den måste vara på samma wifi.';
+
+  @override
+  String get castSearchAgain => 'Sök igen';
+
+  @override
+  String get castStop => 'Sluta casta';
+
+  @override
+  String castPlayingOn(String name) {
+    return 'Spelas på $name';
+  }
+
+  @override
+  String castFailed(String name) {
+    return 'Kunde inte ansluta till $name';
   }
 }

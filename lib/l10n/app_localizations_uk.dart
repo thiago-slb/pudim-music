@@ -1201,6 +1201,26 @@ class L10nUk extends L10n {
   String get settingsSignOut => 'Вийти';
 
   @override
+  String get accountsTitle => 'Облікові записи';
+
+  @override
+  String get accountsAdd => 'Додати обліковий запис або сервер';
+
+  @override
+  String get accountsSwitch => 'Змінити';
+
+  @override
+  String get accountsInUse => 'Використовується';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$user на $host';
+  }
+
+  @override
+  String get loginBackToAccount => 'Повернутися до поточного облікового запису';
+
+  @override
   String get settingsSectionServer => 'Сервер';
 
   @override
@@ -2180,5 +2200,37 @@ class L10nUk extends L10n {
     final String dateString = dateDateFormat.format(date);
 
     return '$dateString';
+  }
+
+  @override
+  String get castTooltip => 'Трансляція';
+
+  @override
+  String get castTitle => 'Відтворити на';
+
+  @override
+  String get castThisDevice => 'Цей пристрій';
+
+  @override
+  String get castSearching => 'Пошук пристроїв у мережі…';
+
+  @override
+  String get castNone =>
+      'Chromecast не знайдено. Він має бути в тій самій мережі Wi-Fi.';
+
+  @override
+  String get castSearchAgain => 'Шукати знову';
+
+  @override
+  String get castStop => 'Зупинити трансляцію';
+
+  @override
+  String castPlayingOn(String name) {
+    return 'Грає на $name';
+  }
+
+  @override
+  String castFailed(String name) {
+    return 'Не вдалося підключитися до $name';
   }
 }
