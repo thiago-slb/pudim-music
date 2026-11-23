@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pudim_music/api/jellyfin.dart';
 import 'package:pudim_music/api/response_cache.dart';
 
-/// Responde uma playlist enquanto `up`; depois finge que a rede caiu.
+/// Answers with a playlist while `up`; afterwards pretends the network went down.
 class FlakyAdapter implements HttpClientAdapter {
   bool up = true;
   int calls = 0;
@@ -19,7 +19,10 @@ class FlakyAdapter implements HttpClientAdapter {
   ) async {
     calls++;
     if (!up) {
-      throw DioException.connectionError(requestOptions: o, reason: 'sem rede');
+      throw DioException.connectionError(
+        requestOptions: o,
+        reason: 'no network',
+      );
     }
     return ResponseBody.fromString(
       jsonEncode({
@@ -39,38 +42,41 @@ class FlakyAdapter implements HttpClientAdapter {
 }
 
 void main() {
-  test('sem internet a biblioteca vem da cópia no aparelho', () async {
-    final tmp = await Directory.systemTemp.createTemp('pudim_cache');
-    addTearDown(() => tmp.delete(recursive: true));
-    final cache = await ResponseCache.open(tmp.path);
-    final net = FlakyAdapter();
-    final api = Jellyfin(
-      baseUrl: 'http://jf',
-      deviceId: 'd',
-      deviceName: 'teste',
-      token: 't',
-      userId: 'u',
-      adapter: net,
-      cache: cache,
-    );
+  test(
+    'without internet the library comes from the copy on the device',
+    () async {
+      final tmp = await Directory.systemTemp.createTemp('pudim_cache');
+      addTearDown(() => tmp.delete(recursive: true));
+      final cache = await ResponseCache.open(tmp.path);
+      final net = FlakyAdapter();
+      final api = Jellyfin(
+        baseUrl: 'http://jf',
+        deviceId: 'd',
+        deviceName: 'teste',
+        token: 't',
+        userId: 'u',
+        adapter: net,
+        cache: cache,
+      );
 
-    expect((await api.playlists()).single.name, 'Rock');
-    await Future<void>.delayed(
-      const Duration(milliseconds: 100),
-    ); // grava em segundo plano
+      expect((await api.playlists()).single.name, 'Rock');
+      await Future<void>.delayed(
+        const Duration(milliseconds: 100),
+      ); // written in the background
 
-    net.up = false;
-    expect((await api.playlists()).single.name, 'Rock');
-    expect(cache.offline.value, isTrue);
+      net.up = false;
+      expect((await api.playlists()).single.name, 'Rock');
+      expect(cache.offline.value, isTrue);
 
-    // Durante os 30 s sem rede nem tenta o servidor.
-    final before = net.calls;
-    expect((await api.playlists()).single.name, 'Rock');
-    expect(net.calls, before);
-    cache.markOnline();
-  });
+      // During the 30 s without network it does not even try the server.
+      final before = net.calls;
+      expect((await api.playlists()).single.name, 'Rock');
+      expect(net.calls, before);
+      cache.markOnline();
+    },
+  );
 
-  test('chave não depende da ordem dos parâmetros', () {
+  test('key does not depend on parameter order', () {
     expect(
       ResponseCache.keyOf('/Items', {'a': 1, 'b': 2}),
       ResponseCache.keyOf('/Items', {'b': 2, 'a': 1}),

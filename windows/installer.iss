@@ -1,7 +1,7 @@
-﻿; Instalador do Pudim para Windows (Inno Setup 6). Instala só para o usuário, sem pedir administrador.
-; Gerar depois do `flutter build windows --release`:
+﻿; Pudim installer for Windows (Inno Setup 6). Installs for the current user only, without asking for administrator.
+; Generate after `flutter build windows --release`:
 ;   "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows\installer.iss
-; Sai em build\installer\PudimMusic-Setup.exe.
+; Outputs build\installer\PudimMusic-Setup.exe.
 
 #define AppVersion "1.0.0"
 
@@ -33,7 +33,7 @@ Name: "desktopicon"; Description: "Criar atalho na área de trabalho"; Flags: un
 [Files]
 Source: "..\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-; Atalhos com o nome antigo (antes de virar "Pudim").
+; Shortcuts with the old name (before it became "Pudim").
 [InstallDelete]
 Type: files; Name: "{autoprograms}\PudimMusic.lnk"
 Type: files; Name: "{autodesktop}\PudimMusic.lnk"

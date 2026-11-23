@@ -36,46 +36,56 @@ const _cover =
     'https://cdn-images.dzcdn.net/images/cover/abc/1000x1000-000000-80-0-0.jpg';
 
 void main() {
-  test('faixa do catálogo vira Item com nuvem, capa e ids com prefixo', () {
-    final t = Item.fromCatalog({
-      'kind': 'track',
-      'deezer_id': 11,
-      'title': 'Oceano',
-      'artist': 'Djavan',
-      'artist_id': 22,
-      'album': 'Djavan',
-      'album_id': 33,
-      'duration': 245,
-      'cover': _cover,
-      'jellyfin_id': null,
-    });
-    expect(t.id, 'dzt11');
-    expect(t.cloud, isTrue);
-    expect(t.isCatalog, isTrue);
-    expect(t.deezerId, 11);
-    expect(t.albumId, 'dza33');
-    expect(t.mainArtist!.id, 'dzr22');
-    expect(t.duration, const Duration(seconds: 245));
-    final api = Jellyfin(baseUrl: 'http://jf', deviceId: 'd', deviceName: 'x');
-    expect(api.imageUrl(t.imageItemId, size: 64), contains('/120x120-'));
-  });
+  test(
+    'catalog track becomes an Item with cloud flag, cover and prefixed ids',
+    () {
+      final t = Item.fromCatalog({
+        'kind': 'track',
+        'deezer_id': 11,
+        'title': 'Oceano',
+        'artist': 'Djavan',
+        'artist_id': 22,
+        'album': 'Djavan',
+        'album_id': 33,
+        'duration': 245,
+        'cover': _cover,
+        'jellyfin_id': null,
+      });
+      expect(t.id, 'dzt11');
+      expect(t.cloud, isTrue);
+      expect(t.isCatalog, isTrue);
+      expect(t.deezerId, 11);
+      expect(t.albumId, 'dza33');
+      expect(t.mainArtist!.id, 'dzr22');
+      expect(t.duration, const Duration(seconds: 245));
+      final api = Jellyfin(
+        baseUrl: 'http://jf',
+        deviceId: 'd',
+        deviceName: 'x',
+      );
+      expect(api.imageUrl(t.imageItemId, size: 64), contains('/120x120-'));
+    },
+  );
 
-  test('o que já está na biblioteca usa o id do Jellyfin e não tem nuvem', () {
-    final t = Item.fromCatalog({
-      'kind': 'track',
-      'deezer_id': 12,
-      'title': 'Sina',
-      'artist': 'Djavan',
-      'album_id': 34,
-      'cover': _cover,
-      'jellyfin_id': 'abc123',
-    });
-    expect(t.id, 'abc123');
-    expect(t.cloud, isFalse);
-    expect(t.isCatalog, isFalse);
-  });
+  test(
+    'what is already in the library uses the Jellyfin id and has no cloud flag',
+    () {
+      final t = Item.fromCatalog({
+        'kind': 'track',
+        'deezer_id': 12,
+        'title': 'Sina',
+        'artist': 'Djavan',
+        'album_id': 34,
+        'cover': _cover,
+        'jellyfin_id': 'abc123',
+      });
+      expect(t.id, 'abc123');
+      expect(t.cloud, isFalse);
+      expect(t.isCatalog, isFalse);
+    },
+  );
 
-  test('busca e download falam com /api/player e mandam o token', () async {
+  test('search and download talk to /api/player and send the token', () async {
     final fake = _Fake({
       '/api/player/search': {
         'tracks': [
@@ -102,7 +112,7 @@ void main() {
     expect(c.playUrl(9), 'https://painel/api/player/play/9');
   });
 
-  test('status do job em palavras', () {
+  test('job status in words', () {
     DownloadJob job(String st) => DownloadJob.fromJson({
       'id': '1',
       'status': st,
@@ -114,29 +124,26 @@ void main() {
     expect(job('erro').failed, isTrue);
   });
 
-  test(
-    'faixa guardada para retomar volta igual (inclusive a capa do catálogo)',
-    () {
-      final t = Item.fromCatalog({
-        'kind': 'track',
-        'deezer_id': 77,
-        'title': 'Vento',
-        'artist': 'Y',
-        'artist_id': 5,
-        'album': 'Ar',
-        'album_id': 6,
-        'duration': 100,
-        'cover': _cover,
-      });
-      final saved = t.toStore();
-      catalogCovers.clear(); // app aberto de novo: capas só do que foi guardado
-      final back = Item.fromStore(saved);
-      expect(back.id, 'dzt77');
-      expect(back.cloud, isTrue);
-      expect(back.albumId, 'dza6');
-      expect(back.mainArtist!.name, 'Y');
-      expect(back.duration, const Duration(seconds: 100));
-      expect(catalogCovers['dza6'], _cover);
-    },
-  );
+  test('track saved for resuming round-trips unchanged (including the catalog cover)', () {
+    final t = Item.fromCatalog({
+      'kind': 'track',
+      'deezer_id': 77,
+      'title': 'Vento',
+      'artist': 'Y',
+      'artist_id': 5,
+      'album': 'Ar',
+      'album_id': 6,
+      'duration': 100,
+      'cover': _cover,
+    });
+    final saved = t.toStore();
+    catalogCovers.clear(); // app reopened: covers only for what was stored
+    final back = Item.fromStore(saved);
+    expect(back.id, 'dzt77');
+    expect(back.cloud, isTrue);
+    expect(back.albumId, 'dza6');
+    expect(back.mainArtist!.name, 'Y');
+    expect(back.duration, const Duration(seconds: 100));
+    expect(catalogCovers['dza6'], _cover);
+  });
 }

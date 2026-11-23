@@ -34,7 +34,7 @@ class _Val<T> extends Notifier<T> {
   void set(T v) => state = v;
 }
 
-/// Coluna "Sua Biblioteca".
+/// "Your Library" column.
 class LibrarySidebar extends ConsumerWidget {
   const LibrarySidebar({super.key});
 
@@ -50,7 +50,7 @@ class LibrarySidebar extends ConsumerWidget {
     final query = ref.watch(libQueryProvider).toLowerCase();
     final recent = ref.watch(recentOpenProvider);
     final off = ref.watch(offlineProvider);
-    // Sem internet: a biblioteca vira o que está guardado no aparelho.
+    // No internet: the library becomes what is stored on the device.
     final offlineOnly = lib.hasError && off.collections.isNotEmpty;
 
     final entries = <_Entry>[];
@@ -171,8 +171,8 @@ class LibrarySidebar extends ConsumerWidget {
                     LibFilter.albums,
                     LibFilter.artists,
                   ])
-                    // A lista horizontal estica os filhos até os 40 px de altura: sem o Center
-                    // o texto ficava grudado em cima, com sobra embaixo.
+                    // The horizontal list stretches the children to the 40 px height: without the Center
+                    // the text stuck to the top, with leftover space below.
                     Center(
                       child: Chip2(
                         switch (f) {
@@ -480,7 +480,7 @@ class _SortMenu extends ConsumerWidget {
   }
 }
 
-/// Usado na rota de Músicas curtidas e na contagem.
+/// Used on the Liked Songs route and in the count.
 final likedCountProvider = Provider<int>(
   (ref) => ref.watch(likedTracksProvider).value?.length ?? 0,
 );

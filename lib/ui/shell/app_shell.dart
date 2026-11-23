@@ -14,7 +14,7 @@ import '../widgets/offline_banner.dart';
 import '../widgets/update_banner.dart';
 import '../../state/prefetch.dart';
 
-/// Layout do Spotify: barra de cima, três colunas e o player embaixo.
+/// Spotify layout: top bar, three columns and the player at the bottom.
 class AppShell extends ConsumerWidget {
   final Widget child;
   const AppShell({super.key, required this.child});
@@ -23,7 +23,7 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(
       prefetchProvider,
-    ); // guarda a biblioteca no aparelho em segundo plano
+    ); // stores the library on the device in the background
     final loc = GoRouterState.of(context).uri.path;
     final collapsed = ref.watch(sidebarCollapsedProvider);
     final panel = ref.watch(rightPanelProvider);
@@ -39,7 +39,7 @@ class AppShell extends ConsumerWidget {
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.space): () {
-          // Espaço só quando não há campo de texto com foco.
+          // Space only when no text field has focus.
           final f = FocusManager.instance.primaryFocus?.context?.widget;
           if (f is EditableText) return;
           ref.read(playerProvider.notifier).togglePlay();

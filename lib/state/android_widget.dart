@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import '../audio/player.dart';
 import 'session.dart';
 
-/// Mantém o widget da tela inicial do Android igual ao player (música, artista, tocando e capa).
+/// Keeps the Android home-screen widget in sync with the player (song, artist, playing, cover).
 final androidWidgetProvider = Provider<void>((ref) {
   if (!Platform.isAndroid) return;
   const channel = MethodChannel('pudim/widget');

@@ -20,7 +20,7 @@ String _fmt(Object? v) {
   return NumberFormat.decimalPattern(appL10n.localeName).format(n);
 }
 
-/// Cartões da Retrospectiva no formato de stories (9:16), para salvar ou mandar.
+/// Recap cards in story format (9:16), to save or send.
 Future<void> showRecapShare(BuildContext context, Map<String, dynamic> r) =>
     showDialog<void>(
       context: context,

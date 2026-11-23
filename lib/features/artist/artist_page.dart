@@ -42,7 +42,7 @@ final _artistProvider = FutureProvider.autoDispose.family<_ArtistData, String>((
   final api = ref.watch(apiProvider);
   final r = await Future.wait([
     api.item(id),
-    // Sem internet, o que não estiver guardado vem vazio em vez de derrubar a página.
+    // Offline, anything not stored comes back empty instead of crashing the page.
     api.artistTopTracks(id, limit: 10).catchError((_) => <Item>[]),
     api.artistAlbums(id),
     api.appearsOn(id).catchError((_) => <Item>[]),
@@ -105,12 +105,12 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
         final hero = a.backdropTags.isNotEmpty
             ? api.imageUrl(a.id, type: 'Backdrop', size: 1600)
             : api.imageUrl(a.id, size: 1200);
-        // Populares como no Spotify: top do Deezer (o que tem toca da biblioteca, o resto pelo painel).
+        // Popular tracks like Spotify: Deezer's top (what exists plays from the library, the rest via the panel).
         final dz = ref.watch(catalogArtistByNameProvider(a.name)).value;
-        // Qualidade das pastas (FLAC, som fraco) vinda do painel.
+        // Folder quality (FLAC, weak audio) coming from the panel.
         final quality = ref.watch(qualityProvider(a.name)).value;
         final top = (dz?.top.isNotEmpty ?? false) ? dz!.top : d.top;
-        // Discografia completa: o que está na biblioteca + o que falta (do catálogo, com nuvem para baixar).
+        // Full discography: what is in the library + what is missing (from the catalog, with a cloud to download).
         final cloudAlbums = (dz?.albums ?? const <Item>[])
             .where((x) => x.cloud)
             .toList();
@@ -136,7 +136,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              // Banner grande com o nome por cima.
+              // Large banner with the name on top.
               SizedBox(
                 height: isCompact(context) ? 300 : 400,
                 child: Stack(

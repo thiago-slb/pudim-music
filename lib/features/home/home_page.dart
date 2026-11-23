@@ -44,7 +44,7 @@ class HomeData {
   });
 }
 
-/// Álbum "de mentira" montado a partir de uma faixa (para não buscar cada álbum).
+/// "Fake" album built from a track (to avoid fetching each album).
 Item albumOf(Item t) => Item(
   id: t.albumId!,
   name: t.album ?? '',
@@ -92,12 +92,12 @@ final homeProvider = FutureProvider.autoDispose<HomeData>((ref) async {
       .toList();
   final auto = pls.where((p) => p.name.endsWith('_automatic')).toList();
   final mistura = pls.where((p) => p.name == 'Mistura da semana').toList();
-  // montadas pelo painel: daylist (muda com a hora), Radar (sexta) e Blends
+  // built by the panel: daylist (changes with the time of day), Radar (Friday) and Blends
   final daylist = pls.where((p) => p.name.startsWith('daylist · ')).toList();
   final radar = pls.where((p) => p.name == 'Radar de Novidades').toList();
   final blends = pls.where((p) => p.name.startsWith('Blend · ')).toList();
 
-  // Atalhos do topo: o que foi aberto por último na Sua Biblioteca.
+  // Top shortcuts: what was opened last in Your Library.
   final order = ref.read(recentOpenProvider);
   final all = [...pls, ...lib.albums, ...lib.artists];
   final byId = {for (final i in all) i.id: i};
@@ -134,7 +134,7 @@ String _clean(String name) => name
     .replaceFirst('Deezer · ', '')
     .replaceFirst(RegExp(r'_automatic$'), '');
 
-/// Aba escolhida na Início (0 Tudo, 1 Música, 2 Podcasts); fica ao voltar para a Início.
+/// Tab chosen on Home (0 All, 1 Music, 2 Podcasts); it persists when returning to Home.
 final homeTab = ValueNotifier<int>(0);
 
 class HomePage extends ConsumerWidget {
@@ -143,7 +143,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(homeProvider);
-    // No celular, margens laterais menores (as capas vão mais perto da borda).
+    // On phones, smaller side margins (covers go closer to the edge).
     final side = isCompact(context) ? 4.0 : 12.0;
     final inner = isCompact(context) ? 6.0 : 12.0;
     final name = ref.watch(sessionProvider).value?.userName ?? '';
@@ -159,7 +159,7 @@ class HomePage extends ConsumerWidget {
       child: data.when(
         loading: () => const LoadingBox(),
         error: (e, _) {
-          // Sem internet e sem cópia da Início: mostra o que está baixado no aparelho.
+          // Offline and no cached copy of Home: show what is downloaded on the device.
           final off = ref.watch(offlineProvider);
           final heads = [
             for (final c in off.collections.values)
@@ -226,7 +226,7 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-/// Prateleiras de música da Início (em "Tudo" entram também os podcasts que você segue).
+/// Music shelves on Home (in "All" the podcasts you follow also appear).
 class _HomeMusic extends ConsumerWidget {
   final HomeData d;
   final double inner;
@@ -303,7 +303,7 @@ class _HomeMusic extends ConsumerWidget {
   }
 }
 
-/// "Rádios recomendadas": Mix instantâneo dos artistas mais ouvidos.
+/// "Recommended radios": instant Mix of the most listened artists.
 class _RadioShelf extends ConsumerWidget {
   final List<Item> artists;
   const _RadioShelf({required this.artists});

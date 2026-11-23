@@ -4,14 +4,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../l10n/l10n.dart';
 
-/// Notificações do sistema (Android e Windows): downloads no aparelho com barra de progresso,
-/// músicas que chegaram na biblioteca e avisos do servidor (lançamentos, Descobertas, Mistura).
+/// System notifications (Android and Windows): on-device downloads with a progress bar,
+/// songs that arrived in the library and server notices (releases, Descobertas, Mistura).
 class Notify {
   static final _p = FlutterLocalNotificationsPlugin();
   static bool _ready = false;
 
-  static const offlineId = 1; // baixando no aparelho
-  static const libraryId = 2; // baixando para a biblioteca
+  static const offlineId = 1; // downloading to the device
+  static const libraryId = 2; // downloading to the library
 
   static Future<void> init() async {
     if (!(Platform.isAndroid || Platform.isWindows)) return;
@@ -35,11 +35,11 @@ class Notify {
       }
       _ready = true;
     } catch (_) {
-      // Sem notificações (permissão negada ou plataforma sem suporte): o app segue normal.
+      // No notifications (permission denied or unsupported platform): the app carries on normally.
     }
   }
 
-  /// Notificação fixa com barra (só no Android; no Windows fica só o aviso do fim).
+  /// Pinned notification with a bar (Android only; on Windows only the end notice).
   static Future<void> progress(
     int id,
     String title,
@@ -74,7 +74,7 @@ class Notify {
     } catch (_) {}
   }
 
-  /// Aviso comum (som normal).
+  /// Plain notice (normal sound).
   static Future<void> show(int id, String title, String body) async {
     if (!_ready) return;
     try {

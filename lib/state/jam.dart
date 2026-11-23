@@ -8,16 +8,16 @@ import '../api/models.dart';
 import '../audio/player.dart';
 import 'session.dart';
 
-/// Jam: ouvir junto com outras contas.
+/// Jam: listening together with other accounts.
 ///
-/// Quem cria (anfitrião) manda a fila, a faixa, a posição e se está tocando a cada mudança e a cada 2 s
-/// (isso também serve de "estou aqui"). Na resposta vêm as músicas e os comandos que os convidados pediram,
-/// e o anfitrião aplica na fila dele. Os convidados perguntam a cada 2 s e copiam o estado; os botões do player
-/// deles viram pedidos para o anfitrião.
+/// Whoever creates it (host) sends the queue, the track, the position and whether it is playing on every change and every 2 s
+/// (this also serves as "I am here"). The response carries the songs and commands the guests asked for,
+/// and the host applies them to their queue. Guests poll every 2 s and copy the state; their player
+/// buttons become requests to the host.
 class JamController extends Notifier<JamState?> {
   Timer? _timer;
   List<Item> _queue = const [];
-  int _from = 0; // onde a janela mandada começa na fila do anfitrião
+  int _from = 0; // where the window sent starts in the host queue
   String _sentSig = '';
   bool _busy = false;
   bool _pushSoon = false;
@@ -25,7 +25,7 @@ class JamController extends Notifier<JamState?> {
   Catalog get _cat => ref.read(catalogProvider);
   PlayerController get _player => ref.read(playerProvider.notifier);
 
-  /// Fila que todos estão ouvindo (a do anfitrião).
+  /// Queue everyone is listening to (the host one).
   List<Item> get queue => _queue;
 
   @override
@@ -41,7 +41,7 @@ class JamController extends Notifier<JamState?> {
         _schedulePush();
       }
     });
-    // Ao abrir o app: volta para a Jam em que a conta já estava.
+    // On app start: go back to the Jam this account was already in.
     Future.microtask(_resume);
     return null;
   }
@@ -56,7 +56,7 @@ class JamController extends Notifier<JamState?> {
     } catch (_) {}
   }
 
-  // ---------- ações ----------
+  // ---------- actions ----------
 
   Future<void> start() async {
     _sentSig = '';
@@ -82,7 +82,7 @@ class JamController extends Notifier<JamState?> {
 
   Future<void> invite(String userId) => _cat.jamInvite(state!.id, userId);
 
-  // ---------- estado ----------
+  // ---------- state ----------
 
   void _apply(JamState st) {
     if (st.ended) {
@@ -122,11 +122,11 @@ class JamController extends Notifier<JamState?> {
         await _follow(st, force: false, revChanged: changed);
       }
     } on CatalogException catch (_) {
-      // a Jam sumiu (painel reiniciou ou acabou): sai sem barulho
+      // the Jam is gone (panel restarted or it ended): leave quietly
       final again = await _cat.jam().catchError((_) => null);
       if (again == null) _stop();
     } catch (_) {
-      // sem internet por um instante: tenta de novo no próximo
+      // no internet for a moment: try again on the next poll
     } finally {
       _busy = false;
     }
@@ -166,7 +166,7 @@ class JamController extends Notifier<JamState?> {
     return out;
   }
 
-  /// Anfitrião: manda o estado e aplica o que os convidados pediram.
+  /// Host: sends the state and applies what the guests asked for.
   Future<void> _push() async {
     final s = state;
     if (s == null) return;
@@ -193,7 +193,7 @@ class JamController extends Notifier<JamState?> {
     }
   }
 
-  /// Convidado: deixa o player igual ao do anfitrião.
+  /// Guest: makes the player match the host one.
   Future<void> _follow(
     JamState st, {
     required bool force,
@@ -215,7 +215,7 @@ class JamController extends Notifier<JamState?> {
     if (st.playing && drift > 3000) await _player.audio.seek(at);
   }
 
-  /// Botões do convidado: viram pedidos para o anfitrião.
+  /// Guest buttons: they become requests to the host.
   bool _remote(String action, {int? index, List<Item>? items}) {
     final s = state;
     if (s == null || s.isHost) return false;

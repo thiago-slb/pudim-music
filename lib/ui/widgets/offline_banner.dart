@@ -4,7 +4,7 @@ import '../../api/response_cache.dart';
 import '../../l10n/l10n.dart';
 import '../theme.dart';
 
-/// Faixa "Sem internet" enquanto o servidor não responde (as telas vêm do aparelho).
+/// "No internet" strip while the server does not answer (screens come from the device).
 class OfflineBanner extends StatelessWidget {
   const OfflineBanner({super.key});
 

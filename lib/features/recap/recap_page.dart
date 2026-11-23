@@ -15,7 +15,7 @@ import 'package:file_picker/file_picker.dart';
 
 import 'recap_share.dart';
 
-/// A Retrospectiva só aparece na Início em novembro e dezembro (a página abre o ano todo).
+/// The Recap only shows on Home in November and December (the page opens all year).
 bool recapSeason([DateTime? now]) => (now ?? DateTime.now()).month >= 11;
 
 final recapProvider = FutureProvider.autoDispose
@@ -23,7 +23,7 @@ final recapProvider = FutureProvider.autoDispose
       (ref, year) => ref.watch(catalogProvider).recap(year: year),
     );
 
-/// Cartão da Retrospectiva para a Início (só em nov/dez e se houver o que mostrar).
+/// Recap card for Home (only in Nov/Dec and if there is something to show).
 class RecapBanner extends ConsumerWidget {
   const RecapBanner({super.key});
 
@@ -201,7 +201,7 @@ class _Recap extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 24),
-        // Números grandes.
+        // Big numbers.
         _Card(
           color: const Color(0xFF1E3264),
           child: Wrap(
@@ -408,7 +408,7 @@ final _spotifyHistoryProvider =
       (ref) => ref.watch(catalogProvider).spotifyHistory(),
     );
 
-/// Junta o "Histórico de streaming estendido" do Spotify à Retrospectiva (anos de antes do Pudim).
+/// Merges Spotify's "Extended streaming history" into the Recap (years from before Pudim).
 class SpotifyHistoryCard extends ConsumerStatefulWidget {
   const SpotifyHistoryCard({super.key});
   @override
@@ -582,7 +582,7 @@ const _ptWeekdays = [
   'domingo',
 ];
 
-/// O servidor manda o mês em português; mostra no idioma da interface.
+/// The server sends the month in Portuguese; shows it in the interface language.
 String _month(BuildContext context, String pt, {bool short = false}) {
   final i = _ptMonths.indexOf(pt);
   if (i < 0) return short && pt.length > 3 ? pt.substring(0, 3) : pt;
@@ -595,7 +595,7 @@ String _month(BuildContext context, String pt, {bool short = false}) {
   }
 }
 
-/// O servidor manda o dia da semana em português; mostra no idioma da interface.
+/// The server sends the weekday in Portuguese; shows it in the interface language.
 String _weekday(BuildContext context, String pt) {
   final i = _ptWeekdays.indexOf(pt);
   if (i < 0) return pt;

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/session.dart';
 import 'disk_image.dart';
 
-/// Tag da foto do perfil desta conta no Jellyfin (null = sem foto).
+/// Tag of this account profile photo in Jellyfin (null = no photo).
 final myPhotoTagProvider = FutureProvider<String?>((ref) async {
   final s = ref.watch(sessionProvider).value;
   if (s == null) return null;
@@ -15,7 +15,7 @@ final myPhotoTagProvider = FutureProvider<String?>((ref) async {
   }
 });
 
-/// Foto redonda de uma conta (ou a inicial do nome numa cor).
+/// Round photo of an account (or the name initial on a color).
 class UserPhoto extends ConsumerWidget {
   final String userId;
   final String name;
@@ -62,7 +62,7 @@ class UserPhoto extends ConsumerWidget {
   }
 }
 
-/// A foto desta conta.
+/// This account photo.
 class MyPhoto extends ConsumerWidget {
   final double size;
   const MyPhoto({super.key, this.size = 32});

@@ -11,7 +11,7 @@ import 'actions.dart';
 import 'common.dart';
 import 'offline_button.dart';
 
-/// Tabela de faixas no estilo do Spotify: # / Título / Álbum / (Adicionada em) / duração.
+/// Spotify-style track table: # / Title / Album / (Added on) / duration.
 class TrackTable extends ConsumerWidget {
   final List<Item> tracks;
   final String contextName;
@@ -23,10 +23,10 @@ class TrackTable extends ConsumerWidget {
   final bool showHeader;
   final int? limit;
 
-  /// Playlist editável de onde vêm as faixas ("Remover desta playlist" no menu).
+  /// Editable playlist the tracks come from ("Remove from this playlist" in the menu).
   final String? playlistId;
 
-  /// Colaborativa: nome de quem adicionou cada faixa.
+  /// Collaborative: name of who added each track.
   final String? Function(Item)? addedBy;
 
   const TrackTable({
@@ -164,7 +164,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
     final q = ref.watch(playerProvider);
     final isCurrent = q.current?.id == t.id;
     final titleColor = isCurrent ? Pm.green : Pm.text;
-    // recomendação do Smart Shuffle (só na fila)
+    // Smart Shuffle recommendation (queue only)
     final rec = widget.queueIndex != null && q.recommended.contains(t.id);
     if (isCompact(context)) return _compact(t, isCurrent, q.playing, rec);
 
@@ -342,7 +342,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
     );
   }
 
-  /// Celular: capa, título/artista e "⋯"; toque toca, toque longo abre o menu.
+  /// Phone: cover, title/artist and "⋯"; tap plays, long press opens the menu.
   Widget _compact(Item t, bool isCurrent, bool playing, bool rec) {
     return InkWell(
       onTap: isCurrent
@@ -456,7 +456,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
   }
 }
 
-/// Equalizador animado da faixa que está tocando.
+/// Animated equalizer of the track that is playing.
 class _Equalizer extends StatefulWidget {
   const _Equalizer();
   @override

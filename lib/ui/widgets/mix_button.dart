@@ -10,7 +10,7 @@ import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
-/// Descobertas e Mistura da semana desta conta (do painel); null sem painel.
+/// Descobertas and Mistura da semana of this account (from the panel); null without a panel.
 final mixesProvider = FutureProvider.autoDispose<(MixInfo, MixInfo)?>((
   ref,
 ) async {
@@ -21,7 +21,7 @@ final mixesProvider = FutureProvider.autoDispose<(MixInfo, MixInfo)?>((
   }
 });
 
-/// Radar de Novidades, daylist e Blends desta conta (do painel); null sem painel.
+/// Radar de Novidades, daylist and Blends of this account (from the panel); null without a panel.
 final madeProvider = FutureProvider.autoDispose<MadeData?>((ref) async {
   try {
     return await ref.watch(catalogProvider).made();
@@ -30,7 +30,7 @@ final madeProvider = FutureProvider.autoDispose<MadeData?>((ref) async {
   }
 });
 
-/// "descobertas" | "mistura" | "radar" | "daylist" pelo nome da playlist (null se não for uma delas).
+/// "descobertas" | "mistura" | "radar" | "daylist" by playlist name (null if it is none of them).
 String? mixKindOf(String playlistName) =>
     playlistName.startsWith('Descobertas da semana')
     ? 'descobertas'
@@ -42,7 +42,7 @@ String? mixKindOf(String playlistName) =>
     ? 'daylist'
     : null;
 
-/// Monta agora o Radar / a daylist desta conta.
+/// Builds the Radar / daylist of this account now.
 Future<void> runMade(BuildContext context, WidgetRef ref, String kind) async {
   try {
     await ref.read(catalogProvider).runMade(kind);
@@ -71,7 +71,7 @@ Future<void> runMade(BuildContext context, WidgetRef ref, String kind) async {
 MixInfo mixInfo((MixInfo, MixInfo) m, String kind) =>
     kind == 'descobertas' ? m.$1 : m.$2;
 
-/// Monta (ou refaz) as Descobertas / a Mistura da semana desta conta.
+/// Builds (or redoes) the Descobertas / Mistura da semana of this account.
 Future<void> runMix(BuildContext context, WidgetRef ref, String kind) async {
   final desc = kind == 'descobertas';
   final ok = await showDialog<bool>(
@@ -112,7 +112,7 @@ Future<void> runMix(BuildContext context, WidgetRef ref, String kind) async {
       );
     }
     ref.invalidate(mixesProvider);
-    // A playlist aparece ou muda na Sua Biblioteca em alguns minutos.
+    // The playlist appears or changes in Your Library within a few minutes.
     for (final s in const [20, 60, 180]) {
       Timer(Duration(seconds: s), () {
         try {
@@ -129,7 +129,7 @@ Future<void> runMix(BuildContext context, WidgetRef ref, String kind) async {
 String _date(DateTime d) =>
     '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}';
 
-/// Botão discreto "Refazer" na página da playlist, com a data da última vez.
+/// Discreet "Redo" button on the playlist page, with the date of the last time.
 class MixButton extends ConsumerWidget {
   final String kind;
   const MixButton(this.kind, {super.key});
@@ -194,7 +194,7 @@ extension on MixButton {
   }
 }
 
-/// Convite para criar as Descobertas / a Mistura quando a conta ainda não tem.
+/// Invitation to create Descobertas / Mistura when the account does not have one yet.
 class MixInvites extends ConsumerWidget {
   final List<String> playlistNames;
   const MixInvites({super.key, required this.playlistNames});

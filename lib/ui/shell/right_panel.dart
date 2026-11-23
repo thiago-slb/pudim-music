@@ -159,7 +159,7 @@ class _NowPlayingPanel extends ConsumerWidget {
   }
 }
 
-/// Cartão "Prévia da letra" na cor da capa.
+/// "Lyrics preview" card in the cover color.
 class LyricsPreview extends ConsumerWidget {
   final Item track;
   const LyricsPreview(this.track, {super.key});
@@ -393,7 +393,7 @@ class NextUpCard extends ConsumerWidget {
   }
 }
 
-/// Painel "Fila": Tocando agora, A seguir na fila, Próximas de: `<contexto>`.
+/// "Queue" panel: Now Playing, Up next in queue, Next from: `<context>`.
 class QueueView extends ConsumerWidget {
   const QueueView({super.key});
 
@@ -485,7 +485,7 @@ class QueueView extends ConsumerWidget {
   }
 }
 
-/// Item completo (para "Sobre o artista").
+/// Full item (for "About the artist").
 final itemProvider = FutureProvider.family<Item, String>(
   (ref, id) => ref.watch(apiProvider).item(id),
 );

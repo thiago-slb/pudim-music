@@ -1,4 +1,4 @@
-// A API nova (nativeapi) do window_manager 0.7 ainda é recente; usamos a ponte legada.
+// The new API (nativeapi) of window_manager 0.7 is still recent; we use the legacy bridge.
 // ignore_for_file: deprecated_member_use
 import 'dart:io';
 import 'dart:ui' show PlatformDispatcher;
@@ -32,23 +32,23 @@ import 'audio/media_session.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
-  // Textos das notificações e do Android Auto antes da primeira tela.
+  // Notification and Android Auto strings before the first screen.
   final saved = prefs.getString('locale');
   appL10n = lookupL10n(
     saved != null && appLanguages.contains(saved)
         ? Locale(saved)
         : resolveAppLocale(PlatformDispatcher.instance.locales),
   );
-  // Cópias no aparelho das telas e capas: o app abre e navega sem internet.
+  // On-device copies of screens and covers: the app opens and navigates without internet.
   final support = (await getApplicationSupportDirectory()).path;
   ResponseCache.instance = await ResponseCache.open(support);
   await DiskImage.init(support);
   await Notify.init();
   if (Platform.isAndroid || Platform.isIOS) {
-    // Notificação, tela de bloqueio e fones Bluetooth.
-    // Também é o que aparece no Android Auto.
+    // Notification, lock screen and Bluetooth headphones.
+    // This is also what shows up in Android Auto.
     await MediaSession.init();
-    // CarPlay (iOS): as listas do carro pedem as pastas por este canal.
+    // CarPlay (iOS): the car's lists request the folders through this channel.
     if (Platform.isIOS) CarPlayBridge.init();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -57,7 +57,7 @@ Future<void> main() async {
       ),
     );
   } else {
-    JustAudioMediaKit.prefetchPlaylist = true; // emenda as faixas sem pausa
+    JustAudioMediaKit.prefetchPlaylist = true; // joins tracks without a gap
     JustAudioMediaKit.ensureInitialized();
     await initWindowsMediaControls();
   }
@@ -81,7 +81,7 @@ Future<void> main() async {
   final container = ProviderContainer(
     overrides: [prefsProvider.overrideWithValue(prefs)],
   );
-  // O player nasce já: o Android Auto pode abrir o app sem a tela aparecer.
+  // The player is created right away: Android Auto can open the app without the UI showing.
   container.read(playerProvider.notifier);
   runApp(
     UncontrolledProviderScope(
@@ -99,7 +99,7 @@ class PudimMusicApp extends ConsumerWidget {
     final session = ref.watch(sessionProvider);
     if (Platform.isWindows) ref.watch(windowsMediaControlsProvider);
     if (Platform.isAndroid) ref.watch(androidWidgetProvider);
-    // Jam: volta para a que a conta já estava e continua sincronizando.
+    // Jam: rejoins the one the account was already in and keeps syncing.
     if (session.value != null && ref.watch(hasExtrasProvider)) {
       ref.watch(jamProvider);
     }
@@ -133,7 +133,7 @@ class PudimMusicApp extends ConsumerWidget {
   }
 }
 
-/// Deixa os textos do idioma atual à mão para o código que não tem [BuildContext].
+/// Keeps the current language's strings at hand for code that has no [BuildContext].
 Widget _keepL10n(BuildContext context, Widget? child) {
   appL10n = L10n.of(context);
   return child ?? const SizedBox.shrink();

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-// A API nova (nativeapi) do window_manager 0.7 ainda é recente; usamos a ponte legada.
+// The new API (nativeapi) of window_manager 0.7 is still recent; we use the legacy bridge.
 // ignore_for_file: deprecated_member_use
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +11,8 @@ import '../../l10n/l10n.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
 
-/// Entrar com a conta do Jellyfin. A senha só vai para o servidor;
-/// o app guarda apenas o token.
+/// Sign in with the Jellyfin account. The password only goes to the server;
+/// the app stores only the token.
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
   @override
@@ -37,7 +37,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _lan = TextEditingController(text: u.lan);
     _wan = TextEditingController(text: u.wan);
     _extras = TextEditingController(text: ref.read(extrasUrlProvider));
-    // Sem endereço salvo nem embutido no build: o campo do servidor já aparece aberto.
+    // No saved address nor one embedded in the build: the server field already shows open.
     _showServer =
         (u.wan.isEmpty && u.lan.isEmpty) ||
         ref.read(sessionProvider.notifier).adding;
@@ -84,7 +84,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
   }
 
-  /// Entrar sem digitar a senha: mostra um código para aprovar no Jellyfin de um aparelho já logado.
+  /// Sign in without typing the password: shows a code to approve in Jellyfin on an already
+  /// signed-in device.
   Future<void> _quickConnect() async {
     final wan = normalizeUrl(_wan.text);
     final lan = normalizeUrl(_lan.text, local: true);
@@ -133,7 +134,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Barra de título arrastável (a janela não tem moldura).
+            // Draggable title bar (the window has no frame).
             if (isDesktop)
               SizedBox(
                 height: 40,
@@ -371,8 +372,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 }
 
-/// Mostra o código do Quick Connect e espera alguém aprovar (fecha sozinho quando entra).
-/// Devolve a mensagem de erro, ou null quando entrou ou a pessoa cancelou.
+/// Shows the Quick Connect code and waits for someone to approve (closes itself on sign-in).
+/// Returns the error message, or null when signed in or the user cancelled.
 class _QuickConnectDialog extends ConsumerStatefulWidget {
   final ServerUrls urls;
   const _QuickConnectDialog(this.urls);
@@ -421,7 +422,7 @@ class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
             if (mounted) Navigator.pop(context);
           }
         } catch (_) {
-          // sem resposta agora: tenta de novo em 3 s
+          // no response yet: retry in 3 s
         } finally {
           _checking = false;
         }

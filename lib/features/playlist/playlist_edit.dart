@@ -17,7 +17,7 @@ import '../../ui/widgets/common.dart';
 import '../../ui/widgets/user_photo.dart';
 import '../chat/chat_pages.dart';
 
-/// Playlists que o painel monta sozinho (não dá para editar à mão: seriam reescritas).
+/// Playlists the panel builds on its own (can't be edited by hand: they would be rewritten).
 bool isGeneratedPlaylist(String name) =>
     name.startsWith('Descobertas da semana') ||
     name == 'Mistura da semana' ||
@@ -27,7 +27,7 @@ bool isGeneratedPlaylist(String name) =>
     name.startsWith('Spotify · ') ||
     name.endsWith('_automatic');
 
-/// Página de uma playlist: dados e faixas (público para atualizar depois de editar).
+/// A playlist's page: data and tracks (public so it can refresh after editing).
 class PlaylistData {
   final Item playlist;
   final List<Item> tracks;
@@ -41,7 +41,7 @@ final playlistProvider = FutureProvider.autoDispose
       return PlaylistData(r[0] as Item, r[1] as List<Item>);
     });
 
-/// Quem participa e quem adicionou cada música (do painel; vazio se não for colaborativa).
+/// Who takes part and who added each song (from the panel; empty if not collaborative).
 final collabProvider = FutureProvider.autoDispose.family<CollabInfo, String>((
   ref,
   pid,
@@ -72,7 +72,7 @@ void _refresh(WidgetRef ref, String pid) {
   ref.invalidate(libraryProvider);
 }
 
-/// "Adicionar à playlist": escolhe (ou cria) e adiciona as faixas da biblioteca.
+/// "Add to playlist": picks (or creates) one and adds the library tracks.
 Future<void> addToPlaylistSheet(
   BuildContext context,
   WidgetRef ref,
@@ -173,7 +173,7 @@ Future<void> addToPlaylistSheet(
   }
 }
 
-/// Pede o nome e cria a playlist (com as faixas, se vierem); abre a página dela.
+/// Asks for the name and creates the playlist (with the tracks, if any); opens its page.
 Future<void> newPlaylistDialog(
   BuildContext context,
   WidgetRef ref, {
@@ -241,7 +241,7 @@ Future<void> removeFromPlaylist(
   }
 }
 
-/// Convida outra conta para editar (o Jellyfin só aceita isso do dono da playlist).
+/// Invites another account to edit (Jellyfin only accepts this from the playlist owner).
 Future<void> inviteToEdit(
   BuildContext context,
   WidgetRef ref,
@@ -266,7 +266,7 @@ Future<void> inviteToEdit(
         .read(catalogProvider)
         .collabInvite(playlist.id, c.id, playlist.name);
   } catch (_) {
-    // sem painel: a permissão no Jellyfin já vale; só não tem o convite no chat
+    // no panel: the Jellyfin permission already applies; there is just no invite in the chat
   }
   ref.invalidate(collabProvider(playlist.id));
   if (context.mounted) {
@@ -274,7 +274,7 @@ Future<void> inviteToEdit(
   }
 }
 
-/// "Colaborativa · fotos de quem participa", no cabeçalho da playlist.
+/// "Collaborative · photos of participants", in the playlist header.
 class CollabMembers extends ConsumerWidget {
   final String pid;
   const CollabMembers(this.pid, {super.key});
@@ -331,7 +331,7 @@ class CollabMembers extends ConsumerWidget {
   }
 }
 
-/// Smart Shuffle na barra da playlist: aleatório com recomendações no meio.
+/// Smart Shuffle in the playlist bar: shuffle with recommendations mixed in.
 class SmartShuffleButton extends ConsumerWidget {
   final List<Item> tracks;
   final String title, route;
@@ -362,7 +362,7 @@ class SmartShuffleButton extends ConsumerWidget {
   }
 }
 
-/// Recomendação do Smart Shuffle que está tocando: botão para ir de vez para a playlist.
+/// Smart Shuffle recommendation currently playing: button to add it to the playlist for good.
 Future<void> keepRecommendation(
   BuildContext context,
   WidgetRef ref,
@@ -381,7 +381,7 @@ Future<void> keepRecommendation(
   }
 }
 
-/// "✦ Recomendação" embaixo dos controles quando a música veio do Smart Shuffle.
+/// "✦ Recommendation" below the controls when the song came from Smart Shuffle.
 class RecommendationBar extends ConsumerWidget {
   final Item track;
   const RecommendationBar(this.track, {super.key});

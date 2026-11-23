@@ -12,15 +12,15 @@ import '../l10n/l10n.dart';
 class DownloadsState {
   final List<DownloadJob> jobs;
 
-  /// Quantos terminaram desde a última vez que o sino foi aberto.
+  /// How many finished since the last time the bell was opened.
   final int unseen;
   const DownloadsState({this.jobs = const [], this.unseen = 0});
 
   int get active => jobs.where((j) => j.active).length;
 }
 
-/// Downloads pedidos pelo app (sino). Consulta o painel a cada 5 s enquanto tem algo baixando e a cada
-/// 60 s quando está tudo parado (sem SSE: ver painel/player_api.py).
+/// Downloads requested by the app (bell). Polls the panel every 5 s while something is downloading and every
+/// 60 s when everything is idle (no SSE: see painel/player_api.py).
 class DownloadsNotifier extends Notifier<DownloadsState> {
   Timer? _timer;
   DateTime _seen = DateTime.now();
@@ -38,7 +38,7 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
     _timer = Timer(d, _poll);
   }
 
-  /// Algo acabou de ser pedido: olha logo (o job aparece em ~1 s).
+  /// Something was just requested: check right away (the job shows up in ~1 s).
   void refreshSoon() => _schedule(const Duration(seconds: 2));
 
   Future<void> _poll() async {
@@ -54,7 +54,7 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
       (j) => !j.active && !j.failed && (before[j.id]?.active ?? false),
     );
     if (arrived) {
-      // Chegou música nova: a biblioteca e a busca passam a mostrar ✓.
+      // New music arrived: the library and search now show the check mark.
       ref.invalidate(libraryProvider);
       ref.invalidate(catalogSearchProvider);
     }
@@ -69,7 +69,7 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
 
   String _name(DownloadJob j) => j.kind == 'artist' ? j.artist : j.title;
 
-  /// Como no Spotify: notificação fixa enquanto baixa e um aviso quando chega.
+  /// Like Spotify: a pinned notification while downloading and a notice when it arrives.
   void _notifyJobs(Map<String, DownloadJob> before, List<DownloadJob> jobs) {
     final active = jobs.where((j) => j.active).toList();
     if (active.isEmpty) {
@@ -86,7 +86,7 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
             : active.map(_name).take(3).join(', '),
       );
     }
-    // Primeira consulta: não avisa do que já tinha terminado.
+    // First poll: do not announce what had already finished.
     if (before.isEmpty) return;
     for (final j in jobs) {
       final was = before[j.id];
@@ -100,7 +100,7 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
     }
   }
 
-  /// Avisos do servidor (lançamento de quem você segue, Descobertas, Mistura, playlist completa).
+  /// Server notices (release from someone you follow, Descobertas, Mistura, completed playlist).
   Future<void> _notices() async {
     final now = DateTime.now();
     if (now.difference(_lastNotices) < const Duration(seconds: 55)) return;
@@ -116,7 +116,7 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
           Notify.show(n.ts.hashCode & 0x7fffffff, n.title, n.body);
         }
       }
-      // Primeira vez: só marca o agora (não despeja o histórico).
+      // First time: just mark "now" (do not dump the history).
       final last = list.isEmpty ? serverNow : list.last.ts;
       await prefs.setDouble('noticeSince', since == null ? serverNow : last);
     } catch (_) {}
@@ -127,7 +127,7 @@ class DownloadsNotifier extends Notifier<DownloadsState> {
     state = DownloadsState(jobs: state.jobs, unseen: 0);
   }
 
-  /// Pede o download (track | album | artist) de um item do catálogo. Devolve o texto do aviso.
+  /// Requests the download (track | album | artist) of a catalog item. Returns the notice text.
   Future<String> request(String kind, Item it) async {
     final n = switch (kind) {
       'album' => catalogNumber(it.kind == ItemKind.album ? it.id : it.albumId),
@@ -153,7 +153,7 @@ final downloadsProvider = NotifierProvider<DownloadsNotifier, DownloadsState>(
   DownloadsNotifier.new,
 );
 
-/// Busca no catálogo do painel (o app junta com a da biblioteca na página de busca).
+/// Searches the panel catalog (the app merges it with the library results on the search page).
 final catalogSearchProvider = FutureProvider.autoDispose
     .family<CatalogSearch, String>((ref, q) async {
       if (q.trim().isEmpty) return CatalogSearch.empty;

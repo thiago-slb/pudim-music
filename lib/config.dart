@@ -1,16 +1,16 @@
-/// Endereços padrão do app.
+/// Default addresses of the app.
 ///
-/// O código aberto não traz nenhum servidor: quem usa digita o endereço do Jellyfin na tela de entrar.
-/// Para um build próprio já vir com os seus endereços preenchidos, copie `pudim.example.json` para
-/// `pudim.local.json` (fica fora do git) e gere com `--dart-define-from-file=pudim.local.json`.
+/// The open-source code ships with no server: users type the Jellyfin address on the sign-in screen.
+/// For a custom build to come with your addresses pre-filled, copy `pudim.example.json` to
+/// `pudim.local.json` (kept out of git) and build with `--dart-define-from-file=pudim.local.json`.
 library;
 
-/// Endereço principal do Jellyfin (o que funciona de qualquer rede), ex. `https://jellyfin.exemplo.com`.
+/// Main Jellyfin address (the one that works from any network), e.g. `https://jellyfin.example.com`.
 const defaultServerUrl = String.fromEnvironment('PUDIM_SERVER_URL');
 
-/// Endereço do Jellyfin na rede local (opcional). Quando responde, o app usa ele no lugar do principal.
+/// Jellyfin address on the local network (optional). When it responds, the app uses it instead of the main one.
 const defaultLanUrl = String.fromEnvironment('PUDIM_SERVER_LAN_URL');
 
-/// Servidor de extras do Pudim (opcional): chat, Jam, Blend, mixes, Retrospectiva, shows, podcasts,
-/// Last.fm, pedidos de download e atualização automática. Sem ele, o app é um player do Jellyfin completo.
+/// Pudim extras server (optional): chat, Jam, Blend, mixes, Year in Review, shows, podcasts,
+/// Last.fm, download requests and automatic updates. Without it, the app is a full Jellyfin player.
 const defaultExtrasUrl = String.fromEnvironment('PUDIM_EXTRAS_URL');

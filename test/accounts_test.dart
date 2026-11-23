@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pudim_music/state/session.dart';
 
 void main() {
-  test('conta salva volta igual', () {
+  test('saved account round-trips unchanged', () {
     const a = Account(
       userId: 'abc',
       userName: 'Ana',
@@ -19,7 +19,7 @@ void main() {
     expect(b.host, 'music.example.com');
   });
 
-  test('sem endereço de fora mostra o da rede local', () {
+  test('without a WAN address, shows the LAN one', () {
     const a = Account(
       userId: 'x',
       userName: 'B',

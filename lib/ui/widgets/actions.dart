@@ -44,7 +44,7 @@ String routeFor(Item it) => switch (it.kind) {
   ItemKind.other => '/',
 };
 
-/// Faixas de um álbum/playlist/artista (ou a própria faixa).
+/// Tracks of an album/playlist/artist (or the track itself).
 Future<List<Item>> tracksOf(WidgetRef ref, Item it) async {
   if (it.isCatalog && it.kind != ItemKind.track) {
     final cat = ref.read(catalogProvider);
@@ -79,7 +79,7 @@ Future<void> toggleFavorite(
 ) async {
   final fav = !it.favorite;
   if (it.isCatalog && it.kind == ItemKind.artist) {
-    // ainda não está no Jellyfin: o painel guarda
+    // not in Jellyfin yet: the panel keeps it
     await ref.read(catalogProvider).followArtist(it, fav);
   } else {
     await ref.read(apiProvider).setFavorite(it.id, fav);
@@ -124,7 +124,7 @@ class _MenuEntry {
   const _MenuEntry(this.icon, this.label, this.action, {this.shortcut});
 }
 
-/// Menu de clique direito / "⋯", com os textos do Spotify.
+/// Right-click / "⋯" menu, with the Spotify texts.
 Future<void> showItemMenu(
   BuildContext context,
   WidgetRef ref,
@@ -139,7 +139,7 @@ Future<void> showItemMenu(
   final player = ref.read(playerProvider.notifier);
   final go = GoRouter.of(context);
   final l = context.l10n;
-  // Episódio de podcast: só o que faz sentido (fila e ir para o podcast).
+  // Podcast episode: only what makes sense (queue and go to the podcast).
   final entries = it.isPodcast
       ? <_MenuEntry?>[
           _MenuEntry(Icons.queue_music, l.widgetActionsAddToQueue, () async {
@@ -215,7 +215,7 @@ Future<void> showItemMenu(
               l.widgetActionsKeepInPlaylist,
               () => keepRecommendation(context, ref, it),
             ),
-          // Do catálogo: baixar para a biblioteca (pedido ao servidor de extras; aparece no sino).
+          // From the catalog: download to the library (requested from the extras server; shows up in the bell).
           if (it.kind == ItemKind.track && it.cloud)
             _MenuEntry(
               Icons.download_outlined,
@@ -269,7 +269,7 @@ Future<void> showItemMenu(
               l.widgetActionsShare,
               () => shareItem(context, ref, it),
             ),
-          // Álbum da biblioteca ainda em MP3: procurar em FLAC (troca o MP3 se achar o álbum inteiro).
+          // Library album still in MP3: look for FLAC (replaces the MP3 if the whole album is found).
           if (it.kind == ItemKind.album && !it.isCatalog)
             if (ref
                     .read(qualityProvider(it.mainArtist?.name ?? ''))
@@ -293,7 +293,7 @@ Future<void> showItemMenu(
                   }
                 },
               ),
-          // Guardar no aparelho para ouvir sem internet.
+          // Store on the device to listen without internet.
           if (it.kind == ItemKind.track && !it.isCatalog)
             ref.read(offlineProvider).has(it.id)
                 ? _MenuEntry(
@@ -411,7 +411,7 @@ Future<void> showItemMenu(
             if (context.mounted) toast(context, l.widgetActionsCopied);
           }),
         ];
-  // Remove separadores repetidos ou nas pontas.
+  // Removes repeated separators or ones at the ends.
   final clean = <_MenuEntry?>[];
   for (final e in entries) {
     if (e == null && (clean.isEmpty || clean.last == null)) continue;

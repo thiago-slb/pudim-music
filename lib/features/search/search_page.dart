@@ -30,7 +30,8 @@ class SearchResults {
   bool get isEmpty =>
       artists.isEmpty && tracks.isEmpty && albums.isEmpty && playlists.isEmpty;
 
-  /// Biblioteca primeiro; do catálogo entra o que não repete (o que já tem vem com o id do Jellyfin).
+  /// Library first; from the catalog only what isn't a duplicate (what already exists comes with
+  /// the Jellyfin id).
   SearchResults merge(CatalogSearch c) {
     List<Item> join(List<Item> a, List<Item> b) {
       final seen = {for (final x in a) x.id};
@@ -256,7 +257,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       Wrap(children: [for (final i in items) MediaCard(i)]);
 }
 
-/// "Melhor resultado": cartão grande.
+/// "Top result": large card.
 class _TopResult extends ConsumerStatefulWidget {
   final Item item;
   const _TopResult(this.item);
@@ -331,7 +332,7 @@ class _TopResultState extends ConsumerState<_TopResult> {
   }
 }
 
-/// Busca vazia: buscas recentes e "Navegar por todas as seções".
+/// Empty search: recent searches and "Browse all sections".
 class _Browse extends ConsumerWidget {
   const _Browse();
 
@@ -433,7 +434,7 @@ class _Browse extends ConsumerWidget {
   }
 }
 
-/// Campo "O que você quer ouvir?" no topo da busca do celular.
+/// "What do you want to listen to?" field at the top of the phone search.
 class _MobileSearchField extends StatefulWidget {
   final String query;
   const _MobileSearchField({required this.query});

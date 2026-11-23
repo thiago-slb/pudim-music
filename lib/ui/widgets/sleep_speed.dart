@@ -22,7 +22,7 @@ String _duration(L10n l, int minutes) => minutes < 60
     ? l.widgetSleepOneHour
     : l.widgetSleepOneAndHalfHours;
 
-/// Botão do timer para dormir (lua). Verde e com o tempo que falta quando está ligado.
+/// Sleep timer button (moon). Green and showing the time left when on.
 class SleepTimerButton extends ConsumerWidget {
   final double size;
   const SleepTimerButton({super.key, this.size = 18});
@@ -128,7 +128,7 @@ class SleepTimerButton extends ConsumerWidget {
   }
 }
 
-/// Velocidade (só aparece em podcast).
+/// Speed (only shows up for podcasts).
 class SpeedButton extends ConsumerWidget {
   const SpeedButton({super.key});
 

@@ -10,9 +10,9 @@ import '../ui/widgets/disk_image.dart';
 import 'library.dart';
 import 'session.dart';
 
-/// Com internet, guarda em segundo plano as páginas da Sua Biblioteca (playlists, álbuns e
-/// artistas) e as capas, para tudo abrir sem internet mesmo o que nunca foi aberto.
-/// Cada item é atualizado no máximo a cada 12 h.
+/// With internet, stores in the background the pages of Your Library (playlists, albums and
+/// artists) and the covers, so everything opens without internet even what was never opened.
+/// Each item is refreshed at most every 12 h.
 final prefetchProvider = Provider<void>((ref) {
   ref.listen(libraryProvider, (_, next) {
     final d = next.value;
@@ -48,7 +48,7 @@ Future<void> _run(Ref ref, LibraryData d) async {
       }
     }
 
-    // Músicas curtidas e as capas das faixas delas.
+    // Liked songs and the covers of their tracks.
     final liked = await ref
         .read(likedTracksProvider.future)
         .catchError((_) => <Item>[]);

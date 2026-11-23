@@ -36,7 +36,7 @@ final podcastProvider = FutureProvider.autoDispose.family<PodcastPage, String>((
   return p;
 });
 
-/// Guarda onde cada episódio parou, para o player continuar dali.
+/// Stores where each episode stopped, so the player can resume from there.
 void _remember(List<PodcastEpisode> eps) {
   for (final e in eps) {
     if (e.position > Duration.zero && !e.done) {
@@ -60,7 +60,7 @@ String _dur(L10n l, Duration d) {
   return h > 0 ? l.podcastsHoursMin(h, min) : l.podcastsMin(min);
 }
 
-/// Toca o episódio (e continua de onde parou, se já tinha começado).
+/// Plays the episode (and resumes where it stopped, if already started).
 Future<void> playEpisode(WidgetRef ref, PodcastEpisode e) async {
   final it = e.toItem();
   if (e.position > Duration.zero && !e.done) {
@@ -102,7 +102,7 @@ class _Art extends StatelessWidget {
   );
 }
 
-/// Fileira de capas de podcast (como as prateleiras de música).
+/// Row of podcast covers (like the music shelves).
 class PodcastShelf extends StatelessWidget {
   final String title;
   final List<PodcastShow> shows;
@@ -171,7 +171,7 @@ class PodcastShelf extends StatelessWidget {
   }
 }
 
-/// Linha de episódio: capa, título, data/duração, barrinha do quanto já ouviu.
+/// Episode row: cover, title, date/duration, small bar showing how much was already heard.
 class EpisodeTile extends ConsumerWidget {
   final PodcastEpisode e;
   final bool showPodcast;
@@ -261,7 +261,7 @@ class EpisodeTile extends ConsumerWidget {
   }
 }
 
-/// Aba Podcasts da Início: busca, os que você segue, episódios novos e os em alta no Brasil.
+/// Podcasts tab on Home: search, the ones you follow, new episodes and the trending ones in Brazil.
 class PodcastsHome extends ConsumerStatefulWidget {
   const PodcastsHome({super.key});
   @override
@@ -404,8 +404,8 @@ class _PodcastsHomeState extends ConsumerState<PodcastsHome> {
   }
 }
 
-/// Página de um podcast: capa, seguir e os episódios, que vão chegando de 20 em 20 conforme você rola
-/// (e dá para procurar um episódio pelo título).
+/// A podcast's page: cover, follow and the episodes, which arrive 20 at a time as you scroll
+/// (and you can search an episode by title).
 class PodcastPageView extends ConsumerStatefulWidget {
   final String id;
   const PodcastPageView(this.id, {super.key});
@@ -416,7 +416,7 @@ class PodcastPageView extends ConsumerStatefulWidget {
 class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
   final _search = TextEditingController();
   Timer? _debounce;
-  PodcastPage? _first; // primeira página que veio do provider
+  PodcastPage? _first; // first page that came from the provider
   List<PodcastEpisode> _eps = const [];
   int? _next;
   int _total = 0;
@@ -424,7 +424,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
   bool _loading = false;
   bool? _subscribed;
   Object? _error;
-  int _gen = 0; // descarta respostas de uma busca antiga
+  int _gen = 0; // discards responses from an old search
 
   @override
   void dispose() {
@@ -503,7 +503,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
           _adopt(p);
           final subscribed = _subscribed ?? p.subscribed;
           final header = _header(p, compact, subscribed);
-          // cabeçalho + episódios + rodapé (carregando / erro / fim)
+          // header + episodes + footer (loading / error / end)
           return ListView.builder(
             padding: EdgeInsets.fromLTRB(
               compact ? 12 : 32,

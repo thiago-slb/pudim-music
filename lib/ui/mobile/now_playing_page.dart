@@ -16,8 +16,8 @@ import '../../features/playlist/playlist_edit.dart';
 import '../widgets/sleep_speed.dart';
 import '../widgets/cast_button.dart';
 
-/// "Tocando agora" do celular: fundo na cor da capa, capa grande, controles,
-/// e abaixo os cartões de letra, artista e "A seguir".
+/// Phone "Now Playing": background in the cover color, large cover, controls,
+/// and below the lyrics, artist and "Up next" cards.
 class NowPlayingPage extends ConsumerWidget {
   const NowPlayingPage({super.key});
 
@@ -52,7 +52,7 @@ class NowPlayingPage extends ConsumerWidget {
           child: SafeArea(
             child: LayoutBuilder(
               builder: (context, box) {
-                // A primeira "tela" ocupa a altura toda; os cartões vêm ao rolar.
+                // The first "screen" takes the full height; the cards come as you scroll.
                 return ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   children: [
@@ -346,7 +346,7 @@ class _SeekState extends ConsumerState<_Seek> {
   }
 }
 
-/// Letra em tela cheia no celular (sobre a cor da capa), com play embaixo.
+/// Full-screen lyrics on the phone (over the cover color), with play below.
 class LyricsFullPage extends ConsumerWidget {
   const LyricsFullPage({super.key});
 
@@ -424,7 +424,7 @@ class LyricsFullPage extends ConsumerWidget {
   }
 }
 
-/// Fila em tela cheia no celular.
+/// Full-screen queue on the phone.
 class QueuePage extends StatelessWidget {
   const QueuePage({super.key});
   @override

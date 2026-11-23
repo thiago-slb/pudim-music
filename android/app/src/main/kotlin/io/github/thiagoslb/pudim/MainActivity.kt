@@ -13,9 +13,9 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 /**
- * AudioServiceActivity: reprodução em segundo plano e Android Auto (audio_service).
- * Canal "pudim/token": cifra o token do Jellyfin com uma chave AES-GCM que
- * nunca sai do Android Keystore.
+ * AudioServiceActivity: background playback and Android Auto (audio_service).
+ * Channel "pudim/token": encrypts the Jellyfin token with an AES-GCM key that
+ * never leaves the Android Keystore.
  */
 class MainActivity : AudioServiceActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -32,7 +32,7 @@ class MainActivity : AudioServiceActivity() {
                     result.error("crypto", e.message, null)
                 }
             }
-        // Widget da tela inicial (PudimWidget): música, artista, tocando e capa.
+        // Home screen widget (PudimWidget): track, artist, playing state and cover.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "pudim/widget")
             .setMethodCallHandler { call, result ->
                 if (call.method == "update") {
