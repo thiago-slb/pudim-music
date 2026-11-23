@@ -1,0 +1,481 @@
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../api/models.dart';
+import '../../audio/player.dart';
+import '../../features/lyrics/lyrics_data.dart';
+import '../../state/session.dart';
+import '../../state/ui.dart';
+import '../colors.dart';
+import '../responsive.dart';
+import '../theme.dart';
+import '../widgets/actions.dart';
+import '../widgets/common.dart';
+import '../widgets/track_table.dart';
+import '../widgets/disk_image.dart';
+
+class RightPanelView extends ConsumerWidget {
+  const RightPanelView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final panel = ref.watch(rightPanelProvider);
+    return Container(
+      decoration: BoxDecoration(
+        color: Pm.base,
+        borderRadius: BorderRadius.circular(Pm.radius),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: switch (panel) {
+        RightPanel.queue => const QueueView(),
+        _ => const _NowPlayingPanel(),
+      },
+    );
+  }
+}
+
+class _PanelHeader extends ConsumerWidget {
+  final String title;
+  const _PanelHeader(this.title);
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 12, 4, 4),
+    child: Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
+        ),
+        IconBtn(
+          Icons.close,
+          tooltip: 'Fechar',
+          size: 18,
+          onPressed: () {
+            if (isCompact(context)) {
+              Navigator.of(context).maybePop();
+            } else {
+              ref.read(rightPanelProvider.notifier).set(RightPanel.none);
+            }
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+class _NowPlayingPanel extends ConsumerWidget {
+  const _NowPlayingPanel();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final q = ref.watch(playerProvider);
+    final cur = q.current;
+    if (cur == null) {
+      return const Column(
+        children: [
+          _PanelHeader(''),
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'Toque alguma coisa para ver aqui o que está tocando.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Pm.subdued),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    return Column(
+      children: [
+        _PanelHeader(q.contextName),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+            children: [
+              LayoutBuilder(
+                builder: (_, c) => Cover(cur, size: c.maxWidth, radius: 8),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextLink(
+                          cur.name,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          onTap: cur.albumId == null
+                              ? null
+                              : () => context.go(routeFor(cur)),
+                        ),
+                        ArtistLinks(
+                          cur,
+                          style: const TextStyle(
+                            color: Pm.subdued,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconBtn(
+                    cur.favorite
+                        ? Icons.check_circle
+                        : Icons.add_circle_outline,
+                    tooltip: cur.favorite
+                        ? 'Remover das Músicas curtidas'
+                        : 'Adicionar a Músicas curtidas',
+                    active: cur.favorite,
+                    size: 24,
+                    onPressed: () => toggleFavorite(context, ref, cur),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              LyricsPreview(cur),
+              const SizedBox(height: 16),
+              if (cur.mainArtist != null) AboutArtistCard(cur.mainArtist!),
+              const SizedBox(height: 16),
+              if (q.next != null) NextUpCard(q.next!),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Cartão "Prévia da letra" na cor da capa.
+class LyricsPreview extends ConsumerWidget {
+  final Item track;
+  const LyricsPreview(this.track, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lyr = ref.watch(lyricsProvider(track.id)).value;
+    if (lyr == null || lyr.isEmpty) return const SizedBox.shrink();
+    final api = ref.watch(apiProvider);
+    final url = api.imageUrl(track.imageItemId, size: 64);
+    final color = url == null
+        ? fallbackColor
+        : (ref.watch(coverColorProvider(url)).value ?? fallbackColor);
+    final pos = ref.watch(positionProvider).value ?? Duration.zero;
+    final idx = lyr.synced
+        ? lyr.indexAt(pos).clamp(0, lyr.lines.length - 1)
+        : 0;
+    final lines = lyr.lines
+        .skip(idx)
+        .where((l) => l.text.isNotEmpty)
+        .take(3)
+        .toList();
+    return GestureDetector(
+      onTap: () =>
+          context.push(isCompact(context) ? '/lyrics-full' : '/lyrics'),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          height: 180,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(Pm.radius),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Prévia da letra',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 12),
+              for (var i = 0; i < lines.length; i++)
+                Text(
+                  lines[i].text,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 20,
+                    height: 1.6,
+                    fontWeight: FontWeight.w800,
+                    color: i == 0
+                        ? Colors.white
+                        : Colors.black.withValues(alpha: 0.6),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AboutArtistCard extends ConsumerWidget {
+  final NameId artist;
+  const AboutArtistCard(this.artist, {super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final it = ref.watch(itemProvider(artist.id)).value;
+    if (it == null) return const SizedBox.shrink();
+    final api = ref.watch(apiProvider);
+    final hasBackdrop = it.backdropTags.isNotEmpty;
+    return GestureDetector(
+      onTap: () {
+        final router = GoRouter.of(context);
+        if (isCompact(context)) router.pop();
+        router.go('/artist/${artist.id}');
+      },
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Pm.elevated,
+            borderRadius: BorderRadius.circular(Pm.radius),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image(
+                      image: DiskImage(
+                        api.imageUrl(
+                          it.id,
+                          type: hasBackdrop ? 'Backdrop' : 'Primary',
+                          size: 600,
+                        )!,
+                      ),
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                      errorBuilder: (_, _, _) => Container(color: Pm.highlight),
+                    ),
+                    const Positioned(
+                      left: 16,
+                      top: 12,
+                      child: Text(
+                        'Sobre o artista',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          shadows: [Shadow(blurRadius: 8)],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      it.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if ((it.overview ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        _strip(it.overview!),
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Pm.subdued, fontSize: 14),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _strip(String s) => s.replaceAll(RegExp(r'<[^>]*>'), '');
+}
+
+class NextUpCard extends ConsumerWidget {
+  final Item next;
+  const NextUpCard(this.next, {super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Pm.elevated,
+        borderRadius: BorderRadius.circular(Pm.radius),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'A seguir',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                ),
+              ),
+              TextLink(
+                'Abrir fila',
+                style: const TextStyle(
+                  color: Pm.subdued,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+                onTap: () => isCompact(context)
+                    ? context.push('/queue')
+                    : ref
+                          .read(rightPanelProvider.notifier)
+                          .set(RightPanel.queue),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Cover(next, size: 48),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      next.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                    Text(
+                      next.artistLine,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Pm.subdued, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Painel "Fila": Tocando agora, A seguir na fila, Próximas de: `<contexto>`.
+class QueueView extends ConsumerWidget {
+  const QueueView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final q = ref.watch(playerProvider);
+    final c = ref.read(playerProvider.notifier);
+    final cur = q.current;
+    Widget title(String t) => Padding(
+      padding: const EdgeInsets.fromLTRB(8, 20, 8, 8),
+      child: Text(
+        t,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+      ),
+    );
+    Widget row(Item t, int queueIndex) => TrackRow(
+      key: ValueKey('q$queueIndex-${t.id}'),
+      track: t,
+      number: queueIndex,
+      showAlbum: false,
+      queueIndex: queueIndex,
+      onPlay: () => c.jumpTo(queueIndex),
+    );
+    if (cur == null) {
+      return const Column(
+        children: [
+          _PanelHeader('Fila'),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.queue_music, size: 48, color: Pm.subdued),
+                  SizedBox(height: 12),
+                  Text(
+                    'Adicione à fila',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      'Clique em "Adicionar à fila" no menu de uma faixa para incluí-la aqui',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Pm.subdued),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    final manual = q.manualNext;
+    final rest = q.contextNext;
+    final restStart = q.index + 1 + manual.length;
+    return Column(
+      children: [
+        const _PanelHeader('Fila'),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            children: [
+              title('Tocando agora'),
+              row(cur, q.index),
+              if (manual.isNotEmpty) ...[
+                title('A seguir na fila'),
+                for (var i = 0; i < manual.length; i++)
+                  row(manual[i], q.index + 1 + i),
+              ],
+              if (rest.isNotEmpty) ...[
+                title(
+                  q.contextName.isEmpty
+                      ? 'A seguir'
+                      : 'Próximas de: ${q.contextName}',
+                ),
+                for (var i = 0; i < rest.length && i < 200; i++)
+                  row(rest[i], restStart + i),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Item completo (para "Sobre o artista").
+final itemProvider = FutureProvider.family<Item, String>(
+  (ref, id) => ref.watch(apiProvider).item(id),
+);

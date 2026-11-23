@@ -1,0 +1,520 @@
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../api/models.dart';
+import '../../audio/player.dart';
+import '../../state/downloads.dart';
+import '../../state/library.dart';
+import '../../state/offline.dart';
+import '../../state/session.dart';
+import '../responsive.dart';
+import '../theme.dart';
+import 'common.dart';
+import '../../state/quality.dart';
+import '../../features/chat/chat_pages.dart';
+import '../../api/catalog.dart';
+import '../../features/playlist/playlist_edit.dart';
+
+void toast(BuildContext context, String msg) {
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(
+      SnackBar(
+        content: Text(msg, textAlign: TextAlign.center),
+        width: 360,
+        duration: const Duration(seconds: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+}
+
+String routeFor(Item it) => switch (it.kind) {
+  ItemKind.album => '/album/${it.id}',
+  ItemKind.artist => '/artist/${it.id}',
+  ItemKind.playlist => '/playlist/${it.id}',
+  ItemKind.track =>
+    (it.albumId ?? '').startsWith('podshow')
+        ? '/podcast/${it.albumId!.substring(7)}'
+        : it.albumId != null
+        ? '/album/${it.albumId}'
+        : '/',
+  ItemKind.other => '/',
+};
+
+/// Faixas de um álbum/playlist/artista (ou a própria faixa).
+Future<List<Item>> tracksOf(WidgetRef ref, Item it) async {
+  if (it.isCatalog && it.kind != ItemKind.track) {
+    final cat = ref.read(catalogProvider);
+    final n = it.deezerId!;
+    return switch (it.kind) {
+      ItemKind.album => (await cat.album(n)).tracks,
+      ItemKind.playlist => (await cat.playlist(n)).tracks,
+      ItemKind.artist => (await cat.artist(id: n)).top,
+      _ => [it],
+    };
+  }
+  final api = ref.read(apiProvider);
+  return switch (it.kind) {
+    ItemKind.album => api.albumTracks(it.id),
+    ItemKind.playlist => api.playlistTracks(it.id),
+    ItemKind.artist => api.artistTopTracks(it.id, limit: 50),
+    _ => [it],
+  };
+}
+
+Future<void> playItem(WidgetRef ref, Item it) async {
+  final tracks = await tracksOf(ref, it);
+  await ref
+      .read(playerProvider.notifier)
+      .playList(tracks, contextName: it.name, contextRoute: routeFor(it));
+}
+
+Future<void> toggleFavorite(
+  BuildContext context,
+  WidgetRef ref,
+  Item it,
+) async {
+  final fav = !it.favorite;
+  if (it.isCatalog && it.kind == ItemKind.artist) {
+    // ainda não está no Jellyfin: o painel guarda
+    await ref.read(catalogProvider).followArtist(it, fav);
+  } else {
+    await ref.read(apiProvider).setFavorite(it.id, fav);
+  }
+  ref.read(playerProvider.notifier).updateItem(it.copyWith(favorite: fav));
+  ref.invalidate(libraryProvider);
+  ref.invalidate(likedTracksProvider);
+  if (context.mounted) {
+    final what = switch (it.kind) {
+      ItemKind.track =>
+        fav ? 'Adicionada a Músicas curtidas' : 'Removida de Músicas curtidas',
+      ItemKind.artist => fav ? 'Seguindo' : 'Deixou de seguir',
+      _ => fav ? 'Salvo na Sua Biblioteca' : 'Removido da Sua Biblioteca',
+    };
+    toast(context, what);
+  }
+}
+
+Future<void> _download(
+  BuildContext context,
+  WidgetRef ref,
+  String kind,
+  Item it,
+) async {
+  final msg = await ref.read(downloadsProvider.notifier).request(kind, it);
+  if (context.mounted) toast(context, msg);
+}
+
+class _MenuEntry {
+  final IconData icon;
+  final String label;
+  final String? shortcut;
+  final Future<void> Function() action;
+  const _MenuEntry(this.icon, this.label, this.action, {this.shortcut});
+}
+
+/// Menu de clique direito / "⋯", com os textos do Spotify.
+Future<void> showItemMenu(
+  BuildContext context,
+  WidgetRef ref,
+  Item it,
+  Offset position, {
+  int? queueIndex,
+  String? playlistId,
+}) async {
+  if (it.isCatalog && it.kind == ItemKind.artist) {
+    it = it.copyWith(favorite: followsCatalogArtist(ref, it));
+  }
+  final player = ref.read(playerProvider.notifier);
+  final go = GoRouter.of(context);
+  // Episódio de podcast: só o que faz sentido (fila e ir para o podcast).
+  final entries = it.isPodcast
+      ? <_MenuEntry?>[
+          _MenuEntry(Icons.queue_music, 'Adicionar à fila', () async {
+            player.addToQueue([it]);
+            if (context.mounted) toast(context, 'Adicionado à fila');
+          }),
+          _MenuEntry(Icons.playlist_play, 'Tocar em seguida', () async {
+            player.playNext([it]);
+          }),
+          if ((it.albumId ?? '').startsWith('podshow'))
+            _MenuEntry(
+              Icons.podcasts,
+              'Ir para o podcast',
+              () async => go.push('/podcast/${it.albumId!.substring(7)}'),
+            ),
+        ]
+      : <_MenuEntry?>[
+          _MenuEntry(
+            Icons.queue_music,
+            'Adicionar à fila',
+            shortcut: 'Q',
+            () async {
+              player.addToQueue(await tracksOf(ref, it));
+              if (context.mounted) toast(context, 'Adicionado à fila');
+            },
+          ),
+          _MenuEntry(Icons.playlist_play, 'Tocar em seguida', () async {
+            player.playNext(await tracksOf(ref, it));
+          }),
+          if (queueIndex != null)
+            _MenuEntry(
+              Icons.remove_circle_outline,
+              'Remover da fila',
+              () async => player.removeAt(queueIndex),
+            ),
+          null,
+          if (!it.isCatalog &&
+              (it.kind == ItemKind.track ||
+                  it.kind == ItemKind.album ||
+                  it.kind == ItemKind.playlist))
+            _MenuEntry(
+              Icons.playlist_add,
+              'Adicionar à playlist',
+              shortcut: 'P',
+              () async {
+                final tracks = await tracksOf(ref, it);
+                if (context.mounted) {
+                  await addToPlaylistSheet(context, ref, tracks);
+                }
+              },
+            ),
+          if (playlistId != null &&
+              it.kind == ItemKind.track &&
+              it.playlistItemId != null)
+            _MenuEntry(
+              Icons.delete_outline,
+              'Remover desta playlist',
+              () => removeFromPlaylist(context, ref, playlistId, it),
+            ),
+          if (it.kind == ItemKind.playlist &&
+              !it.isCatalog &&
+              !isGeneratedPlaylist(it.name) &&
+              ref.read(hasExtrasProvider))
+            _MenuEntry(
+              Icons.group_add_outlined,
+              'Convidar para editar',
+              () => inviteToEdit(context, ref, it),
+            ),
+          if (queueIndex != null &&
+              ref.read(playerProvider).recommended.contains(it.id))
+            _MenuEntry(
+              Icons.auto_awesome,
+              'Manter na playlist',
+              () => keepRecommendation(context, ref, it),
+            ),
+          // Do catálogo: baixar para a biblioteca (pedido ao servidor de extras; aparece no sino).
+          if (it.kind == ItemKind.track && it.cloud)
+            _MenuEntry(
+              Icons.download_outlined,
+              'Baixar música',
+              () => _download(context, ref, 'track', it),
+            ),
+          if ((it.kind == ItemKind.track || it.kind == ItemKind.album) &&
+              isCatalogId(it.kind == ItemKind.album ? it.id : it.albumId))
+            _MenuEntry(
+              Icons.album_outlined,
+              'Baixar álbum',
+              () => _download(context, ref, 'album', it),
+            ),
+          if (isCatalogId(
+            it.kind == ItemKind.artist ? it.id : it.mainArtist?.id,
+          ))
+            _MenuEntry(
+              Icons.library_music_outlined,
+              'Baixar discografia',
+              () => _download(context, ref, 'artist', it),
+            ),
+          if (it.kind == ItemKind.artist && ref.read(hasExtrasProvider))
+            _MenuEntry(
+              Icons.checklist,
+              'Buscar álbuns',
+              () async => go.push(
+                '/artist-albums?name=${Uri.encodeQueryComponent(it.name)}',
+              ),
+            ),
+          if (it.kind == ItemKind.artist && !it.isCatalog)
+            if (ref.read(qualityProvider(it.name)).value case final q?
+                when q.poor > 0)
+              _MenuEntry(
+                Icons.high_quality_outlined,
+                'Melhorar qualidade (${q.poor})',
+                () async {
+                  try {
+                    await ref.read(catalogProvider).improve(q.name);
+                    ref.read(downloadsProvider.notifier).refreshSoon();
+                    if (context.mounted) {
+                      toast(
+                        context,
+                        'Procurando versões melhores de ${q.poor} álbuns',
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) toast(context, '$e');
+                  }
+                },
+              ),
+          if (it.kind != ItemKind.other)
+            _MenuEntry(
+              Icons.share_outlined,
+              'Compartilhar',
+              () => shareItem(context, ref, it),
+            ),
+          // Álbum da biblioteca ainda em MP3: procurar em FLAC (troca o MP3 se achar o álbum inteiro).
+          if (it.kind == ItemKind.album && !it.isCatalog)
+            if (ref
+                    .read(qualityProvider(it.mainArtist?.name ?? ''))
+                    .value
+                    ?.of(it.name)
+                case final q? when !q.flac && !q.partial)
+              _MenuEntry(
+                Icons.high_quality_outlined,
+                'Buscar em FLAC',
+                () async {
+                  try {
+                    await ref
+                        .read(catalogProvider)
+                        .flac(it.mainArtist?.name ?? '', q.folder);
+                    ref.read(downloadsProvider.notifier).refreshSoon();
+                    if (context.mounted) {
+                      toast(
+                        context,
+                        'Procurando ${it.name} em FLAC; se achar, troca o MP3',
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) toast(context, '$e');
+                  }
+                },
+              ),
+          // Guardar no aparelho para ouvir sem internet.
+          if (it.kind == ItemKind.track && !it.isCatalog)
+            ref.read(offlineProvider).has(it.id)
+                ? _MenuEntry(
+                    Icons.arrow_circle_down,
+                    'Remover do aparelho',
+                    () async {
+                      await ref
+                          .read(offlineProvider.notifier)
+                          .removeTrack(it.id);
+                      if (context.mounted) {
+                        toast(context, 'Removida do aparelho');
+                      }
+                    },
+                  )
+                : _MenuEntry(
+                    Icons.arrow_circle_down_outlined,
+                    'Baixar no aparelho',
+                    () async {
+                      await ref.read(offlineProvider.notifier).saveTracks([it]);
+                      if (context.mounted) {
+                        toast(
+                          context,
+                          'Baixando no aparelho para ouvir sem internet',
+                        );
+                      }
+                    },
+                  ),
+          if ((it.kind == ItemKind.album || it.kind == ItemKind.playlist) &&
+              !it.isCatalog)
+            ref.read(offlineProvider).saved(it.id)
+                ? _MenuEntry(
+                    Icons.arrow_circle_down,
+                    'Remover do aparelho',
+                    () async {
+                      await ref
+                          .read(offlineProvider.notifier)
+                          .removeCollection(it.id);
+                      if (context.mounted) {
+                        toast(context, 'Removido do aparelho');
+                      }
+                    },
+                  )
+                : _MenuEntry(
+                    Icons.arrow_circle_down_outlined,
+                    'Baixar no aparelho',
+                    () async {
+                      final tracks = await tracksOf(ref, it);
+                      await ref
+                          .read(offlineProvider.notifier)
+                          .saveCollection(it.id, it.name, it, tracks);
+                      if (context.mounted) {
+                        toast(
+                          context,
+                          'Baixando no aparelho para ouvir sem internet',
+                        );
+                      }
+                    },
+                  ),
+          null,
+          if (!it.isCatalog || it.kind == ItemKind.artist)
+            _MenuEntry(
+              it.favorite ? Icons.check_circle : Icons.add_circle_outline,
+              switch (it.kind) {
+                ItemKind.track =>
+                  it.favorite
+                      ? 'Remover das Músicas curtidas'
+                      : 'Adicionar a Músicas curtidas',
+                ItemKind.artist => it.favorite ? 'Deixar de seguir' : 'Seguir',
+                _ =>
+                  it.favorite
+                      ? 'Remover da Sua Biblioteca'
+                      : 'Adicionar à Sua Biblioteca',
+              },
+              shortcut: 'L',
+              () => toggleFavorite(context, ref, it),
+            ),
+          null,
+          if (it.kind == ItemKind.track && !it.isCatalog)
+            _MenuEntry(
+              Icons.sensors,
+              'Ir para a rádio da música',
+              shortcut: 'R',
+              () async {
+                final mix = await ref.read(apiProvider).instantMix(it.id);
+                await player.playList([
+                  it,
+                  ...mix.where((t) => t.id != it.id),
+                ], contextName: 'Rádio de ${it.name}');
+              },
+            ),
+          if (it.kind != ItemKind.track && !it.isCatalog)
+            _MenuEntry(Icons.sensors, 'Ligar mix', () async {
+              final mix = await ref.read(apiProvider).instantMix(it.id);
+              await player.playList(mix, contextName: 'Mix de ${it.name}');
+            }),
+          if (it.mainArtist != null && it.kind != ItemKind.artist)
+            _MenuEntry(
+              Icons.person_outline,
+              'Ir para o artista',
+              shortcut: 'Alt+A',
+              () async => go.go('/artist/${it.mainArtist!.id}'),
+            ),
+          if (it.kind == ItemKind.track && it.albumId != null)
+            _MenuEntry(
+              Icons.album_outlined,
+              'Ir para o álbum',
+              shortcut: 'A',
+              () async => go.go('/album/${it.albumId}'),
+            ),
+          null,
+          _MenuEntry(Icons.link, 'Copiar nome', () async {
+            await Clipboard.setData(
+              ClipboardData(
+                text: it.artistLine.isEmpty
+                    ? it.name
+                    : '${it.name} — ${it.artistLine}',
+              ),
+            );
+            if (context.mounted) toast(context, 'Copiado');
+          }),
+        ];
+  // Remove separadores repetidos ou nas pontas.
+  final clean = <_MenuEntry?>[];
+  for (final e in entries) {
+    if (e == null && (clean.isEmpty || clean.last == null)) continue;
+    clean.add(e);
+  }
+  if (clean.isNotEmpty && clean.last == null) clean.removeLast();
+
+  if (isCompact(context)) {
+    final chosen = await showModalBottomSheet<_MenuEntry>(
+      context: context,
+      useRootNavigator: true,
+      backgroundColor: Pm.elevated,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (sheet) => SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(sheet).height * 0.8,
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Row(
+                  children: [
+                    Cover(it, size: 48, round: it.kind == ItemKind.artist),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            it.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          if (it.artistLine.isNotEmpty)
+                            Text(
+                              it.artistLine,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(color: Pm.subdued),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(color: Colors.white12),
+              for (final e in clean)
+                if (e != null)
+                  ListTile(
+                    leading: Icon(e.icon, color: Pm.subdued),
+                    title: Text(e.label),
+                    onTap: () => Navigator.of(sheet).pop(e),
+                  ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (chosen != null) await chosen.action();
+    return;
+  }
+
+  final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+  final chosen = await showMenu<_MenuEntry>(
+    context: context,
+    position: RelativeRect.fromRect(
+      position & const Size(1, 1),
+      Offset.zero & overlay.size,
+    ),
+    constraints: const BoxConstraints(minWidth: 260, maxWidth: 320),
+    items: [
+      for (final e in clean)
+        if (e == null)
+          const PopupMenuDivider(height: 8)
+        else
+          PopupMenuItem<_MenuEntry>(
+            value: e,
+            height: 40,
+            child: Row(
+              children: [
+                Icon(e.icon, size: 18, color: Pm.subdued),
+                const SizedBox(width: 12),
+                Expanded(child: Text(e.label)),
+                if (e.shortcut != null)
+                  Text(
+                    e.shortcut!,
+                    style: const TextStyle(color: Pm.muted, fontSize: 12),
+                  ),
+              ],
+            ),
+          ),
+    ],
+  );
+  if (chosen != null) await chosen.action();
+}

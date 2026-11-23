@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Servidores Jellyfin caseiros costumam responder em HTTP na rede local (ex. http://192.168.0.10:8096),
+     e o endereço é digitado por quem usa, então HTTP fica liberado. Prefira HTTPS fora de casa. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <!-- certificados instalados pela pessoa (servidor com CA própria) -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
