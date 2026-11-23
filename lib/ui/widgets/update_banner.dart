@@ -7,12 +7,47 @@ import '../theme.dart';
 import 'actions.dart';
 
 /// Faixa discreta "Nova versão do Pudim" quando a atualização já foi baixada.
+/// Builds already offered in a dialog (both shells share it; once per build is enough).
+final _asked = <int>{};
+
 class UpdateBanner extends ConsumerWidget {
   const UpdateBanner({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final u = ref.watch(updaterProvider);
+    // Ready: ask once right away instead of waiting for someone to notice the strip.
+    ref.listen(updaterProvider, (prev, next) {
+      if (next == null ||
+          prev?.build == next.build ||
+          _asked.contains(next.build)) {
+        return;
+      }
+      _asked.add(next.build);
+      showDialog<void>(
+        context: context,
+        useRootNavigator: true,
+        builder: (d) => AlertDialog(
+          backgroundColor: Pm.elevated,
+          title: Text(d.l10n.widgetUpdateReady),
+          content: next.notes.isEmpty ? null : Text(next.notes),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(d).pop(),
+              child: Text(d.l10n.commonClose),
+            ),
+            FilledButton(
+              onPressed: () async {
+                Navigator.of(d).pop();
+                final err = await ref.read(updaterProvider.notifier).install();
+                if (err != null && context.mounted) toast(context, err);
+              },
+              child: Text(d.l10n.widgetUpdateAction),
+            ),
+          ],
+        ),
+      );
+    });
     return AnimatedSize(
       duration: const Duration(milliseconds: 200),
       child: u == null

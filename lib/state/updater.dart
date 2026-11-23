@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart' show AppLifecycleListener;
+
 import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_filex/open_filex.dart';
@@ -31,28 +33,43 @@ class Updater extends Notifier<UpdateReady?> {
       ? 'windows'
       : null;
 
+  DateTime? _checked;
+
   @override
   UpdateReady? build() {
     ref.onDispose(() => _timer?.cancel());
     if (_kind != null) {
-      // Um pouco depois de abrir (não disputa a rede com a Início) e depois a cada 6 h.
+      // Um pouco depois de abrir (não disputa a rede com a Início) e depois a cada hora.
       Timer(const Duration(seconds: 20), check);
-      _timer = Timer.periodic(const Duration(hours: 6), (_) => check());
+      _timer = Timer.periodic(const Duration(hours: 1), (_) => check());
+      // The app usually stays in the background for days: also check when it comes back.
+      final life = AppLifecycleListener(
+        onResume: () {
+          final last = _checked;
+          if (last == null ||
+              DateTime.now().difference(last) > const Duration(minutes: 10)) {
+            check();
+          }
+        },
+      );
+      ref.onDispose(life.dispose);
     }
     return null;
   }
 
   Future<void> check() async {
     final kind = _kind;
-    if (kind == null || _busy || state != null) return;
+    if (kind == null || _busy) return;
     _busy = true;
+    _checked = DateTime.now();
     try {
       final cat = ref.read(catalogProvider);
       if (cat.token.isEmpty || !cat.enabled) return;
       final info = await cat.updateInfo();
       final build = (info['build'] as num?)?.toInt() ?? 0;
       final file = info[kind];
-      if (build <= appBuild || file is! Map) return;
+      // A newer build than the one already downloaded also counts (it was never installed).
+      if (build <= appBuild || build == state?.build || file is! Map) return;
       final want = '${file['sha256'] ?? ''}'.toLowerCase();
       final dir = await getTemporaryDirectory();
       final path =
