@@ -214,7 +214,11 @@ class PlayerController extends Notifier<QueueState> {
       }
       MediaSession.instance?.update(prev, next);
     });
-    MediaSession.instance?.attach(this);
+    // Only after build() returns: attach reads the queue, and reading state inside build throws
+    // ("uninitialized provider"), which left the whole phone screen gray.
+    Future.microtask(() {
+      if (ref.mounted) MediaSession.instance?.attach(this);
+    });
     // Guarda onde parou a cada 5 s tocando (fechar o app perde no máximo isso).
     _saveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (isPlaying) {
