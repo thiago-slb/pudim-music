@@ -15,6 +15,7 @@ import 'router.dart';
 import 'l10n/l10n.dart';
 import 'state/locale.dart';
 import 'state/session.dart';
+import 'state/legacy_data.dart';
 import 'ui/responsive.dart';
 import 'ui/theme.dart';
 
@@ -31,6 +32,8 @@ import 'audio/media_session.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Before reading settings: an older Windows build may have kept them in another folder.
+  await migrateLegacyData();
   final prefs = await SharedPreferences.getInstance();
   // Textos das notificações e do Android Auto antes da primeira tela.
   final saved = prefs.getString('locale');
@@ -108,7 +111,7 @@ class PudimMusicApp extends ConsumerWidget {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         locale: locale,
-        localizationsDelegates: L10n.localizationsDelegates,
+        localizationsDelegates: _delegates,
         supportedLocales: L10n.supportedLocales,
         localeListResolutionCallback: (device, _) => resolveAppLocale(device),
         builder: _keepL10n,
@@ -124,7 +127,7 @@ class PudimMusicApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
       locale: locale,
-      localizationsDelegates: L10n.localizationsDelegates,
+      localizationsDelegates: _delegates,
       supportedLocales: L10n.supportedLocales,
       localeListResolutionCallback: (device, _) => resolveAppLocale(device),
       builder: _keepL10n,
@@ -132,6 +135,15 @@ class PudimMusicApp extends ConsumerWidget {
     );
   }
 }
+
+/// The widgets come from package:material_ui, so the Material texts must come from its delegates
+/// too. L10n.localizationsDelegates brings flutter_localizations' Material delegate, which material_ui's
+/// TextField does not see: every language other than English failed with "No MaterialLocalizations"
+/// and the screens went gray.
+const _delegates = <LocalizationsDelegate<dynamic>>[
+  L10n.delegate,
+  ...GlobalMaterialLocalizations.delegates,
+];
 
 /// Deixa os textos do idioma atual à mão para o código que não tem [BuildContext].
 Widget _keepL10n(BuildContext context, Widget? child) {

@@ -160,6 +160,7 @@ flutter build apk --release --dart-define-from-file=pudim.local.json
 | `PUDIM_SERVER_URL` | Main Jellyfin address |
 | `PUDIM_SERVER_LAN_URL` | Optional LAN address, tried first |
 | `PUDIM_EXTRAS_URL` | Optional extras server |
+| `PUDIM_LEGACY_DATA_DIR` | Windows only: old data folder under `%APPDATA%` to copy on first launch, if an earlier build of yours used another CompanyName/ProductName |
 
 Everything can also be changed in the app (login screen and Settings).
 

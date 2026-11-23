@@ -1,5 +1,6 @@
 {
   "PUDIM_SERVER_URL": "https://jellyfin.example.com",
   "PUDIM_SERVER_LAN_URL": "http://192.168.0.10:8096",
-  "PUDIM_EXTRAS_URL": ""
+  "PUDIM_EXTRAS_URL": "",
+  "PUDIM_LEGACY_DATA_DIR": ""
 }
