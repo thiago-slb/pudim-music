@@ -1,5 +1,5 @@
-// Modelos mínimos do Jellyfin usados pelo PudimMusic.
-// Só os campos que o app usa; o resto do JSON é ignorado.
+// Minimal Jellyfin models used by PudimMusic.
+// Only the fields the app uses; the rest of the JSON is ignored.
 
 import '../l10n/l10n.dart';
 
@@ -58,19 +58,19 @@ class Item {
   final DateTime? dateCreated;
   final String? playlistItemId;
 
-  /// Só no catálogo (Deezer), ainda não está na biblioteca: mostra nuvem e toca pelo painel.
+  /// Catalog only (Deezer), not in the library yet: shows a cloud and plays through the panel.
   final bool cloud;
 
-  /// Do catálogo: "album", "single", "ep" ou "compile" (para separar Álbuns de Singles e EPs).
+  /// From the catalog: "album", "single", "ep" or "compile" (to separate Albums from Singles and EPs).
   final String? recordType;
 
-  /// Endereço do áudio fora do Jellyfin (episódio de podcast); a capa fica em catalogCovers[id].
+  /// Audio URL outside Jellyfin (podcast episode); the cover is in catalogCovers[id].
   final String? streamUrl;
 
-  /// Ganho para deixar todas as músicas no mesmo volume (dB, calculado pelo Jellyfin; null = sem análise).
+  /// Gain to bring all tracks to the same volume (dB, computed by Jellyfin; null = not analyzed).
   final double? normalizationGain;
 
-  /// Episódio de podcast (id "pod…").
+  /// Podcast episode (id "pod…").
   bool get isPodcast => id.startsWith('pod');
 
   const Item({
@@ -109,7 +109,7 @@ class Item {
     final user = (j['UserData'] as Map?) ?? const {};
     return Item(
       id: j['Id'] as String,
-      // Playlists salvas pelo app/painel vêm com "Deezer · " no nome: o app não mostra a origem.
+      // Playlists saved by the app/panel come with "Deezer · " in the name: the app does not show the origin.
       name: (j['Name'] as String? ?? '').replaceFirst(
         RegExp(r'^Deezer · '),
         '',
@@ -165,8 +165,8 @@ class Item {
     normalizationGain: normalizationGain,
   );
 
-  /// Item do catálogo do painel (`/api/player/*`). Ids com prefixo: dzt faixa, dza álbum, dzr artista,
-  /// dzp playlist; o que já está na biblioteca vem com `jellyfin_id` e usa esse id (toca do Jellyfin).
+  /// Panel catalog item (`/api/player/*`). Prefixed ids: dzt track, dza album, dzr artist,
+  /// dzp playlist; what is already in the library comes with `jellyfin_id` and uses that id (plays from Jellyfin).
   factory Item.fromCatalog(Map<String, dynamic> j) {
     final kind = switch (j['kind']) {
       'track' => ItemKind.track,
@@ -196,7 +196,7 @@ class Item {
       artists: isTrack ? artists : const [],
       albumArtists: artists,
       duration: Duration(seconds: (j['duration'] as num?)?.toInt() ?? 0),
-      // Capa: faixa usa a do álbum (registrada em catalogCovers); o resto usa a própria.
+      // Cover: a track uses its album's (registered in catalogCovers); everything else uses its own.
       primaryTag: isTrack || (jf != null && kind != ItemKind.album)
           ? null
           : 'dz',
@@ -211,7 +211,7 @@ class Item {
     );
   }
 
-  /// Versão curta para guardar a fila no aparelho (fecha e abre o app no mesmo lugar).
+  /// Short version to store the queue on the device (close and reopen the app at the same place).
   Map<String, dynamic> toStore() => {
     'id': id,
     'n': name,
@@ -267,13 +267,13 @@ class Item {
     return it;
   }
 
-  /// Faixa/álbum/artista/playlist do catálogo (não da biblioteca): id começa com "dz".
+  /// Catalog track/album/artist/playlist (not in the library): id starts with "dz".
   bool get isCatalog => isCatalogId(id);
 
-  /// Número do Deezer de um id de catálogo ("dzt123" -> 123).
+  /// Deezer number of a catalog id ("dzt123" -> 123).
   int? get deezerId => catalogNumber(id);
 
-  /// "Artista 1, Artista 2" para faixas; artista do álbum para álbuns.
+  /// "Artist 1, Artist 2" for tracks; the album artist for albums.
   String get artistLine {
     final list = artists.isNotEmpty ? artists : albumArtists;
     return list.map((a) => a.name).join(', ');
@@ -283,7 +283,7 @@ class Item {
       ? albumArtists.first
       : (artists.isNotEmpty ? artists.first : null);
 
-  /// Id do item que tem a capa: o próprio, ou o álbum da faixa.
+  /// Id of the item that holds the cover: itself, or the track's album.
   String? get imageItemId {
     if (primaryTag != null) return id;
     if (albumId != null && albumPrimaryTag != null) return albumId;
@@ -300,7 +300,7 @@ class Item {
   };
 }
 
-/// Capas do catálogo pelo id do app (o Jellyfin não tem essas imagens).
+/// Catalog covers by app id (Jellyfin does not have these images).
 final Map<String, String> catalogCovers = {};
 
 String catalogPrefix(ItemKind k) => switch (k) {
@@ -316,7 +316,7 @@ bool isCatalogId(String? id) => id != null && id.startsWith('dz');
 int? catalogNumber(String? id) =>
     isCatalogId(id) ? int.tryParse(id!.substring(3)) : null;
 
-/// Endereço da capa do Deezer no tamanho mais próximo (as do catálogo vêm em 1000x1000).
+/// Deezer cover URL at the closest size (catalog ones come at 1000x1000).
 String? catalogCover(String? id, int size) {
   final url = catalogCovers[id];
   if (url == null) return null;
@@ -352,7 +352,7 @@ class Lyrics {
     );
   }
 
-  /// Índice da linha que está tocando em [pos] (-1 antes da primeira).
+  /// Index of the line playing at [pos] (-1 before the first).
   int indexAt(Duration pos) {
     if (!synced) return -1;
     var lo = 0, hi = lines.length - 1, ans = -1;

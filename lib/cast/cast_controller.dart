@@ -10,17 +10,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../api/models.dart';
 import '../audio/player.dart';
 
-/// Receptor padrão do Google Cast: toca um endereço de áudio com capa e título.
+/// Google Cast default receiver: plays an audio URL with cover art and title.
 const _defaultReceiver = 'CC1AD845';
 const _nsReceiver = 'urn:x-cast:com.google.cast.receiver';
 const _nsMedia = 'urn:x-cast:com.google.cast.media';
 
 class CastState {
-  /// Chromecasts achados na rede.
+  /// Chromecasts found on the network.
   final List<CastDevice> devices;
   final bool searching;
 
-  /// Aparelho em uso (ou conectando).
+  /// Device in use (or connecting).
   final CastDevice? device;
   final bool connecting;
   final String? error;
@@ -52,9 +52,9 @@ class CastState {
   );
 }
 
-/// Chromecast: acha os aparelhos na rede (mDNS `_googlecast._tcp`), conecta no receptor
-/// padrão e vira a saída do player ([RemoteOutput]): a fila continua no app, e cada música
-/// é mandada para o aparelho por endereço (o Chromecast baixa direto do Jellyfin).
+/// Chromecast: finds devices on the network (mDNS `_googlecast._tcp`), connects to the default
+/// receiver and becomes the player's output ([RemoteOutput]): the queue stays in the app, and each
+/// track is sent to the device by URL (the Chromecast downloads straight from Jellyfin).
 class CastController extends Notifier<CastState> implements RemoteOutput {
   CastSession? _session;
   StreamSubscription? _msgSub, _stateSub;
@@ -62,11 +62,11 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
   int _req = 1;
   int? _mediaSessionId;
 
-  // Posição: o aparelho só avisa quando muda de estado; entre um aviso e outro, estima.
+  // Position: the device only reports when its state changes; between reports, we estimate.
   Duration _basePos = Duration.zero;
   DateTime _baseAt = DateTime.now();
   bool _playing = false;
-  bool _loading = false; // mandou LOAD e ainda não chegou o PLAYING/PAUSED da música nova
+  bool _loading = false; // sent LOAD and the PLAYING/PAUSED of the new track has not arrived yet
 
   PlayerController get _player => ref.read(playerProvider.notifier);
 
@@ -76,7 +76,7 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
     return const CastState();
   }
 
-  // ---------- descoberta ----------
+  // ---------- discovery ----------
 
   Future<void> search({Duration timeout = const Duration(seconds: 5)}) async {
     if (state.searching) return;
@@ -93,9 +93,8 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
             disc.serviceResolver.resolveService(e.service);
           case BonsoirDiscoveryServiceResolvedEvent():
             final s = e.service;
-            final host = s.hostAddresses
-                    .where((a) => !a.contains(':'))
-                    .firstOrNull ??
+            final host =
+                s.hostAddresses.where((a) => !a.contains(':')).firstOrNull ??
                 s.hostAddress ??
                 s.hostname;
             if (host == null) return;
@@ -115,7 +114,7 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
       await Future<void>.delayed(timeout);
       await sub.cancel();
     } catch (_) {
-      // sem permissão de rede local ou sem Wi-Fi: a lista fica vazia
+      // no local network permission or no Wi-Fi: the list stays empty
     } finally {
       try {
         await d?.stop();
@@ -127,7 +126,7 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
     }
   }
 
-  // ---------- conexão ----------
+  // ---------- connection ----------
 
   Future<void> connect(CastDevice device) async {
     await disconnect(resumeHere: false);
@@ -165,18 +164,18 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
     }
   }
 
-  /// Para de transmitir. [resumeHere]: a fila volta para este aparelho, pausada no mesmo ponto.
+  /// Stops casting. [resumeHere]: the queue returns to this device, paused at the same point.
   Future<void> disconnect({bool resumeHere = true}) async {
     if (_session == null && state.device == null) return;
     final pos = position;
     final s = _session;
     final id = _mediaSessionId;
     try {
-      // Depois de conectar, as mensagens vão para o app do receptor: para a música por lá.
+      // After connecting, messages go to the receiver app: stop the music there.
       if (id != null) _send(_nsMedia, {'type': 'STOP', 'mediaSessionId': id});
       await s?.flush();
     } catch (_) {}
-    _cleanup(); // antes de fechar: o "fechou" da conexão não é uma queda
+    _cleanup(); // before closing: the connection's "closed" event is not a drop
     try {
       if (s != null) await CastSessionManager().endSession(s.sessionId);
     } catch (_) {}
@@ -213,7 +212,8 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
     final list = m['status'];
     if (list is! List || list.isEmpty) return;
     final st = list.first as Map<String, dynamic>;
-    _mediaSessionId = (st['mediaSessionId'] as num?)?.toInt() ?? _mediaSessionId;
+    _mediaSessionId =
+        (st['mediaSessionId'] as num?)?.toInt() ?? _mediaSessionId;
     final t = (st['currentTime'] as num?)?.toDouble();
     if (t != null) {
       _basePos = Duration(milliseconds: (t * 1000).round());
@@ -233,7 +233,8 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
         _player.remoteStatus(playing: _playing, buffering: true);
       case 'IDLE':
         final why = st['idleReason'] as String?;
-        if (_loading) return; // a música anterior parou porque mandamos outra
+        // the previous track stopped because we sent another one
+        if (_loading) return;
         _playing = false;
         if (why == 'FINISHED' || why == 'ERROR') {
           _player.remoteEnded();
@@ -243,7 +244,7 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
     }
   }
 
-  // ---------- RemoteOutput (o player manda tocar aqui) ----------
+  // ---------- RemoteOutput (the player sends playback here) ----------
 
   @override
   Future<void> load(
@@ -263,7 +264,9 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
       'currentTime': at.inMilliseconds / 1000,
       'media': {
         'contentId': url,
-        'contentType': url.contains('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg',
+        'contentType': url.contains('.m3u8')
+            ? 'application/x-mpegURL'
+            : 'audio/mpeg',
         'streamType': 'BUFFERED',
         'metadata': {
           'metadataType': 3, // MusicTrackMediaMetadata
@@ -309,7 +312,7 @@ class CastController extends Notifier<CastState> implements RemoteOutput {
 
   @override
   Future<void> setVolume(double v) async {
-    // Volume desta música no receptor (não mexe no volume da TV/caixa).
+    // Volume of this track on the receiver (does not touch the TV/speaker volume).
     final id = _mediaSessionId;
     if (id == null) return;
     _send(_nsMedia, {

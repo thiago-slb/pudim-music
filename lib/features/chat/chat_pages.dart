@@ -43,7 +43,7 @@ String _when(DateTime t) {
   return '${two(t.day)}/${two(t.month)}';
 }
 
-/// Ícone de conversa na barra (com o número de não lidas).
+/// Chat icon in the bar (with the unread count).
 class ChatButton extends ConsumerWidget {
   const ChatButton({super.key});
   @override
@@ -64,7 +64,7 @@ class ChatButton extends ConsumerWidget {
   }
 }
 
-// ------------------------------------------------------------------ lista de conversas
+// ------------------------------------------------------------------ conversation list
 
 class ChatsPage extends ConsumerWidget {
   const ChatsPage({super.key});
@@ -178,7 +178,7 @@ class ChatsPage extends ConsumerWidget {
   }
 }
 
-// ------------------------------------------------------------------ uma conversa
+// ------------------------------------------------------------------ a conversation
 
 class ChatThreadPage extends ConsumerStatefulWidget {
   final String userId;
@@ -350,7 +350,7 @@ class _ChatThreadPageState extends ConsumerState<ChatThreadPage> {
           SafeArea(
             top: false,
             child: Padding(
-              // No celular a barra do player fica por cima: sobe o campo.
+              // On phones the player bar sits on top: raise the field.
               padding: EdgeInsets.fromLTRB(12, 6, 8, compact ? 150 : 12),
               child: Row(
                 children: [
@@ -387,7 +387,7 @@ class _ChatThreadPageState extends ConsumerState<ChatThreadPage> {
   }
 }
 
-/// Cartão do que foi compartilhado; tocar abre a página (ou toca a música).
+/// Card for what was shared; tapping opens the page (or plays the song).
 class SharedCard extends ConsumerWidget {
   final SharedItem s;
   const SharedCard(this.s, {super.key});
@@ -555,9 +555,9 @@ class SharedCard extends ConsumerWidget {
   }
 }
 
-// ------------------------------------------------------------------ compartilhar
+// ------------------------------------------------------------------ share
 
-/// Escolher outra conta do servidor (convites: editar playlist, Jam, Blend).
+/// Pick another account on the server (invites: edit playlist, Jam, Blend).
 Future<Contact?> pickContact(
   BuildContext context, {
   required String title,
@@ -655,7 +655,7 @@ SharedItem sharedOf(Item it) {
   return SharedItem(kind, it.id, it.name, sub, cover);
 }
 
-/// Escolher um contato e mandar a página (com um recado opcional).
+/// Pick a contact and send the page (with an optional note).
 Future<void> shareItem(BuildContext context, WidgetRef ref, Item it) async {
   final share = sharedOf(it);
   await showModalBottomSheet<void>(
@@ -690,7 +690,8 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
   Future<void> _send(Contact c) async {
     setState(() => _sendingTo = c.id);
     if (widget.share.kind == 'playlist' && !isCatalogId(widget.share.id)) {
-      // só o dono consegue liberar no Jellyfin; se não for, a pessoa já tem acesso de outro jeito ou não terá
+      // only the owner can grant access in Jellyfin; if not, the person already has access another way
+      // or won't
       try {
         await ref.read(apiProvider).sharePlaylist(widget.share.id, c.id);
       } catch (_) {}

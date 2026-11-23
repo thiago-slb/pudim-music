@@ -39,7 +39,7 @@ jobs:
           name: pudim-android
           path: build/app/outputs/flutter-apk/app-release.apk
 
-  # Sem Mac no desenvolvimento: confere que o app de iOS (com o CarPlay em Swift) compila.
+  # No Mac in development: checks that the iOS app (with CarPlay in Swift) compiles.
   ios:
     needs: test
     runs-on: macos-latest

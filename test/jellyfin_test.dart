@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pudim_music/api/jellyfin.dart';
 import 'package:pudim_music/api/models.dart';
 
-/// Responde com JSON fixo por caminho e guarda as requisições feitas.
+/// Answers with fixed JSON per path and records the requests made.
 class FakeAdapter implements HttpClientAdapter {
   final Map<String, Object> responses;
   final requests = <RequestOptions>[];
@@ -43,22 +43,19 @@ Jellyfin client(FakeAdapter a) => Jellyfin(
 );
 
 void main() {
-  test(
-    'Seguir/Deixar de seguir usa POST/DELETE em /UserFavoriteItems',
-    () async {
-      final a = FakeAdapter({});
-      final c = client(a);
-      await c.setFavorite('art', true);
-      await c.setFavorite('art', false);
-      expect(a.requests.map((r) => '${r.method} ${r.path}'), [
-        'POST /UserFavoriteItems/art',
-        'DELETE /UserFavoriteItems/art',
-      ]);
-      expect(a.requests.first.queryParameters['userId'], 'u');
-    },
-  );
+  test('Follow/Unfollow uses POST/DELETE on /UserFavoriteItems', () async {
+    final a = FakeAdapter({});
+    final c = client(a);
+    await c.setFavorite('art', true);
+    await c.setFavorite('art', false);
+    expect(a.requests.map((r) => '${r.method} ${r.path}'), [
+      'POST /UserFavoriteItems/art',
+      'DELETE /UserFavoriteItems/art',
+    ]);
+    expect(a.requests.first.queryParameters['userId'], 'u');
+  });
 
-  test('InstantMix só pede campos que o Jellyfin aceita', () async {
+  test('InstantMix only asks for fields Jellyfin accepts', () async {
     final a = FakeAdapter({});
     await client(a).instantMix('x');
     final fields = a.requests.single.queryParameters['Fields'] as String;
@@ -66,25 +63,22 @@ void main() {
     expect(fields.split(','), isNot(contains('ProductionYear')));
   });
 
-  test(
-    'Adicionados recentemente usa a biblioteca de música como ParentId',
-    () async {
-      final a = FakeAdapter({
-        '/UserViews': {
-          'Items': [
-            {'Id': 'filmes', 'CollectionType': 'movies'},
-            {'Id': 'mus', 'CollectionType': 'music'},
-          ],
-        },
-        '/Items/Latest': [
-          {'Id': 'al', 'Name': 'Álbum', 'Type': 'MusicAlbum'},
+  test('Recently added uses the music library as ParentId', () async {
+    final a = FakeAdapter({
+      '/UserViews': {
+        'Items': [
+          {'Id': 'filmes', 'CollectionType': 'movies'},
+          {'Id': 'mus', 'CollectionType': 'music'},
         ],
-      });
-      final latest = await client(a).latestAlbums();
-      expect(latest.single.kind, ItemKind.album);
-      final q = a.requests.last.queryParameters;
-      expect(q['ParentId'], 'mus');
-      expect(q.containsKey('IncludeItemTypes'), isFalse);
-    },
-  );
+      },
+      '/Items/Latest': [
+        {'Id': 'al', 'Name': 'Álbum', 'Type': 'MusicAlbum'},
+      ],
+    });
+    final latest = await client(a).latestAlbums();
+    expect(latest.single.kind, ItemKind.album);
+    final q = a.requests.last.queryParameters;
+    expect(q['ParentId'], 'mus');
+    expect(q.containsKey('IncludeItemTypes'), isFalse);
+  });
 }

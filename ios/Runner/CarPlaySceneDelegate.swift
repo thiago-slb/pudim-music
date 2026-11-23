@@ -2,14 +2,14 @@ import CarPlay
 import Flutter
 import UIKit
 
-/// Canal com o Dart (`lib/audio/carplay_bridge.dart`), criado quando o Flutter inicia.
+/// Channel to Dart (`lib/audio/carplay_bridge.dart`), created when Flutter starts.
 enum CarPlayBridge {
   static var channel: FlutterMethodChannel?
 }
 
-/// CarPlay: listas com as mesmas pastas do Android Auto (Tocadas recentemente, Curtidas,
-/// Playlists, Álbuns, Artistas, Baixadas). Tocar abre a tela "Tocando agora" do sistema, que
-/// usa os controles e as informações publicados pelo audio_service.
+/// CarPlay: lists with the same folders as Android Auto (Recently played, Liked,
+/// Playlists, Albums, Artists, Downloaded). Playing opens the system "Now Playing" screen, which
+/// uses the controls and info published by audio_service.
 class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
   private var interfaceController: CPInterfaceController?
   private let images = NSCache<NSURL, UIImage>()
@@ -31,11 +31,11 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     self.interfaceController = nil
   }
 
-  // MARK: - Listas
+  // MARK: - Lists
 
   private func load(_ template: CPListTemplate, parent: String) {
     guard let channel = CarPlayBridge.channel else {
-      // O Flutter ainda não subiu (app fechado no iPhone): avisa e tenta de novo.
+      // Flutter is not up yet (app closed on the iPhone): shows a notice and retries.
       template.updateSections([Self.message(Self.text(.openApp))])
       DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self, weak template] in
         guard let self = self, let template = template, self.interfaceController != nil else { return }
@@ -89,7 +89,7 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     }
   }
 
-  // MARK: - Capas
+  // MARK: - Covers
 
   private func image(_ url: URL, done: @escaping (UIImage) -> Void) {
     if let cached = images.object(forKey: url as NSURL) {
@@ -107,7 +107,7 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     }.resume()
   }
 
-  // MARK: - Textos (pt, es, en)
+  // MARK: - Texts (pt, es, en)
 
   private enum Text { case openApp, empty }
 

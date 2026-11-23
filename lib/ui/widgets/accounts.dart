@@ -6,19 +6,19 @@ import '../../l10n/l10n.dart';
 import '../../state/session.dart';
 import '../theme.dart';
 
-/// Troca de conta/servidor: a fila é da biblioteca da conta de antes, então para e esvazia.
+/// Account/server switch: the queue belongs to the previous account library, so it stops and is emptied.
 Future<void> switchAccount(WidgetRef ref, String id) async {
   await ref.read(playerProvider.notifier).stop();
   await ref.read(sessionProvider.notifier).switchTo(id);
 }
 
-/// Vai para a tela de entrar sem sair da conta atual (dá para voltar).
+/// Goes to the sign-in screen without leaving the current account (can go back).
 Future<void> addAccount(WidgetRef ref) async {
   await ref.read(playerProvider.notifier).stop();
   ref.read(sessionProvider.notifier).beginAdd();
 }
 
-/// Lista das contas salvas (Configurações): a em uso marcada, as outras com "Trocar".
+/// List of saved accounts (Settings): the one in use marked, the others with "Switch".
 class AccountsList extends ConsumerWidget {
   const AccountsList({super.key});
 

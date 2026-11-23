@@ -20,7 +20,7 @@ bool _isBrazil(ShowEvent e) {
   return c == 'br' || c == 'brasil' || c == 'brazil';
 }
 
-/// Shows dos artistas que você segue, numa linha do tempo (próximos e os que já aconteceram).
+/// Shows of the artists you follow, on a timeline (upcoming and past ones).
 class ShowsPage extends ConsumerStatefulWidget {
   const ShowsPage({super.key});
   @override
@@ -45,7 +45,7 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
     final compact = isCompact(context);
     final side = compact ? 16.0 : 32.0;
     final d = data.value;
-    // Ainda buscando alguns artistas no MusicBrainz: atualiza sozinho.
+    // Still fetching some artists from MusicBrainz: refreshes by itself.
     if (d != null && d.pending > 0 && _again == null) {
       _again = Timer(const Duration(seconds: 20), () {
         _again = null;
@@ -176,7 +176,7 @@ class _MonthHeader extends StatelessWidget {
   );
 }
 
-/// Uma linha da linha do tempo: data à esquerda, ponto na linha e o cartão do show.
+/// One timeline row: date on the left, dot on the line and the show card.
 class _EventRow extends StatelessWidget {
   final ShowEvent e;
   final bool past;

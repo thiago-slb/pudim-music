@@ -21,7 +21,7 @@ class CatalogList {
   const CatalogList(this.head, this.tracks);
 }
 
-/// Download pedido pelo app (um job no servidor de extras).
+/// Download requested by the app (a job on the extras server).
 class DownloadJob {
   final String id;
   final String status;
@@ -80,8 +80,8 @@ class DownloadJob {
   );
 }
 
-/// Álbum da pasta da biblioteca com a qualidade (do painel).
-/// Álbum que falta na biblioteca (da discografia no MusicBrainz).
+/// Library folder album with its quality (from the panel).
+/// Album missing from the library (from the MusicBrainz discography).
 class PlanAlbum {
   final String rgid, title, year, type;
   final List<String> secondary;
@@ -95,7 +95,7 @@ class PlanAlbum {
     this.partial,
   );
 
-  /// Álbum de estúdio: tipo Album sem ao vivo, coletânea, trilha...
+  /// Studio album: type Album without live, compilation, soundtrack...
   bool get studio => type == 'Album' && secondary.isEmpty;
 
   factory PlanAlbum.fromJson(Map<String, dynamic> j) => PlanAlbum(
@@ -168,7 +168,7 @@ class ArtistQuality {
       .replaceAll(RegExp(r'\s*[\(\[].*?[\)\]]'), '')
       .replaceAll(RegExp(r'[^a-z0-9à-ÿ]+'), '');
 
-  /// Acha o álbum da pasta pelo nome do álbum no Jellyfin (sem "(Deluxe)", maiúsculas etc.).
+  /// Finds the folder's album by the album name in Jellyfin (ignoring "(Deluxe)", case etc.).
   AlbumQuality? of(String albumName) {
     final want = _key(albumName);
     for (final a in albums) {
@@ -178,7 +178,7 @@ class ArtistQuality {
   }
 }
 
-/// Detalhes de um download (para "Ver detalhes" no sino).
+/// Details of a download (for "View details" in the bell).
 class JobDetail {
   final String status;
   final String? summary;
@@ -187,7 +187,7 @@ class JobDetail {
   const JobDetail(this.status, this.summary, this.albums, this.log);
 }
 
-/// Descobertas ou Mistura da semana da conta.
+/// The account's Descobertas or Mistura da semana (weekly discovery or weekly mix).
 class MixInfo {
   final String name;
   final bool thisWeek, running, available;
@@ -221,7 +221,7 @@ class MixInfo {
         error: j['error'] as String?,
       );
 
-  /// Semana ISO no formato do painel ("2026-W47").
+  /// ISO week in the panel's format ("2026-W47").
   static String isoWeek(DateTime d) {
     final thursday = DateTime(d.year, d.month, d.day + 4 - d.weekday);
     final first = DateTime(thursday.year, 1, 1);
@@ -243,9 +243,9 @@ class CatalogException implements Exception {
   String toString() => message;
 }
 
-/// Cliente das rotas `/api/player/*` do servidor de extras (opcional): catálogo, downloads, social e mixes.
-/// Usa o mesmo token do Jellyfin; o servidor confere quem é a conta. Sem endereço, tudo falha na hora
-/// com [CatalogException] (as telas que dependem dele ficam escondidas, ver `hasExtrasProvider`).
+/// Client for the extras server's `/api/player/*` routes (optional): catalog, downloads, social and mixes.
+/// Uses the same token as Jellyfin; the server checks who the account is. Without an address, everything
+/// fails immediately with [CatalogException] (screens that depend on it are hidden, see `hasExtrasProvider`).
 class Catalog {
   final String token;
   late final Dio _dio;
@@ -264,14 +264,14 @@ class Catalog {
       _dio.interceptors.add(
         InterceptorsWrapper(
           onRequest: (o, h) => h.reject(
-            DioException(requestOptions: o, message: 'Sem servidor de extras.'),
+            DioException(requestOptions: o, message: 'No extras server.'),
           ),
         ),
       );
     }
   }
 
-  /// Tem servidor de extras configurado?
+  /// Is an extras server configured?
   bool get enabled => _dio.options.baseUrl.isNotEmpty;
 
   String get authHeader => 'MediaBrowser Token="$token"';
@@ -307,7 +307,7 @@ class Catalog {
     );
   }
 
-  /// Por id do Deezer ou pelo nome (artista da biblioteca, para os Populares).
+  /// By Deezer id or by name (library artist, for the Popular tracks).
   Future<CatalogArtist> artist({int? id, String? name}) async {
     final d = await _get('/api/player/artist', {
       'id': ?id?.toString(),
@@ -338,12 +338,12 @@ class Catalog {
     );
   }
 
-  /// Endereço para o player: o painel acha no YouTube Music, baixa e redireciona para o áudio.
-  /// Também cria o download da música ("toca já e baixa junto").
+  /// URL for the player: the panel finds it on YouTube Music, downloads it and redirects to the audio.
+  /// Also creates the track's download ("plays right away and downloads along").
   String playUrl(int deezerId) =>
       '${_dio.options.baseUrl}/api/player/play/$deezerId';
 
-  /// kind: track | album | artist. Devolve true se já estava na fila.
+  /// kind: track | album | artist. Returns true if it was already in the queue.
   Future<bool> download(String kind, int deezerId) async {
     try {
       final r = await _dio.post<Map<String, dynamic>>(
@@ -379,13 +379,13 @@ class Catalog {
     }
   }
 
-  // ---------- histórico do Spotify na Retrospectiva ----------
+  // ---------- Spotify history in the Year in Review ----------
 
-  /// Quantas reproduções do Spotify já entraram e de quando a quando.
+  /// How many Spotify plays have been imported and from when to when.
   Future<Map<String, dynamic>> spotifyHistory() =>
       _get('/api/player/recap/spotify');
 
-  /// Manda o zip (my_spotify_data.zip) ou um Streaming_History_Audio_*.json.
+  /// Uploads the zip (my_spotify_data.zip) or a Streaming_History_Audio_*.json.
   Future<Map<String, dynamic>> importSpotify(
     List<int> bytes,
     String filename,
@@ -396,7 +396,7 @@ class Catalog {
         data: FormData.fromMap({
           'file': MultipartFile.fromBytes(bytes, filename: filename),
         }),
-        // anos de histórico podem ser centenas de milhares de linhas
+        // years of history can be hundreds of thousands of lines
         options: Options(
           sendTimeout: const Duration(minutes: 5),
           receiveTimeout: const Duration(minutes: 5),
@@ -416,7 +416,7 @@ class Catalog {
           ?.toInt() ??
       0;
 
-  // ---------- qualidade dos álbuns ----------
+  // ---------- album quality ----------
 
   Future<ArtistQuality> quality(String artistName) async {
     final d = await _get('/api/player/quality', {'name': artistName});
@@ -432,12 +432,12 @@ class Catalog {
   Future<void> improve(String artist) =>
       _send('POST', '/api/player/improve', {'artist': artist});
 
-  // ---------- atualização do app ----------
+  // ---------- app update ----------
 
-  /// {build, notes, apk: {sha256, size}, windows: {...}} do painel.
+  /// {build, notes, apk: {sha256, size}, windows: {...}} from the panel.
   Future<Map<String, dynamic>> updateInfo() => _get('/api/player/update');
 
-  /// Baixa o instalador ("apk" ou "windows") para [path].
+  /// Downloads the installer ("apk" or "windows") to [path].
   Future<void> downloadUpdate(
     String kind,
     String path, {
@@ -449,13 +449,13 @@ class Catalog {
     options: Options(receiveTimeout: const Duration(minutes: 10)),
   );
 
-  // ---------- escolher álbuns (MusicBrainz, igual ao "Escolher" do painel) ----------
+  // ---------- choose albums (MusicBrainz, same as the panel's "Choose") ----------
 
-  /// Começa a conferir a discografia; devolve o token para [albumPlan].
+  /// Starts checking the discography; returns the token for [albumPlan].
   Future<String> startAlbumPlan(String artist) async =>
       '${(await _send('POST', '/api/player/albums/plan', {'artist': artist}))['token']}';
 
-  /// null enquanto ainda está conferindo.
+  /// null while it is still checking.
   Future<AlbumPlan?> albumPlan(String token) async {
     final d = await _get('/api/player/albums/plan/$token');
     if (d['status'] == 'buscando') return null;
@@ -473,7 +473,7 @@ class Catalog {
         'titles': [for (final a in picked) '${a.year} - ${a.title}'],
       });
 
-  // ---------- controles dos downloads ----------
+  // ---------- download controls ----------
 
   Future<JobDetail> job(String id) async {
     final d = await _get('/api/player/jobs/$id');
@@ -497,12 +497,12 @@ class Catalog {
       _send('POST', '/api/player/jobs/$id/retry');
   Future<void> deleteJob(String id) => _send('DELETE', '/api/player/jobs/$id');
 
-  // ---------- playlists prontas ----------
+  // ---------- ready-made playlists ----------
 
   Future<List<Item>> featured() async =>
       _items((await _get('/api/player/featured'))['playlists']);
 
-  /// Cria a playlist na Sua Biblioteca e baixa o que falta. Devolve o texto do aviso.
+  /// Creates the playlist in Your Library and downloads what is missing. Returns the notice text.
   Future<String> savePlaylist(int deezerId, {String? cover}) async {
     final d = await _send('POST', '/api/player/playlist/save', {
       'deezer_id': deezerId,
@@ -516,7 +516,7 @@ class Catalog {
         : appL10n.apiPlaylistDownloading(n);
   }
 
-  // ---------- descobertas e mistura ----------
+  // ---------- discoveries and mix ----------
 
   Future<(MixInfo, MixInfo)> mixes() async {
     final d = await _get('/api/player/mixes');
@@ -534,7 +534,7 @@ class Catalog {
 
   Future<void> runMix(String kind) => _send('POST', '/api/player/mixes/$kind');
 
-  // ---------- avisos ----------
+  // ---------- notices ----------
 
   Future<(List<Notice>, double)> notices(double since) async {
     final d = await _get('/api/player/notices', {'since': '$since'});
@@ -553,7 +553,7 @@ class Catalog {
     );
   }
 
-  // ---------- retrospectiva ----------
+  // ---------- year in review ----------
 
   Future<(List<int>, Map<String, dynamic>?)> recap({int? year}) async {
     final d = await _get('/api/player/recap', {'year': ?year?.toString()});
@@ -563,7 +563,7 @@ class Catalog {
     );
   }
 
-  /// Capa (tipo=capa) ou foto do artista (tipo=artista) da retrospectiva; leva o token na URL.
+  /// Cover (tipo=capa) or artist photo (tipo=artista) of the year in review; carries the token in the URL.
   String recapImage({
     required String tipo,
     String? item,
@@ -590,13 +590,13 @@ class Catalog {
   }
 }
 
-// ---------- perfil, contatos e conversa ----------
+// ---------- profile, contacts and chat ----------
 
-/// Outra conta do Jellyfin (contato).
+/// Another Jellyfin account (contact).
 class Contact {
   final String id, name, displayName;
 
-  /// Tag da foto do perfil no Jellyfin (null = sem foto).
+  /// Profile photo tag in Jellyfin (null = no photo).
   final String? image;
   const Contact(this.id, this.name, this.displayName, {this.image});
   factory Contact.fromJson(Map<String, dynamic> j) => Contact(
@@ -607,11 +607,11 @@ class Contact {
   );
 }
 
-/// Página compartilhada numa mensagem (música, álbum, artista ou playlist).
+/// Page shared in a message (track, album, artist or playlist).
 class SharedItem {
   final String kind, id, title, subtitle;
 
-  /// URL da capa (catálogo) ou `jf:ID` para a capa da biblioteca.
+  /// Cover URL (catalog) or `jf:ID` for the library cover.
   final String cover;
   const SharedItem(this.kind, this.id, this.title, this.subtitle, this.cover);
   factory SharedItem.fromJson(Map<String, dynamic> j) => SharedItem(
@@ -678,7 +678,7 @@ extension SocialApi on Catalog {
   Future<void> saveDisplayName(String name) =>
       _send('POST', '/api/player/me', {'display_name': name});
 
-  /// Troca o nome de usuário no Jellyfin (o painel leva junto o que guarda pelo nome).
+  /// Changes the username in Jellyfin (the panel carries along what it stores by name).
   Future<String> renameUser(String name) async =>
       '${(await _send('POST', '/api/player/me/username', {'name': name}))['name'] ?? name}';
 
@@ -706,7 +706,7 @@ extension SocialApi on Catalog {
     );
   }
 
-  /// Mensagens com [userId] depois de [after] (e marca as recebidas como lidas).
+  /// Messages with [userId] after [after] (and marks the received ones as read).
   Future<(Contact, List<ChatMessage>)> chat(
     String userId, {
     int after = 0,
@@ -734,7 +734,7 @@ extension SocialApi on Catalog {
   }
 }
 
-// ---------- shows (MusicBrainz) ----------
+// ---------- concerts (MusicBrainz) ----------
 
 class ShowEvent {
   final String id, date, time, name, type, place, city, country, artist, url;
@@ -844,7 +844,7 @@ class PodcastEpisode {
     );
   }
 
-  /// Vira uma faixa da fila do player (toca direto do endereço do episódio).
+  /// Becomes a player queue track (plays straight from the episode's URL).
   Item toItem() {
     final id = 'pod$guid';
     if (image.isNotEmpty) catalogCovers[id] = image;
@@ -867,7 +867,7 @@ class PodcastPage {
   final List<PodcastEpisode> episodes;
   final bool subscribed;
 
-  /// Quantos episódios o feed tem (com o filtro, se houver) e de onde pedir a próxima página (null = acabou).
+  /// How many episodes the feed has (with the filter, if any) and where to request the next page from (null = done).
   final int total;
   final int? nextOffset;
   const PodcastPage(
@@ -880,8 +880,8 @@ class PodcastPage {
 }
 
 extension MediaApi on Catalog {
-  /// Artistas seguidos que ainda não estão na biblioteca (sem álbum baixado). O painel guarda por conta e,
-  /// quando o artista chega ao Jellyfin, passa o "seguir" para lá sozinho.
+  /// Followed artists that are not in the library yet (no album downloaded). The panel stores them per account and,
+  /// when the artist arrives in Jellyfin, moves the "follow" over there by itself.
   Future<List<Item>> followedArtists() async {
     final d = await _get('/api/player/follows');
     return [
@@ -933,7 +933,7 @@ extension MediaApi on Catalog {
   Future<void> podcastSubscribe(String id, bool on) =>
       _send(on ? 'POST' : 'DELETE', '/api/player/podcasts/subs/$id');
 
-  /// Uma página de episódios (o painel lê o RSS só quando alguém abre o podcast e entrega de [limit] em [limit]).
+  /// One page of episodes (the panel reads the RSS only when someone opens the podcast and delivers [limit] at a time).
   Future<PodcastPage> podcast(
     String id, {
     int offset = 0,
@@ -988,9 +988,9 @@ extension MediaApi on Catalog {
   });
 }
 
-// ---------- Radar, daylist e Blend (playlists montadas pelo painel) ----------
+// ---------- Radar, daylist and Blend (playlists built by the panel) ----------
 
-/// Radar de Novidades ou daylist da conta.
+/// The account's Radar de Novidades (new-releases radar) or daylist.
 class MadeInfo {
   final String? playlist, name, note, error;
   final int tracks;
@@ -1066,7 +1066,7 @@ class JamState {
   final int rev, index, posMs;
   final List<Contact> members;
 
-  /// null quando não mudou desde o último rev pedido.
+  /// null when nothing changed since the last requested rev.
   final List<Item>? queue;
   final List<Item> pending;
   final List<Map<String, dynamic>> cmds;
@@ -1127,7 +1127,7 @@ class CollabInfo {
   final String? owner;
   final List<Contact> members;
 
-  /// id da faixa -> id de quem adicionou.
+  /// track id -> id of whoever added it.
   final Map<String, String> added;
   const CollabInfo(this.owner, this.members, this.added);
   static const none = CollabInfo(null, [], {});
@@ -1207,7 +1207,7 @@ extension PudimExtrasApi on Catalog {
   Future<void> jamInvite(String id, String userId) =>
       _send('POST', '/api/player/jam/$id/invite/$userId');
 
-  // Colaborativas
+  // Collaborative
   Future<CollabInfo> collab(String pid) async {
     final d = await _get('/api/player/collab/$pid');
     return CollabInfo(

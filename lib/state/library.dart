@@ -4,7 +4,7 @@ import '../api/models.dart';
 import 'session.dart';
 import '../api/catalog.dart';
 
-/// Itens da "Sua Biblioteca": playlists, álbuns salvos e artistas seguidos.
+/// Items of "Your Library": playlists, saved albums and followed artists.
 class LibraryData {
   final List<Item> playlists;
   final List<Item> albums;
@@ -14,7 +14,7 @@ class LibraryData {
 
 final libraryProvider = FutureProvider<LibraryData>((ref) async {
   final api = ref.watch(apiProvider);
-  // seguidos sem nenhum álbum na biblioteca (vêm do painel; sem painel, a lista fica só com os do Jellyfin)
+  // followed artists with no album in the library (they come from the panel; without a panel, the list only has the Jellyfin ones)
   final extra = ref
       .watch(catalogProvider)
       .followedArtists()
@@ -32,7 +32,7 @@ final libraryProvider = FutureProvider<LibraryData>((ref) async {
   ]);
 });
 
-/// Se este artista do catálogo (fora da biblioteca) está sendo seguido.
+/// Whether this catalog artist (outside the library) is being followed.
 bool followsCatalogArtist(WidgetRef ref, Item it) =>
     ref.read(libraryProvider).value?.artists.any((a) => a.id == it.id) ?? false;
 
@@ -40,7 +40,7 @@ final likedTracksProvider = FutureProvider<List<Item>>(
   (ref) => ref.watch(apiProvider).favoriteTracks(),
 );
 
-/// Ordem em que a Sua Biblioteca foi aberta/tocada por último (só local).
+/// Order in which Your Library was last opened/played (local only).
 final recentOpenProvider = NotifierProvider<RecentOpen, List<String>>(
   RecentOpen.new,
 );

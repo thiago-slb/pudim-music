@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Cores no estilo do Spotify (tema escuro).
+/// Spotify-style colors (dark theme).
 class Pm {
   static const black = Color(0xFF000000);
   static const base = Color(0xFF121212);
@@ -81,7 +81,7 @@ String formatDuration(Duration d) {
   return h > 0 ? '$h:${m.toString().padLeft(2, '0')}:$s' : '$m:$s';
 }
 
-/// "3 h 50 min" / "42 min 10 s", como no cabeçalho do Spotify.
+/// "3 h 50 min" / "42 min 10 s", as in the Spotify header.
 String formatTotal(Duration d) {
   final h = d.inHours;
   final m = d.inMinutes.remainder(60);

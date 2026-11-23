@@ -7,8 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
-/// Imagem da rede guardada no aparelho: abre na hora (e sem internet) com a cópia local
-/// e atualiza em segundo plano quando a cópia tem mais de 7 dias.
+/// Network image stored on the device: opens instantly (and without internet) from the local copy
+/// and refreshes in the background when the copy is more than 7 days old.
 class DiskImage extends ImageProvider<DiskImage> {
   final String url;
   const DiskImage(this.url);
@@ -23,7 +23,7 @@ class DiskImage extends ImageProvider<DiskImage> {
   );
   static final _inFlight = <String, Future<Uint8List>>{};
 
-  /// Chamado no main: pasta das capas e limpeza se passar de 400 MB.
+  /// Called in main: covers folder and cleanup if it goes over 400 MB.
   static Future<void> init(String basePath) async {
     final d = Directory('$basePath${Platform.pathSeparator}imgcache');
     await d.create(recursive: true);
@@ -49,7 +49,7 @@ class DiskImage extends ImageProvider<DiskImage> {
     } catch (_) {}
   }
 
-  /// A chave ignora o endereço do servidor: a mesma capa vale em casa e fora.
+  /// The key ignores the server address: the same cover is valid at home and away.
   static File? _file(String url) {
     final u = Uri.tryParse(url);
     return _named(u == null || !u.hasAuthority ? url : '${u.path}?${u.query}');
@@ -66,7 +66,7 @@ class DiskImage extends ImageProvider<DiskImage> {
     return File('${_dir!.path}${Platform.pathSeparator}$name.img');
   }
 
-  /// Arquivo da capa; aproveita o que foi guardado com a chave antiga (URL inteira).
+  /// Cover file; reuses what was stored with the old key (whole URL).
   static Future<File?> _local(String url) async {
     final f = _file(url);
     if (f == null || await f.exists()) return f;
@@ -79,7 +79,7 @@ class DiskImage extends ImageProvider<DiskImage> {
     return f;
   }
 
-  /// Bytes da imagem: do aparelho se tiver, senão baixa e guarda.
+  /// Image bytes: from the device if present, otherwise downloads and stores.
   static Future<Uint8List> fetch(String url) async {
     final f = await _local(url);
     if (f != null && await f.exists()) {
@@ -93,7 +93,7 @@ class DiskImage extends ImageProvider<DiskImage> {
     return _download(url);
   }
 
-  /// Baixa e guarda (sem mostrar), para ter a capa sem internet depois.
+  /// Downloads and stores (without showing), to have the cover without internet later.
   static Future<void> prefetch(String url) async {
     final f = await _local(url);
     if (f == null || await f.exists()) return;
@@ -107,7 +107,7 @@ class DiskImage extends ImageProvider<DiskImage> {
         try {
           final r = await _dio.get<List<int>>(url);
           final bytes = Uint8List.fromList(r.data ?? const []);
-          if (bytes.isEmpty) throw StateError('imagem vazia');
+          if (bytes.isEmpty) throw StateError('empty image');
           final f = _file(url);
           if (f != null) {
             final tmp = File('${f.path}.tmp');

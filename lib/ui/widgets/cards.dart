@@ -10,7 +10,7 @@ import '../theme.dart';
 import 'actions.dart';
 import 'common.dart';
 
-/// Cartão de álbum/playlist/artista: capa, título e subtítulo, botão verde ao passar o mouse.
+/// Album/playlist/artist card: cover, title and subtitle, green button on mouse hover.
 class MediaCard extends ConsumerStatefulWidget {
   final Item item;
   final String? subtitle;
@@ -143,7 +143,7 @@ class _MediaCardState extends ConsumerState<MediaCard> {
   }
 }
 
-/// Fileira horizontal de cartões, com setas para rolar.
+/// Horizontal row of cards, with arrows to scroll.
 class Shelf extends StatefulWidget {
   final String title;
   final String? overline;
@@ -185,7 +185,7 @@ class _ShelfState extends State<Shelf> {
     if (widget.items.isEmpty) return const SizedBox.shrink();
     final compact = isCompact(context);
     return Padding(
-      // No celular as capas ficam mais juntas e as seções mais próximas.
+      // On the phone the covers sit closer together and the sections are tighter.
       padding: EdgeInsets.only(bottom: compact ? 16 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,7 +256,7 @@ class _Arrow extends StatelessWidget {
   );
 }
 
-/// Atalho da grade do topo da Início (capa pequena + nome).
+/// Shortcut of the Home top grid (small cover + name).
 class QuickTile extends ConsumerStatefulWidget {
   final Item item;
   const QuickTile(this.item, {super.key});

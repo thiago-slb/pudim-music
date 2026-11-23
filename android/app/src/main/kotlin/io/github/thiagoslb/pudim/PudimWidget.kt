@@ -12,9 +12,9 @@ import android.widget.RemoteViews
 import java.io.File
 
 /**
- * Widget da tela inicial: o app manda (canal "pudim/widget") música, artista, se está tocando e a capa
- * já salva num arquivo. Os botões mandam teclas de mídia para o MediaButtonReceiver do audio_service,
- * igual aos botões de um fone bluetooth.
+ * Home screen widget: the app sends (channel "pudim/widget") the track, artist, whether it is playing
+ * and the cover already saved to a file. The buttons send media keys to the audio_service
+ * MediaButtonReceiver, just like the buttons on a bluetooth headset.
  */
 class PudimWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {

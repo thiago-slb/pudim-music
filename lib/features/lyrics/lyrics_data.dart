@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../api/models.dart';
 import '../../state/session.dart';
 
-/// Letra de uma faixa (o Jellyfin lê os .lrc/.txt ao lado do arquivo).
+/// Lyrics of a track (Jellyfin reads the .lrc/.txt next to the file).
 final lyricsProvider = FutureProvider.family<Lyrics, String>((ref, id) async {
   ref.keepAlive();
   try {

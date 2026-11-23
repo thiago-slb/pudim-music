@@ -25,7 +25,7 @@ import 'features/profile/profile_page.dart';
 import 'features/shows/shows_page.dart';
 import 'features/podcasts/podcasts.dart';
 
-/// Avisa o go_router quando a sessão muda (entrar/sair).
+/// Notifies go_router when the session changes (sign in/out).
 class _SessionListenable extends ChangeNotifier {
   _SessionListenable(Ref ref) {
     ref.listen(sessionProvider, (_, _) => notifyListeners());
@@ -39,7 +39,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   Page<void> page(Widget child, GoRouterState s) =>
       NoTransitionPage(key: s.pageKey, child: child);
 
-  // Telas do celular que sobem por cima de tudo (Tocando agora, letra, fila).
+  // Phone screens that slide up over everything (Now Playing, lyrics, queue).
   Page<void> sheet(Widget child, GoRouterState s) => CustomTransitionPage(
     key: s.pageKey,
     child: child,

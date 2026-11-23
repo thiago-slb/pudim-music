@@ -1,3 +1,3 @@
-/// Número do build deste app. O deploy/release-pudim.sh aumenta este número e o do pubspec juntos;
-/// o app compara com o do painel (/api/player/update) para saber se tem atualização.
+/// Build number of this app. deploy/release-pudim.sh bumps this number and the pubspec one together;
+/// the app compares it with the panel's (/api/player/update) to know whether an update is available.
 const appBuild = 9;

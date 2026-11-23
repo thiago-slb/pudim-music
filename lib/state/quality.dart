@@ -4,8 +4,8 @@ import '../api/catalog.dart';
 import 'session.dart';
 import '../l10n/l10n.dart';
 
-/// Qualidade dos álbuns de um artista na biblioteca (FLAC, som fraco, incompleto), pelo nome.
-/// Sem painel ou sem a pasta: vazio (as páginas só não mostram as etiquetas).
+/// Quality of an artist albums in the library (FLAC, low volume, incomplete), by name.
+/// Without a panel or the folder: empty (the pages just do not show the labels).
 final qualityProvider = FutureProvider.autoDispose
     .family<ArtistQuality, String>((ref, name) async {
       if (name.isEmpty) return ArtistQuality.empty;
@@ -16,7 +16,7 @@ final qualityProvider = FutureProvider.autoDispose
       }
     });
 
-/// Etiqueta curta para o álbum ("FLAC", "som fraco", "incompleto") ou null.
+/// Short label for the album ("FLAC", "low volume", "incomplete") or null.
 String? qualityTag(AlbumQuality? q) => q == null
     ? null
     : q.flac

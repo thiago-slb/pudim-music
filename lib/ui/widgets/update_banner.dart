@@ -6,7 +6,7 @@ import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
-/// Faixa discreta "Nova versão do Pudim" quando a atualização já foi baixada.
+/// Discreet "New version of Pudim" strip when the update has already been downloaded.
 class UpdateBanner extends ConsumerWidget {
   const UpdateBanner({super.key});
 

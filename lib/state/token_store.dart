@@ -8,16 +8,16 @@ import 'package:win32/win32.dart';
 
 import '../l10n/l10n.dart';
 
-/// Guarda o token do Jellyfin cifrado. Senha nunca é guardada.
+/// Stores the encrypted Jellyfin token. The password is never stored.
 ///
-/// - Windows: DPAPI (só a sua conta do Windows, nesta máquina, consegue abrir).
-///   Usamos a DPAPI direto em vez do flutter_secure_storage porque o plugin dele
-///   no Windows exige o componente ATL do Visual Studio para compilar.
-/// - Android: chave AES-GCM no Android Keystore (MainActivity.kt, canal
-///   `pudim/token`); o arquivo cifrado fica na pasta privada do app.
-/// - iOS/macOS entram na fase da Apple (Keychain).
+/// - Windows: DPAPI (only your Windows account, on this machine, can open it).
+///   We use DPAPI directly instead of flutter_secure_storage because its plugin
+///   on Windows requires the Visual Studio ATL component to build.
+/// - Android: AES-GCM key in the Android Keystore (MainActivity.kt, channel
+///   `pudim/token`); the encrypted file lives in the private app folder.
+/// - iOS/macOS arrive in the Apple phase (Keychain).
 class TokenStore {
-  /// Conta dona do token (vazio = arquivo antigo, de quando só cabia uma conta).
+  /// Account that owns the token (empty = old file, from when only one account fit).
   final String account;
   const TokenStore([this.account = '']);
 
@@ -101,7 +101,7 @@ class TokenStore {
               output,
             );
       if (!ok.value) {
-        throw StateError('DPAPI falhou (erro ${ok.error})');
+        throw StateError('DPAPI failed (error ${ok.error})');
       }
       final out = Uint8List.fromList(
         output.ref.pbData.asTypedList(output.ref.cbData),

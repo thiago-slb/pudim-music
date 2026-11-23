@@ -18,8 +18,9 @@ import '../../ui/widgets/track_table.dart';
 import '../../ui/widgets/disk_image.dart';
 import '../../state/library.dart';
 
-// Páginas do catálogo (Deezer pelo painel): álbum, playlist e artista que ainda não estão na biblioteca.
-// O que já está na biblioteca vem com o id do Jellyfin e toca de lá; o resto tem nuvem e toca pelo painel.
+// Catalog pages (Deezer via the panel): album, playlist and artist not yet in the library.
+// What is already in the library comes with the Jellyfin id and plays from there; the rest has a cloud
+// and plays via the panel.
 
 final catalogAlbumProvider = FutureProvider.autoDispose
     .family<CatalogList, int>(
@@ -36,17 +37,17 @@ final catalogArtistProvider = FutureProvider.autoDispose
       (ref, id) => ref.watch(catalogProvider).artist(id: id),
     );
 
-/// Populares do Deezer para um artista da biblioteca (pelo nome).
+/// Deezer popular tracks for a library artist (by name).
 final catalogArtistByNameProvider = FutureProvider.autoDispose
     .family<CatalogArtist?, String>((ref, name) async {
       try {
         return await ref.watch(catalogProvider).artist(name: name);
       } catch (_) {
-        return null; // sem painel: a página do artista usa só a biblioteca
+        return null; // no panel: the artist page uses only the library
       }
     });
 
-/// Botão "Baixar" das páginas do catálogo.
+/// "Download" button of the catalog pages.
 class DownloadButton extends ConsumerWidget {
   final String kind;
   final Item item;
@@ -80,7 +81,8 @@ class DownloadButton extends ConsumerWidget {
   );
 }
 
-/// Playlist pronta -> Sua Biblioteca: cria com o que já tem e baixa o resto (a playlist completa sozinha).
+/// Ready-made playlist -> Your Library: creates it with what is already there and downloads the rest
+/// (the playlist completes itself).
 class _SavePlaylistButton extends ConsumerStatefulWidget {
   final int deezerId;
   final Item head;
@@ -142,9 +144,9 @@ class _SavePlaylistButtonState extends ConsumerState<_SavePlaylistButton> {
   );
 }
 
-/// Álbum ou playlist do catálogo.
+/// Album or playlist from the catalog.
 class CatalogListPage extends ConsumerWidget {
-  final String id; // dza123 ou dzp123
+  final String id; // dza123 or dzp123
   const CatalogListPage(this.id, {super.key});
 
   bool get _isAlbum => id.startsWith('dza');
@@ -251,7 +253,7 @@ class CatalogListPage extends ConsumerWidget {
   }
 }
 
-/// Artista que não está na biblioteca: Populares, discografia e relacionados do Deezer.
+/// Artist not in the library: Deezer's popular tracks, discography and related artists.
 class CatalogArtistPage extends ConsumerStatefulWidget {
   final String id; // dzr123
   const CatalogArtistPage(this.id, {super.key});
@@ -275,7 +277,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
         if (a == null) {
           return Center(child: Text(l.catalogArtistNotFound));
         }
-        // Já está na biblioteca: vai para a página de verdade.
+        // Already in the library: go to the real page.
         if (!a.isCatalog) {
           WidgetsBinding.instance.addPostFrameCallback(
             (_) => context.mounted ? context.go('/artist/${a.id}') : null,

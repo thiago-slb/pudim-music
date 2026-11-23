@@ -6,7 +6,7 @@ import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
-/// Botão de transmitir (Chromecast). Verde quando o som está saindo em outro aparelho.
+/// Cast button (Chromecast). Green when the sound is coming out on another device.
 class CastButton extends ConsumerWidget {
   final double size;
   const CastButton({super.key, this.size = 18});

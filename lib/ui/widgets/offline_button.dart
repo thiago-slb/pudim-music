@@ -7,9 +7,9 @@ import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'actions.dart';
 
-/// Botão "Baixar" das páginas (seta num círculo, como no Spotify): guarda o álbum/playlist no aparelho.
+/// "Download" button of the pages (arrow in a circle, as in Spotify): stores the album/playlist on the device.
 class OfflineButton extends ConsumerWidget {
-  final String id; // id da coleção: álbum, playlist ou "liked"
+  final String id; // collection id: album, playlist or "liked"
   final String name;
   final Item? head;
   final List<Item> tracks;
@@ -82,7 +82,7 @@ class OfflineButton extends ConsumerWidget {
   }
 }
 
-/// Setinha verde ao lado do artista: a faixa está no aparelho.
+/// Small green arrow next to the artist: the track is on the device.
 class OfflineBadge extends ConsumerWidget {
   final String id;
   final double size;

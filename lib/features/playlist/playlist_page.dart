@@ -17,7 +17,7 @@ import '../../ui/widgets/track_table.dart';
 import '../../ui/widgets/mix_button.dart';
 import 'playlist_edit.dart';
 
-/// Rótulo da origem da playlist, a partir do prefixo que o painel usa.
+/// Label for the playlist origin, from the prefix the panel uses.
 String playlistOrigin(String name) {
   final l = appL10n;
   if (name.startsWith('Spotify · ')) return l.playlistOriginSpotify;
@@ -76,7 +76,7 @@ class PlaylistPage extends ConsumerWidget {
   }
 }
 
-/// Músicas curtidas (favoritos do usuário).
+/// Liked songs (the user's favorites).
 class LikedPage extends ConsumerWidget {
   const LikedPage({super.key});
   @override
@@ -121,7 +121,7 @@ class LikedPage extends ConsumerWidget {
   }
 }
 
-/// Sem internet: a mesma página com o que foi guardado no aparelho.
+/// Offline: the same page with what was stored on the device.
 Widget _offlineTracks(
   BuildContext context,
   OfflineState off,
@@ -144,7 +144,7 @@ Widget _offlineTracks(
   );
 }
 
-/// Todas as músicas baixadas no aparelho.
+/// All songs downloaded on the device.
 class OfflinePage extends ConsumerWidget {
   const OfflinePage({super.key});
   @override
@@ -170,7 +170,7 @@ class OfflinePage extends ConsumerWidget {
   }
 }
 
-/// Capa da "Baixadas": seta verde.
+/// Cover of "Downloaded": green arrow.
 class OfflineCover extends StatelessWidget {
   final double size;
   const OfflineCover({super.key, this.size = 48});
@@ -190,7 +190,7 @@ class OfflineCover extends StatelessWidget {
   );
 }
 
-/// Página genérica de lista de faixas (playlist, curtidas).
+/// Generic track-list page (playlist, liked songs).
 class TracksPage extends ConsumerStatefulWidget {
   final String title;
   final String type;
@@ -224,22 +224,22 @@ class TracksPage extends ConsumerStatefulWidget {
     this.smart = false,
   });
 
-  /// Linha acima dos dados (ex.: quem participa da playlist colaborativa).
+  /// Row above the data (e.g. who takes part in the collaborative playlist).
   final Widget? above;
 
-  /// Playlist editável: as faixas ganham "Remover desta playlist".
+  /// Editable playlist: tracks get "Remove from this playlist".
   final String? playlistId;
 
-  /// Colaborativa: quem adicionou cada faixa.
+  /// Collaborative: who added each track.
   final String? Function(Item)? addedBy;
 
-  /// Mostrar o botão de Smart Shuffle.
+  /// Show the Smart Shuffle button.
   final bool smart;
 
-  /// Botões a mais na barra (ex.: "Refazer" das Descobertas).
+  /// Extra buttons in the bar (e.g. "Redo" for Descobertas).
   final List<Widget> extra;
 
-  /// Id para "Baixar no aparelho" (sem ele a página não tem o botão).
+  /// Id for "Download to device" (without it the page has no button).
   final String? offlineId;
 
   @override

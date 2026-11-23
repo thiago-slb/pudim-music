@@ -11,7 +11,7 @@ import 'offline_button.dart';
 import 'disk_image.dart';
 import 'user_photo.dart';
 
-/// Capa (quadrada) ou foto (redonda) de um item, com placeholder.
+/// Cover (square) or photo (round) of an item, with a placeholder.
 class Cover extends ConsumerWidget {
   final Item? item;
   final double size;
@@ -82,7 +82,7 @@ class Cover extends ConsumerWidget {
   }
 }
 
-/// Etiqueta pequena de qualidade do álbum ("FLAC" em verde, o resto discreto).
+/// Small album quality label ("FLAC" in green, the rest muted).
 class QualityChip extends StatelessWidget {
   final String label;
   const QualityChip(this.label, {super.key});
@@ -107,7 +107,7 @@ class QualityChip extends StatelessWidget {
   }
 }
 
-/// Botão verde redondo de play/pausa.
+/// Round green play/pause button.
 class GreenPlayButton extends StatelessWidget {
   final double size;
   final bool playing;
@@ -166,7 +166,7 @@ class _HoverScaleState extends State<HoverScale> {
   );
 }
 
-/// Link de texto que sublinha ao passar o mouse (nome de artista, álbum...).
+/// Text link that underlines on mouse hover (artist name, album...).
 class TextLink extends StatefulWidget {
   final String text;
   final VoidCallback? onTap;
@@ -205,8 +205,8 @@ class _TextLinkState extends State<TextLink> {
   }
 }
 
-/// "Artista 1, Artista 2" com cada nome clicável.
-/// Nuvem: está no catálogo, ainda não na biblioteca (toca pelo painel e baixa junto).
+/// "Artist 1, Artist 2" with each name clickable.
+/// Cloud: it is in the catalog, not yet in the library (plays through the panel and downloads along).
 class CloudBadge extends StatelessWidget {
   final double size;
   const CloudBadge({super.key, this.size = 14});
@@ -257,7 +257,7 @@ class ArtistLinks extends StatelessWidget {
   }
 }
 
-/// Título de seção com "Mostrar tudo".
+/// Section title with "Show all".
 class SectionHeader extends StatelessWidget {
   final String title;
   final String? overline;
@@ -323,7 +323,7 @@ class Chip2 extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  /// Espaço à direita (use 0 dentro de um Wrap que já tem spacing).
+  /// Space on the right (use 0 inside a Wrap that already has spacing).
   final double gap;
   const Chip2(
     this.label, {
@@ -364,7 +364,7 @@ class Chip2 extends StatelessWidget {
   }
 }
 
-/// Fileira de pills com respiro embaixo (para o conteúdo não encostar nelas).
+/// Row of pills with breathing room below (so the content does not touch them).
 class ChipBar extends StatelessWidget {
   final List<Widget> children;
   final EdgeInsets padding;
@@ -427,7 +427,7 @@ class ErrorBox extends ConsumerWidget {
               child: Text(context.l10n.commonRetry),
             ),
           ],
-          // Sem internet: o que está no aparelho continua tocando.
+          // No internet: what is on the device keeps playing.
           if (ref.watch(
             offlineProvider.select((o) => o.tracks.isNotEmpty),
           )) ...[
@@ -444,7 +444,7 @@ class ErrorBox extends ConsumerWidget {
   );
 }
 
-/// Ícone pequeno sem fundo, que acende ao passar o mouse.
+/// Small icon with no background, which lights up on mouse hover.
 class IconBtn extends StatelessWidget {
   final IconData icon;
   final String tooltip;
@@ -482,7 +482,7 @@ class IconBtn extends StatelessWidget {
   }
 }
 
-/// Bolinha com a inicial do usuário (abre Configurações), como no Spotify do celular.
+/// Bubble with the user initial (opens Settings), as in the Spotify phone app.
 class UserAvatar extends ConsumerWidget {
   final double size;
   const UserAvatar({super.key, this.size = 32});
