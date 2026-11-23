@@ -568,5 +568,14 @@
   "widgetTracksDateAdded": "Fecha en que se añadió",
   "widgetTracksAddedBy": "por {name}",
   "widgetTracksMoreOptions": "Más opciones",
-  "widgetTracksAddedDate": "{date}"
+  "widgetTracksAddedDate": "{date}",
+  "castTooltip": "Transmitir",
+  "castTitle": "Reproducir en",
+  "castThisDevice": "Este dispositivo",
+  "castSearching": "Buscando dispositivos en la red…",
+  "castNone": "No se encontró ningún Chromecast. Tiene que estar en la misma red Wi-Fi.",
+  "castSearchAgain": "Buscar de nuevo",
+  "castStop": "Dejar de transmitir",
+  "castPlayingOn": "Reproduciendo en {name}",
+  "castFailed": "No se pudo conectar con {name}"
 }

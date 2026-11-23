@@ -3512,6 +3512,60 @@ abstract class L10n {
   /// In pt, this message translates to:
   /// **'{date}'**
   String widgetTracksAddedDate(DateTime date);
+
+  /// No description provided for @castTooltip.
+  ///
+  /// In pt, this message translates to:
+  /// **'Transmitir'**
+  String get castTooltip;
+
+  /// No description provided for @castTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tocar em'**
+  String get castTitle;
+
+  /// No description provided for @castThisDevice.
+  ///
+  /// In pt, this message translates to:
+  /// **'Este aparelho'**
+  String get castThisDevice;
+
+  /// No description provided for @castSearching.
+  ///
+  /// In pt, this message translates to:
+  /// **'Procurando aparelhos na rede…'**
+  String get castSearching;
+
+  /// No description provided for @castNone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum Chromecast achado. Ele precisa estar no mesmo Wi-Fi.'**
+  String get castNone;
+
+  /// No description provided for @castSearchAgain.
+  ///
+  /// In pt, this message translates to:
+  /// **'Procurar de novo'**
+  String get castSearchAgain;
+
+  /// No description provided for @castStop.
+  ///
+  /// In pt, this message translates to:
+  /// **'Parar de transmitir'**
+  String get castStop;
+
+  /// No description provided for @castPlayingOn.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tocando em {name}'**
+  String castPlayingOn(String name);
+
+  /// No description provided for @castFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não deu para conectar em {name}'**
+  String castFailed(String name);
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

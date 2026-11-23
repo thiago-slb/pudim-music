@@ -94,15 +94,15 @@ final windowsMediaControlsProvider = Provider<void>((ref) {
     controls.buttonPressStream.listen((b) {
       switch (b) {
         case smtc.PressedButton.play:
-          if (!player.audio.playing) player.togglePlay();
+          if (!player.isPlaying) player.togglePlay();
         case smtc.PressedButton.pause:
-          if (player.audio.playing) player.togglePlay();
+          if (player.isPlaying) player.togglePlay();
         case smtc.PressedButton.next:
           player.next();
         case smtc.PressedButton.previous:
           player.previous();
         case smtc.PressedButton.stop:
-          player.audio.pause();
+          player.pause();
         default:
           break;
       }
