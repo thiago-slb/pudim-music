@@ -1185,6 +1185,26 @@ class L10nEn extends L10n {
   String get settingsSignOut => 'Sign out';
 
   @override
+  String get accountsTitle => 'Accounts';
+
+  @override
+  String get accountsAdd => 'Add account or server';
+
+  @override
+  String get accountsSwitch => 'Switch';
+
+  @override
+  String get accountsInUse => 'In use';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$user on $host';
+  }
+
+  @override
+  String get loginBackToAccount => 'Back to current account';
+
+  @override
   String get settingsSectionServer => 'Server';
 
   @override

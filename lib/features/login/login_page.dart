@@ -38,7 +38,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _wan = TextEditingController(text: u.wan);
     _extras = TextEditingController(text: ref.read(extrasUrlProvider));
     // Sem endereço salvo nem embutido no build: o campo do servidor já aparece aberto.
-    _showServer = u.wan.isEmpty && u.lan.isEmpty;
+    _showServer =
+        (u.wan.isEmpty && u.lan.isEmpty) ||
+        ref.read(sessionProvider.notifier).adding;
     _user.text = ref.read(prefsProvider).getString('lastUser') ?? '';
   }
 
@@ -284,6 +286,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               onPressed: _busy ? null : _quickConnect,
                             ),
                           ),
+                          if (ref.read(sessionProvider.notifier).adding) ...[
+                            const SizedBox(height: 8),
+                            TextButton(
+                              onPressed: _busy
+                                  ? null
+                                  : () => ref
+                                        .read(sessionProvider.notifier)
+                                        .cancelAdd(),
+                              child: Text(
+                                context.l10n.loginBackToAccount,
+                                style: const TextStyle(color: Pm.text),
+                              ),
+                            ),
+                          ],
                           const SizedBox(height: 16),
                           TextButton(
                             onPressed: () =>

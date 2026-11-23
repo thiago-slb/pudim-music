@@ -10,6 +10,7 @@ import 'package:window_manager/legacy.dart';
 import '../../l10n/l10n.dart';
 import '../../state/session.dart';
 import '../theme.dart';
+import '../widgets/accounts.dart';
 import '../widgets/downloads_bell.dart';
 import '../widgets/common.dart';
 import '../../features/chat/chat_pages.dart';
@@ -216,23 +217,42 @@ class _Avatar extends ConsumerWidget {
         if (v == 'profile') context.go('/profile');
         if (v == 'settings') context.go('/settings');
         if (v == 'logout') ref.read(sessionProvider.notifier).logout();
+        if (v == 'add') addAccount(ref);
+        if (v.startsWith('acc:')) switchAccount(ref, v.substring(4));
       },
-      itemBuilder: (_) => [
-        PopupMenuItem(
-          enabled: false,
-          child: Text(name, style: const TextStyle(color: Pm.subdued)),
-        ),
-        PopupMenuItem(
-          value: 'profile',
-          child: Text(context.l10n.commonProfile),
-        ),
-        PopupMenuItem(
-          value: 'settings',
-          child: Text(context.l10n.commonSettings),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem(value: 'logout', child: Text(context.l10n.topBarLogout)),
-      ],
+      itemBuilder: (_) {
+        final n = ref.read(sessionProvider.notifier);
+        final others = [
+          for (final a in n.accounts)
+            if (a.id != n.activeId) a,
+        ];
+        return [
+          PopupMenuItem(
+            enabled: false,
+            child: Text(name, style: const TextStyle(color: Pm.subdued)),
+          ),
+          for (final a in others)
+            PopupMenuItem(
+              value: 'acc:${a.id}',
+              child: Text(context.l10n.accountsOn(a.userName, a.host)),
+            ),
+          PopupMenuItem(value: 'add', child: Text(context.l10n.accountsAdd)),
+          const PopupMenuDivider(),
+          PopupMenuItem(
+            value: 'profile',
+            child: Text(context.l10n.commonProfile),
+          ),
+          PopupMenuItem(
+            value: 'settings',
+            child: Text(context.l10n.commonSettings),
+          ),
+          const PopupMenuDivider(),
+          PopupMenuItem(
+            value: 'logout',
+            child: Text(context.l10n.topBarLogout),
+          ),
+        ];
+      },
       child: Container(
         width: 48,
         height: 48,

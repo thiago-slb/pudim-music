@@ -1184,6 +1184,26 @@ class L10nPt extends L10n {
   String get settingsSignOut => 'Sair';
 
   @override
+  String get accountsTitle => 'Contas';
+
+  @override
+  String get accountsAdd => 'Adicionar conta ou servidor';
+
+  @override
+  String get accountsSwitch => 'Trocar';
+
+  @override
+  String get accountsInUse => 'Em uso';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$user em $host';
+  }
+
+  @override
+  String get loginBackToAccount => 'Voltar para a conta atual';
+
+  @override
   String get settingsSectionServer => 'Servidor';
 
   @override

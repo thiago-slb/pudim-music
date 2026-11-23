@@ -1186,6 +1186,26 @@ class L10nEs extends L10n {
   String get settingsSignOut => 'Cerrar sesión';
 
   @override
+  String get accountsTitle => 'Cuentas';
+
+  @override
+  String get accountsAdd => 'Añadir cuenta o servidor';
+
+  @override
+  String get accountsSwitch => 'Cambiar';
+
+  @override
+  String get accountsInUse => 'En uso';
+
+  @override
+  String accountsOn(String user, String host) {
+    return '$user en $host';
+  }
+
+  @override
+  String get loginBackToAccount => 'Volver a la cuenta actual';
+
+  @override
   String get settingsSectionServer => 'Servidor';
 
   @override

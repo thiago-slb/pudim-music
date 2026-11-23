@@ -67,7 +67,7 @@ discovery, which depend on a separate download pipeline. The app is a complete J
 | Chromecast / casting | ❌ | ◐⁸ | ◐⁹ | ✅ | ? | ◐¹⁰ | ◐⁹ | ✅ |
 | Quick Connect login | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ? | ✅ |
 | Instant mix / radio | ✅ | ✅ | ✅ | ✅ | ? | ✅ | ◐¹¹ | ✅ |
-| Multiple servers | ❌ | ? | ✅ | ✅ | ? | ? | ✅ | ❌ |
+| Multiple servers | ✅ | ? | ✅ | ✅ | ? | ? | ✅ | ❌ |
 | Android home-screen widget | ✅ | ? | ❌ | ✅ | ❌ | ? | ❌ | ❌ |
 | Last.fm scrobbling | ◐¹² | ? | ◐¹³ | ? | ◐¹³ | ◐¹³ | ? | ? |
 | Auto mixes / smart playlists | ◐¹² | ◐¹⁴ | ◐¹⁵ | ✅ | ? | ❌ | ? | ? |
