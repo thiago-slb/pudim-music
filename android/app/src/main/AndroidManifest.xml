@@ -37,9 +37,14 @@
         <!-- Android Auto: o app aparece como app de música no carro. -->
         <meta-data android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
+        <!-- Icon Android Auto shows for the app (must be monochrome). -->
+        <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
+            android:resource="@drawable/ic_stat_pudim" />
         <!-- Reprodução em segundo plano e navegação no carro (audio_service). -->
         <service android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher"
+            android:label="Pudim"
             android:exported="true" tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />

@@ -741,8 +741,18 @@ class PlayerController extends Notifier<QueueState> {
   }
 
   /// O player passou sozinho para a faixa pré-carregada (sem pausa entre as duas).
-  Future<void> _autoAdvanced() async {
-    if (_busy) return;
+  Future<void> _autoAdvanced([int tries = 0]) async {
+    if (_busy) {
+      // Busy preparing the next track (e.g. the queue just changed): try again shortly instead of
+      // dropping the advance, which left the queue, the notification and Android Auto on the old track.
+      if (tries < 20) {
+        Timer(
+          const Duration(milliseconds: 250),
+          () => unawaited(_autoAdvanced(tries + 1)),
+        );
+      }
+      return;
+    }
     final i = audio.currentIndex;
     final seq = audio.sequence;
     if (i == null || i >= seq.length) return;
