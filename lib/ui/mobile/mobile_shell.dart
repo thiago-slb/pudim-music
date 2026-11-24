@@ -2,6 +2,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../widgets/scroll_memory.dart';
+
 import '../../l10n/l10n.dart';
 import '../../api/models.dart';
 import '../../audio/player.dart';
@@ -51,7 +53,10 @@ class _MobileShellState extends ConsumerState<MobileShell> {
   }
 
   void _back() {
-    if (_stack.length > 1) context.go(_stack[_stack.length - 2]);
+    if (_stack.length < 2) return;
+    final prev = _stack[_stack.length - 2];
+    ScrollMemory.markBack(prev);
+    context.go(prev);
   }
 
   void _openTab(String tab) {

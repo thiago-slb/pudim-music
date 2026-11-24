@@ -9,6 +9,7 @@ import 'features/artist/artist_page.dart';
 import 'features/home/home_page.dart';
 import 'features/login/login_page.dart';
 import 'features/lyrics/lyrics_page.dart';
+import 'ui/widgets/scroll_memory.dart';
 import 'features/catalog/album_picker_page.dart';
 import 'features/playlist/playlist_page.dart';
 import 'features/recap/recap_page.dart';
@@ -37,8 +38,11 @@ final routerProvider = Provider<GoRouter>((ref) {
   final listenable = _SessionListenable(ref);
   ref.onDispose(listenable.dispose);
 
-  Page<void> page(Widget child, GoRouterState s) =>
-      NoTransitionPage(key: s.pageKey, child: child);
+  // Each page keeps its scroll position for when the user comes back to it.
+  Page<void> page(Widget child, GoRouterState s) => NoTransitionPage(
+    key: s.pageKey,
+    child: ScrollMemory(location: s.uri.toString(), child: child),
+  );
 
   // Phone screens that slide up over everything (Now Playing, lyrics, queue).
   Page<void> sheet(Widget child, GoRouterState s) => CustomTransitionPage(
