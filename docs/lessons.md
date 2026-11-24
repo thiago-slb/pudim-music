@@ -45,6 +45,18 @@ source that is actually playing when it is the queue's next track.
 **Still to verify in a car:** automatic advance, skipping from the phone and from the car buttons,
 and the app icon in the Android Auto launcher (clear Android Auto's cache if an old icon sticks).
 
+## The same track played twice at the end (build 14)
+
+**Cause.** Same root as build 12: the player switched to the preloaded track by itself and the queue
+did not follow (the `autoAdvance` discontinuity was missed, or the retry ran out). Build 12 only
+hid this on the car display. When that track ended, the queue was still one behind, so `next()`
+loaded the track that had just finished.
+
+**Fix.** `catchUpIndex` (in `player.dart`) says where the queue should be given the track the player
+is on. It is used when the player's current index changes (a second signal besides the
+discontinuity), in `_autoAdvanced` when `_preId` is stale, and when a track ends, before choosing the
+next one. Guard: `test/queue_catch_up_test.dart`.
+
 ## Windows data folder moved (build 8)
 
 **Cause.** The Windows data folder is `%APPDATA%\<CompanyName>\<ProductName>` from

@@ -20,6 +20,22 @@ import '../l10n/l10n.dart';
 
 enum RepeatMode { off, all, one }
 
+/// Queue index for the track the player is actually on ([playingId]), when the player moved on
+/// to the preloaded track by itself and the queue did not follow; null when they already agree.
+/// Without this the queue stayed on the old track and, when the new one ended, "next" played the
+/// same track again (seen in Android Auto, build 13).
+int? catchUpIndex(QueueState st, String? playingId) {
+  if (playingId == null || playingId == st.current?.id) return null;
+  if (playingId == st.next?.id) return st.index + 1;
+  if (st.repeat == RepeatMode.all &&
+      st.index == st.queue.length - 1 &&
+      st.queue.length > 1 &&
+      st.queue.first.id == playingId) {
+    return 0;
+  }
+  return null;
+}
+
 /// Jam: on the guest, the buttons become requests to the host (returns true when handled).
 typedef JamRemote = bool Function(
   String action, {
@@ -205,6 +221,13 @@ class PlayerController extends Notifier<QueueState> {
         }
       }),
     );
+    // Second signal for the same thing: the discontinuity event alone was missed at times, leaving
+    // the queue one track behind the player.
+    _subs.add(
+      audio.currentIndexStream.listen((i) {
+        if (i != null && i > 0) unawaited(_autoAdvanced());
+      }),
+    );
     // What comes after the current one changed (queue, shuffle, repeat): swaps the preloaded track.
     listenSelf((prev, next) {
       if (prev?.next?.id != next.next?.id ||
@@ -348,6 +371,20 @@ class PlayerController extends Notifier<QueueState> {
   Future<void> _onTrackEnded() async {
     // Jam: the host is the one who advances to the next track
     if (remote != null) return;
+    // The player had already moved on to the preloaded track without the queue noticing, and that
+    // track is the one that just ended: catch the queue up first so "next" does not replay it.
+    if (_out == null) {
+      final i = audio.currentIndex;
+      final seq = audio.sequence;
+      final tag = i != null && i < seq.length ? seq[i].tag : null;
+      final to = tag is Item ? catchUpIndex(state, tag.id) : null;
+      if (to != null) {
+        state = state.copyWith(
+          index: to,
+          manualCount: to == 0 ? 0 : max(0, state.manualCount - 1),
+        );
+      }
+    }
     if (_stopAfterCurrent) {
       // Sleep timer "end of track": leaves the next one ready, but stopped.
       _stopAfterCurrent = false;
@@ -761,7 +798,9 @@ class PlayerController extends Notifier<QueueState> {
     final seq = audio.sequence;
     if (i == null || i >= seq.length) return;
     final tag = seq[i].tag;
-    if (tag is! Item || tag.id != _preId) return;
+    if (tag is! Item) return;
+    // Normally the preloaded track; also accepts the queue's next one in case _preId went stale.
+    if (tag.id != _preId && catchUpIndex(state, tag.id) == null) return;
     await _advanced(tag.id);
   }
 

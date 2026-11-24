@@ -3,6 +3,11 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 14
+- Fix a track playing twice at the end (seen in Android Auto): when the player moved on to the
+  preloaded track without the queue following, "next" replayed it. The queue now catches up from the
+  player's current index stream and again when a track ends.
+
 ## Build 13
 - Updates: a dialog offers the update as soon as it is downloaded; the app also checks when it comes
   back to the foreground (at most every 10 min) and every hour. A downloaded but never installed build
