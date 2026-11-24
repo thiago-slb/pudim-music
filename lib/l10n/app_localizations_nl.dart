@@ -2225,22 +2225,23 @@ class L10nNl extends L10n {
 
   @override
   String get themeNightDesc =>
-      'Standaard. Geïnspireerd op de stijl van Spotify: zwart en groen.';
+      'Donker, afgeronde kaarten en zwevende minispeler.';
 
   @override
   String get themeRedDesc =>
-      'Geïnspireerd op YouTube Music: bijna zwart en rood.';
+      'Puur zwart met rood, grote vierkante hoezen, minispeler aan de balk.';
 
   @override
-  String get themeWaveDesc => 'Geïnspireerd op Deezer: donkerviolet en paars.';
+  String get themeWaveDesc =>
+      'Paars met verlopen, krachtige letters en minispeler als pil.';
 
   @override
   String get themeRetroDesc =>
-      'Geïnspireerd op Winamp: grijze panelen uit de jaren 2000, groen display en niveaubalken.';
+      'Grijs venster met reliëf, groen display met lopende titel en tekstlijsten.';
 
   @override
   String get themeClassicDesc =>
-      'Geïnspireerd op Windows Media Player: zwart en blauw met glans.';
+      'Blauw en zwart glas met glans, bolknop, visualizer en tabellijsten.';
 
   @override
   String get settingsCheckUpdates => 'Controleren op updates';

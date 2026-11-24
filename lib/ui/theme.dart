@@ -1,7 +1,25 @@
 import 'package:material_ui/material_ui.dart';
 
-/// One look for the whole app. Only colors, corners, type and the player bar's style: inspired by
-/// other players' palettes, with no logos, icons or fonts of theirs.
+/// Which layout family a theme uses: mini player, navigation, Now Playing, lists and buttons.
+enum UiStyle {
+  /// Dark, rounded cards, floating mini player, bottom bar.
+  night,
+
+  /// Pure black, big square covers, flat full-width mini player with a top progress line.
+  ruby,
+
+  /// Gradients, bold type, pill mini player, highlighted bottom tabs.
+  wave,
+
+  /// Bevelled gray window, green LCD with scrolling title, small transport keys, text playlist.
+  retro,
+
+  /// Glossy glass, orb play button, visualizer, table-like lists.
+  glass,
+}
+
+/// One look for the whole app: colors, corners, type and layout family. Inspired by the general
+/// style of other players only: no logos, icons, artwork or fonts of theirs, no brand names.
 class AppTheme {
   const AppTheme({
     required this.id,
@@ -17,6 +35,9 @@ class AppTheme {
     required this.accent,
     required this.onAccent,
     required this.sliderInactive,
+    required this.style,
+    this.coverRadius = 6,
+    this.hero,
     this.radius = 8,
     this.fontFamily = 'Segoe UI',
     this.fontFamilyFallback,
@@ -34,7 +55,15 @@ class AppTheme {
   final Color text, subdued, muted;
   final Color accent, onAccent, sliderInactive;
 
-  /// Corners of cards, covers and menus.
+  final UiStyle style;
+
+  /// Corners of covers in cards and Now Playing.
+  final double coverRadius;
+
+  /// Background gradient for headers and Now Playing (null = from the cover color).
+  final List<Color>? hero;
+
+  /// Corners of cards and menus.
   final double radius;
   final String fontFamily;
   final List<String>? fontFamilyFallback;
@@ -53,7 +82,9 @@ const appThemes = <AppTheme>[
   // Default: dark gray and green (streaming-app style).
   AppTheme(
     id: 'night',
-    name: 'Verde Noite',
+    name: 'Noite',
+    style: UiStyle.night,
+    coverRadius: 6,
     black: Color(0xFF000000),
     base: Color(0xFF121212),
     elevated: Color(0xFF1F1F1F),
@@ -69,9 +100,11 @@ const appThemes = <AppTheme>[
   // Near-black with red, rounder (video-music app style).
   AppTheme(
     id: 'red',
-    name: 'Vermelho',
-    black: Color(0xFF030303),
-    base: Color(0xFF0F0F0F),
+    name: 'Rubi',
+    style: UiStyle.ruby,
+    coverRadius: 2,
+    black: Color(0xFF000000),
+    base: Color(0xFF030303),
     elevated: Color(0xFF1D1D1D),
     highlight: Color(0xFF272727),
     press: Color(0xFF3A3A3A),
@@ -86,7 +119,10 @@ const appThemes = <AppTheme>[
   // Deep violet surfaces with a bright purple accent.
   AppTheme(
     id: 'wave',
-    name: 'Roxo Onda',
+    name: 'Onda',
+    style: UiStyle.wave,
+    coverRadius: 18,
+    hero: [Color(0xFF6A1FD1), Color(0xFF2A0F57), Color(0xFF131119)],
     black: Color(0xFF0B0A10),
     base: Color(0xFF131119),
     elevated: Color(0xFF1E1B27),
@@ -103,7 +139,9 @@ const appThemes = <AppTheme>[
   // 2000s desktop player: gray bevelled panels, green LCD text, level bars.
   AppTheme(
     id: 'retro',
-    name: 'Retrô Amp',
+    name: 'Retrô',
+    style: UiStyle.retro,
+    coverRadius: 0,
     black: Color(0xFF1B1B22),
     base: Color(0xFF26262E),
     elevated: Color(0xFF33333D),
@@ -133,7 +171,10 @@ const appThemes = <AppTheme>[
   // Mid-2000s media player: black and blue with a glossy glow.
   AppTheme(
     id: 'classic',
-    name: 'Clássico Azul',
+    name: 'Vidro',
+    style: UiStyle.glass,
+    coverRadius: 10,
+    hero: [Color(0xFF123A66), Color(0xFF07182D), Color(0xFF02060D)],
     black: Color(0xFF02060D),
     base: Color(0xFF07111F),
     elevated: Color(0xFF0E1E33),

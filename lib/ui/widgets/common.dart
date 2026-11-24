@@ -8,6 +8,7 @@ import '../../state/session.dart';
 import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'offline_button.dart';
+import 'theme_bits.dart';
 import 'disk_image.dart';
 import 'user_photo.dart';
 
@@ -107,7 +108,7 @@ class QualityChip extends StatelessWidget {
   }
 }
 
-/// Round green play/pause button.
+/// The theme's play/pause button (round accent, bevelled key or glossy orb).
 class GreenPlayButton extends StatelessWidget {
   final double size;
   final bool playing;
@@ -120,28 +121,9 @@ class GreenPlayButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return HoverScale(
-      child: Material(
-        color: Pm.accent,
-        shape: const CircleBorder(),
-        elevation: 4,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onPressed,
-          child: SizedBox(
-            width: size,
-            height: size,
-            child: Icon(
-              playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
-              color: Colors.black,
-              size: size * 0.55,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => HoverScale(
+    child: ThemedPlayButton(size: size, playing: playing, onPressed: onPressed),
+  );
 }
 
 class HoverScale extends StatefulWidget {
@@ -288,10 +270,23 @@ class SectionHeader extends StatelessWidget {
                     style: TextStyle(color: Pm.subdued, fontSize: 13),
                   ),
                 Text(
-                  title,
+                  // Retro: uppercase labels; wave: heavier, tighter type.
+                  Pm.current.style == UiStyle.retro
+                      ? title.toUpperCase()
+                      : title,
                   style: TextStyle(
-                    fontSize: MediaQuery.sizeOf(context).width < 700 ? 20 : 24,
-                    fontWeight: FontWeight.w800,
+                    fontSize:
+                        (MediaQuery.sizeOf(context).width < 700 ? 20 : 24) +
+                        (Pm.current.style == UiStyle.wave ? 4 : 0),
+                    fontWeight: Pm.current.style == UiStyle.wave
+                        ? FontWeight.w900
+                        : FontWeight.w800,
+                    letterSpacing: switch (Pm.current.style) {
+                      UiStyle.wave => -0.6,
+                      UiStyle.retro => 1.5,
+                      _ => null,
+                    },
+                    color: Pm.current.style == UiStyle.retro ? Pm.accent : null,
                   ),
                 ),
                 if (subtitle != null)

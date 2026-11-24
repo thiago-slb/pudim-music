@@ -2187,19 +2187,19 @@ class L10nKo extends L10n {
   String get settingsThemeSubtitle => '색상이 바로 바뀝니다.';
 
   @override
-  String get themeNightDesc => '기본값. Spotify 스타일: 검정과 초록.';
+  String get themeNightDesc => '어두운 화면, 둥근 카드, 떠 있는 미니 플레이어.';
 
   @override
-  String get themeRedDesc => 'YouTube Music 스타일: 거의 검정과 빨강.';
+  String get themeRedDesc => '순수한 검정과 빨강, 큰 정사각형 커버, 바에 붙은 미니 플레이어.';
 
   @override
-  String get themeWaveDesc => 'Deezer 스타일: 짙은 바이올렛과 보라.';
+  String get themeWaveDesc => '보라색 그라데이션, 굵은 글꼴, 알약 모양 미니 플레이어.';
 
   @override
-  String get themeRetroDesc => 'Winamp 스타일: 2000년대 회색 패널, 초록 디스플레이, 레벨 막대.';
+  String get themeRetroDesc => '입체 회색 창, 제목이 흐르는 초록 디스플레이, 텍스트 목록.';
 
   @override
-  String get themeClassicDesc => 'Windows Media Player 스타일: 광택 있는 검정과 파랑.';
+  String get themeClassicDesc => '광택 있는 파랑·검정 유리, 구슬 버튼, 비주얼라이저, 표 형식 목록.';
 
   @override
   String get settingsCheckUpdates => '업데이트 확인';

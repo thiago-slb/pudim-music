@@ -3648,31 +3648,31 @@ abstract class L10n {
   /// No description provided for @themeNightDesc.
   ///
   /// In pt, this message translates to:
-  /// **'Padrão. Inspirado no visual do Spotify: preto e verde.'**
+  /// **'Escuro, cards arredondados e mini player flutuante.'**
   String get themeNightDesc;
 
   /// No description provided for @themeRedDesc.
   ///
   /// In pt, this message translates to:
-  /// **'Inspirado no YouTube Music: quase preto e vermelho.'**
+  /// **'Preto puro com vermelho, capas grandes e quadradas, mini player colado na barra.'**
   String get themeRedDesc;
 
   /// No description provided for @themeWaveDesc.
   ///
   /// In pt, this message translates to:
-  /// **'Inspirado no Deezer: violeta escuro e roxo.'**
+  /// **'Roxo com gradientes, letras fortes e mini player em pílula.'**
   String get themeWaveDesc;
 
   /// No description provided for @themeRetroDesc.
   ///
   /// In pt, this message translates to:
-  /// **'Inspirado no Winamp: painéis cinza dos anos 2000, display verde e barras de nível.'**
+  /// **'Janela cinza em relevo, display verde com título rolando e listas em texto.'**
   String get themeRetroDesc;
 
   /// No description provided for @themeClassicDesc.
   ///
   /// In pt, this message translates to:
-  /// **'Inspirado no Windows Media Player: preto e azul com brilho.'**
+  /// **'Azul e preto com brilho de vidro, botão em esfera, visualizador e listas em tabela.'**
   String get themeClassicDesc;
 
   /// No description provided for @settingsCheckUpdates.

@@ -11,6 +11,8 @@ import '../theme.dart';
 import '../widgets/actions.dart';
 import '../widgets/common.dart';
 import 'mobile_shell.dart';
+import 'retro_playing.dart';
+import '../widgets/theme_bits.dart';
 import '../../features/jam/jam_sheet.dart';
 import '../../features/playlist/playlist_edit.dart';
 import '../widgets/sleep_speed.dart';
@@ -31,8 +33,32 @@ class NowPlayingPage extends ConsumerWidget {
       });
       return Scaffold(backgroundColor: Pm.base);
     }
+    final style = Pm.current.style;
+    if (style == UiStyle.retro) return const RetroNowPlaying();
     final color = currentCoverColor(ref, cur);
     final c = ref.read(playerProvider.notifier);
+    final hero = Pm.current.hero;
+    // Background: cover color (night), pure black (ruby) or the theme gradient (wave, glass).
+    final bg = style == UiStyle.ruby
+        ? BoxDecoration(color: Pm.black)
+        : hero != null
+        ? BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: hero,
+            ),
+          )
+        : BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [darken(color, 0.05), darken(color, 0.45), Pm.base],
+              stops: const [0, 0.55, 0.9],
+            ),
+          );
+    final wave = style == UiStyle.wave;
+    final glassy = style == UiStyle.glass;
     return Scaffold(
       backgroundColor: Pm.base,
       body: GestureDetector(
@@ -41,14 +67,7 @@ class NowPlayingPage extends ConsumerWidget {
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 400),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [darken(color, 0.05), darken(color, 0.45), Pm.base],
-              stops: const [0, 0.55, 0.9],
-            ),
-          ),
+          decoration: bg,
           child: SafeArea(
             child: LayoutBuilder(
               builder: (context, box) {
@@ -70,12 +89,38 @@ class NowPlayingPage extends ConsumerWidget {
                               child: AspectRatio(
                                 aspectRatio: 1,
                                 child: LayoutBuilder(
-                                  builder: (_, b) =>
-                                      Cover(cur, size: b.maxWidth, radius: 8),
+                                  builder: (_, b) => Container(
+                                    decoration: wave || glassy
+                                        ? BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              Pm.current.coverRadius,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color:
+                                                    (glassy
+                                                            ? Pm.accent
+                                                            : Colors.black)
+                                                        .withValues(alpha: 0.5),
+                                                blurRadius: 30,
+                                              ),
+                                            ],
+                                          )
+                                        : null,
+                                    child: Cover(
+                                      cur,
+                                      size: b.maxWidth,
+                                      radius: Pm.current.coverRadius,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
+                          if (glassy) ...[
+                            const SizedBox(height: 12),
+                            Visualizer(playing: q.playing, height: 56),
+                          ],
                           const SizedBox(height: 32),
                           Row(
                             children: [
@@ -85,11 +130,15 @@ class NowPlayingPage extends ConsumerWidget {
                                   children: [
                                     Text(
                                       cur.name,
-                                      maxLines: 1,
+                                      maxLines: wave ? 2 : 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w800,
+                                      style: TextStyle(
+                                        fontSize: wave ? 28 : 22,
+                                        height: wave ? 1.1 : null,
+                                        fontWeight: wave
+                                            ? FontWeight.w900
+                                            : FontWeight.w800,
+                                        letterSpacing: wave ? -0.5 : null,
                                       ),
                                     ),
                                     const SizedBox(height: 2),
@@ -140,32 +189,12 @@ class NowPlayingPage extends ConsumerWidget {
                                 ),
                                 onPressed: c.previous,
                               ),
-                              Material(
-                                color: Pm.text,
-                                shape: const CircleBorder(),
-                                child: InkWell(
-                                  customBorder: const CircleBorder(),
-                                  onTap: c.togglePlay,
-                                  child: SizedBox(
-                                    width: 68,
-                                    height: 68,
-                                    child: q.buffering
-                                        ? const Padding(
-                                            padding: EdgeInsets.all(22),
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 3,
-                                              color: Colors.black,
-                                            ),
-                                          )
-                                        : Icon(
-                                            q.playing
-                                                ? Icons.pause_rounded
-                                                : Icons.play_arrow_rounded,
-                                            color: Colors.black,
-                                            size: 42,
-                                          ),
-                                  ),
-                                ),
+                              ThemedPlayButton(
+                                size: 68,
+                                light: !wave,
+                                playing: q.playing,
+                                busy: q.buffering,
+                                onPressed: c.togglePlay,
                               ),
                               IconButton(
                                 iconSize: 44,
@@ -312,8 +341,14 @@ class _SeekState extends ConsumerState<_Seek> {
     return Column(
       children: [
         SliderTheme(
-          data: SliderTheme.of(context)
-              .copyWith(trackHeight: 3, inactiveTrackColor: Colors.white24),
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: Pm.current.style == UiStyle.ruby ? 2 : 3,
+            inactiveTrackColor: Colors.white24,
+            activeTrackColor: Pm.current.style == UiStyle.night
+                ? Pm.text
+                : Pm.accent,
+            thumbColor: Pm.current.style == UiStyle.night ? Pm.text : Pm.accent,
+          ),
           child: SizedBox(
             height: 24,
             child: Slider(

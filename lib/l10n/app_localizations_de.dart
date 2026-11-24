@@ -2227,23 +2227,23 @@ class L10nDe extends L10n {
 
   @override
   String get themeNightDesc =>
-      'Standard. Inspiriert vom Spotify-Look: Schwarz und Grün.';
+      'Dunkel, abgerundete Karten und schwebender Mini-Player.';
 
   @override
   String get themeRedDesc =>
-      'Inspiriert von YouTube Music: fast Schwarz und Rot.';
+      'Reines Schwarz mit Rot, große quadratische Cover, Mini-Player an der Leiste.';
 
   @override
   String get themeWaveDesc =>
-      'Inspiriert von Deezer: dunkles Violett und Lila.';
+      'Lila Verläufe, kräftige Schrift und Mini-Player als Pille.';
 
   @override
   String get themeRetroDesc =>
-      'Inspiriert von Winamp: graue 2000er-Panels, grünes Display und Pegelbalken.';
+      'Graues Fenster mit 3D-Rand, grünes Display mit Lauftext und Textlisten.';
 
   @override
   String get themeClassicDesc =>
-      'Inspiriert vom Windows Media Player: Schwarz und Blau mit Glanz.';
+      'Blau-schwarzes Glas mit Glanz, Kugel-Taste, Visualizer und Tabellenlisten.';
 
   @override
   String get settingsCheckUpdates => 'Nach Updates suchen';

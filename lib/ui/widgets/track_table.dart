@@ -343,7 +343,127 @@ class _TrackRowState extends ConsumerState<TrackRow> {
   }
 
   /// Phone: cover, title/artist and "⋯"; tap plays, long press opens the menu.
+  /// Retro: one line of monospace text per track, like a text playlist.
+  /// Glass: table rows with columns (number, title, artist, time) and zebra stripes.
+  Widget _dense(Item t, bool isCurrent, bool retro) {
+    final n = widget.number;
+    final color = isCurrent ? Pm.accent : (retro ? Pm.text : Pm.text);
+    void menu() => showItemMenu(
+      context,
+      ref,
+      t,
+      Offset.zero,
+      queueIndex: widget.queueIndex,
+      playlistId: widget.playlistId,
+    );
+    final time = t.duration > Duration.zero ? formatDuration(t.duration) : '';
+    if (retro) {
+      return InkWell(
+        onTap: isCurrent
+            ? () => ref.read(playerProvider.notifier).togglePlay()
+            : widget.onPlay,
+        onLongPress: menu,
+        child: Container(
+          height: 30,
+          color: isCurrent ? Pm.accent.withValues(alpha: 0.15) : null,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '${n.toString().padLeft(2, '0')}. ${t.artistLine} - ${t.name}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: color, fontSize: 13),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(time, style: TextStyle(color: color, fontSize: 13)),
+            ],
+          ),
+        ),
+      );
+    }
+    return InkWell(
+      onTap: isCurrent
+          ? () => ref.read(playerProvider.notifier).togglePlay()
+          : widget.onPlay,
+      onLongPress: menu,
+      child: Container(
+        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          color: n.isOdd
+              ? Colors.transparent
+              : Pm.elevated.withValues(alpha: 0.6),
+          border: Border(
+            bottom: BorderSide(color: Pm.highlight.withValues(alpha: 0.5)),
+          ),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 26,
+              child: Text(
+                '$n',
+                style: TextStyle(
+                  color: isCurrent ? Pm.accent : Pm.muted,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Text(
+                t.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  shadows: isCurrent
+                      ? [Shadow(color: Pm.accent, blurRadius: 8)]
+                      : null,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 4,
+              child: Text(
+                t.artistLine,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Pm.subdued, fontSize: 12.5),
+              ),
+            ),
+            SizedBox(
+              width: 44,
+              child: Text(
+                time,
+                textAlign: TextAlign.right,
+                style: TextStyle(color: Pm.subdued, fontSize: 12.5),
+              ),
+            ),
+            GestureDetector(
+              onTap: menu,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 6),
+                child: Icon(Icons.more_vert, color: Pm.muted, size: 18),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _compact(Item t, bool isCurrent, bool playing, bool rec) {
+    final style = Pm.current.style;
+    if (style == UiStyle.retro || style == UiStyle.glass) {
+      return _dense(t, isCurrent, style == UiStyle.retro);
+    }
     return InkWell(
       onTap: isCurrent
           ? () => ref.read(playerProvider.notifier).togglePlay()
@@ -361,7 +481,11 @@ class _TrackRowState extends ConsumerState<TrackRow> {
         child: Row(
           children: [
             if (widget.showCover) ...[
-              Cover(t, size: 48),
+              Cover(
+                t,
+                size: Pm.current.style == UiStyle.ruby ? 56 : 48,
+                radius: Pm.current.coverRadius,
+              ),
               const SizedBox(width: 12),
             ] else ...[
               SizedBox(

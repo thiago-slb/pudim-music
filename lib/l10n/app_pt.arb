@@ -1507,18 +1507,39 @@
   "settingsSectionAppearance": "Aparência",
   "settingsTheme": "Tema",
   "settingsThemeSubtitle": "Muda as cores na hora.",
-  "themeNightDesc": "Padrão. Inspirado no visual do Spotify: preto e verde.",
-  "themeRedDesc": "Inspirado no YouTube Music: quase preto e vermelho.",
-  "themeWaveDesc": "Inspirado no Deezer: violeta escuro e roxo.",
-  "themeRetroDesc": "Inspirado no Winamp: painéis cinza dos anos 2000, display verde e barras de nível.",
-  "themeClassicDesc": "Inspirado no Windows Media Player: preto e azul com brilho.",
+  "themeNightDesc": "Escuro, cards arredondados e mini player flutuante.",
+  "themeRedDesc": "Preto puro com vermelho, capas grandes e quadradas, mini player colado na barra.",
+  "themeWaveDesc": "Roxo com gradientes, letras fortes e mini player em pílula.",
+  "themeRetroDesc": "Janela cinza em relevo, display verde com título rolando e listas em texto.",
+  "themeClassicDesc": "Azul e preto com brilho de vidro, botão em esfera, visualizador e listas em tabela.",
   "settingsCheckUpdates": "Verificar atualizações",
   "updateChecking": "Verificando…",
   "updateUpToDate": "Você está na versão mais nova (build {build}).",
-  "@updateUpToDate": {"placeholders": {"build": {"type": "int"}}},
+  "@updateUpToDate": {
+    "placeholders": {
+      "build": {
+        "type": "int"
+      }
+    }
+  },
   "updateDownloading": "Baixando a build {build}… {percent}%",
-  "@updateDownloading": {"placeholders": {"build": {"type": "int"}, "percent": {"type": "int"}}},
+  "@updateDownloading": {
+    "placeholders": {
+      "build": {
+        "type": "int"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "updateFailed": "Não deu para verificar: {error}",
-  "@updateFailed": {"placeholders": {"error": {"type": "String"}}},
+  "@updateFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "updateUnavailable": "Sem servidor de extras configurado."
 }

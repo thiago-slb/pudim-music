@@ -2160,19 +2160,19 @@ class L10nZh extends L10n {
   String get settingsThemeSubtitle => '立即更改颜色。';
 
   @override
-  String get themeNightDesc => '默认。Spotify 风格：黑色和绿色。';
+  String get themeNightDesc => '深色、圆角卡片和悬浮迷你播放器。';
 
   @override
-  String get themeRedDesc => 'YouTube Music 风格：近黑色和红色。';
+  String get themeRedDesc => '纯黑配红色，大方形封面，迷你播放器贴着导航栏。';
 
   @override
-  String get themeWaveDesc => 'Deezer 风格：深紫罗兰和紫色。';
+  String get themeWaveDesc => '紫色渐变、粗体字和胶囊形迷你播放器。';
 
   @override
-  String get themeRetroDesc => 'Winamp 风格：2000 年代的灰色面板、绿色显示屏和电平条。';
+  String get themeRetroDesc => '立体灰色窗口、滚动标题的绿色显示屏和文本列表。';
 
   @override
-  String get themeClassicDesc => 'Windows Media Player 风格：带光泽的黑色和蓝色。';
+  String get themeClassicDesc => '光泽蓝黑玻璃、球形按钮、可视化效果和表格列表。';
 
   @override
   String get settingsCheckUpdates => '检查更新';
