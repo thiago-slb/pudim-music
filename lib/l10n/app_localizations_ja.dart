@@ -683,6 +683,15 @@ class L10nJa extends L10n {
   String get lyricsNoneHint => 'ファイルと同じ場所に.lrcまたは.txtがあると、ここに表示されます。';
 
   @override
+  String get lyricsFind => '歌詞を探す';
+
+  @override
+  String get lyricsFinding => '歌詞を検索中…';
+
+  @override
+  String get lyricsNotFound => 'この曲の歌詞が見つかりませんでした';
+
+  @override
   String get lyricsSynced => '.lrcファイルの同期歌詞';
 
   @override

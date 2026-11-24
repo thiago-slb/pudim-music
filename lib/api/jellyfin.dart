@@ -473,6 +473,37 @@ class Jellyfin {
     }
   }
 
+  /// Asks the server's lyrics providers for this track and saves the first match next to the
+  /// file. Null when the server has no provider, finds nothing or does not allow it.
+  Future<Lyrics?> downloadServerLyrics(String trackId) async {
+    try {
+      final r = await _dio.get('/Audio/$trackId/RemoteSearch/Lyrics');
+      final found = (r.data as List?)?.whereType<Map<String, dynamic>>() ?? [];
+      if (found.isEmpty) return null;
+      final id = found.first['Id'];
+      final s = await _dio.post('/Audio/$trackId/RemoteSearch/Lyrics/$id');
+      final l = Lyrics.fromJson(s.data as Map<String, dynamic>);
+      return l.isEmpty ? null : l;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Saves an .lrc text as the track's lyrics on the server (needs the lyrics permission).
+  Future<bool> uploadLyrics(String trackId, String lrc) async {
+    try {
+      await _dio.post(
+        '/Audio/$trackId/Lyrics',
+        queryParameters: {'fileName': '$trackId.lrc'},
+        data: lrc,
+        options: Options(contentType: 'text/plain'),
+      );
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   // ---------- favorites ----------
 
   Future<void> setFavorite(String itemId, bool fav) async {

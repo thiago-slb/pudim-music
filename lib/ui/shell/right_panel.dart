@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/l10n.dart';
 import '../../api/models.dart';
 import '../../audio/player.dart';
+import '../../features/lyrics/find_lyrics_button.dart';
 import '../../features/lyrics/lyrics_data.dart';
 import '../../state/session.dart';
 import '../../state/ui.dart';
@@ -157,7 +158,14 @@ class LyricsPreview extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final lyr = ref.watch(lyricsProvider(track.id)).value;
-    if (lyr == null || lyr.isEmpty) return const SizedBox.shrink();
+    if (lyr == null) return const SizedBox.shrink();
+    if (lyr.isEmpty) {
+      // No lyrics yet: offer to look them up, in the card's place.
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: FindLyricsButton(track, key: ValueKey(track.id)),
+      );
+    }
     final api = ref.watch(apiProvider);
     final url = api.imageUrl(track.imageItemId, size: 64);
     final color = url == null

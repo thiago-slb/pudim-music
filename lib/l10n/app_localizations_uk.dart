@@ -699,6 +699,15 @@ class L10nUk extends L10n {
       'Якщо поруч із файлом є .lrc або .txt, текст з’явиться тут.';
 
   @override
+  String get lyricsFind => 'Знайти текст';
+
+  @override
+  String get lyricsFinding => 'Шукаємо текст…';
+
+  @override
+  String get lyricsNotFound => 'Текст цієї пісні не знайдено';
+
+  @override
   String get lyricsSynced => 'Синхронізований текст із файлу .lrc';
 
   @override

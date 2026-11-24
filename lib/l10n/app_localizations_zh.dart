@@ -674,6 +674,15 @@ class L10nZh extends L10n {
   String get lyricsNoneHint => '文件旁边有 .lrc 或 .txt 文件时，歌词会显示在这里。';
 
   @override
+  String get lyricsFind => '查找歌词';
+
+  @override
+  String get lyricsFinding => '正在查找歌词…';
+
+  @override
+  String get lyricsNotFound => '找不到这首歌的歌词';
+
+  @override
   String get lyricsSynced => '来自 .lrc 文件的同步歌词';
 
   @override

@@ -321,12 +321,16 @@ class Chip2 extends StatelessWidget {
 
   /// Space on the right; 0 inside a [PillBar], which spaces its pills itself.
   final double gap;
+
+  /// Optional icon before the label (action pills such as "Find lyrics").
+  final Widget? icon;
   const Chip2(
     this.label, {
     super.key,
     required this.selected,
     required this.onTap,
     this.gap = 0,
+    this.icon,
   });
 
   @override
@@ -385,18 +389,33 @@ class Chip2 extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 32),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: deco,
-            child: Text(
-              retro ? label.toUpperCase() : label,
-              maxLines: 1,
-              style: TextStyle(
-                color: fg,
-                fontSize: retro ? 12.5 : 14,
-                fontWeight: t.style == UiStyle.wave && selected
-                    ? FontWeight.w800
-                    : FontWeight.w500,
-                letterSpacing: retro ? 1 : null,
-                height: 1.2,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  IconTheme(
+                    data: IconThemeData(color: fg, size: 18),
+                    child: icon!,
+                  ),
+                  const SizedBox(width: 6),
+                ],
+                Flexible(
+                  child: Text(
+                    retro ? label.toUpperCase() : label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: fg,
+                      fontSize: retro ? 12.5 : 14,
+                      fontWeight: t.style == UiStyle.wave && selected
+                          ? FontWeight.w800
+                          : FontWeight.w500,
+                      letterSpacing: retro ? 1 : null,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
