@@ -5,6 +5,8 @@ import 'dart:math';
 
 import 'package:audio_service/audio_service.dart' show MediaItem;
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -143,6 +145,15 @@ class QueueState {
   );
 }
 
+/// Whether a player state read from the panel should replace this device's paused queue: only
+/// when it is newer than the last one this device sent or took, and came from another device.
+bool takeOverCloudState({
+  required int updated,
+  required int seen,
+  required Object? device,
+  required String me,
+}) => updated > seen && device != me;
+
 class PlayerController extends Notifier<QueueState> {
   final AudioPlayer audio = AudioPlayer();
   final _subs = <StreamSubscription>[];
@@ -155,6 +166,16 @@ class PlayerController extends Notifier<QueueState> {
   Duration _resumeAt =
       Duration.zero; // position saved the last time the app closed
   Timer? _saveTimer;
+
+  // Resume on another device: the queue goes to the panel and another device picks it up paused.
+  int _cloudSeen =
+      0; // panel stamp of the state this device already sent or took
+  String? _pushedId; // track of the last state sent
+  DateTime _pushedAt = DateTime(0);
+  DateTime _pulledAt = DateTime(0);
+  bool _pulling = false;
+  int _loadEpoch =
+      0; // bumps on every load: a pull that started before it gives up
 
   /// Jam (guest): next/previous/play/queue become requests to the host.
   JamRemote? remote;
@@ -249,14 +270,30 @@ class PlayerController extends Notifier<QueueState> {
       if (isPlaying) {
         _save();
         _scrobbleTick();
+        // The panel gets it on every track change and every ~15 s while playing.
+        if (state.current?.id != _pushedId ||
+            DateTime.now().difference(_pushedAt) >=
+                const Duration(seconds: 15)) {
+          unawaited(_pushCloud());
+        }
       }
     });
+    _cloudSeen = prefs.getInt(_seenKey) ?? 0;
+    // Opening the app (or Android Auto starting it) and coming back to it: picks up what another
+    // device was playing, if nothing is playing here.
+    Future.microtask(() {
+      if (ref.mounted) unawaited(syncFromCloud());
+    });
+    final life = AppLifecycleListener(
+      onResume: () => unawaited(syncFromCloud()),
+    );
     ref.onDispose(() {
       for (final s in _subs) {
         s.cancel();
       }
       _progressTimer?.cancel();
       _saveTimer?.cancel();
+      life.dispose();
       _syncSoon?.cancel();
       _volume.close();
       _remotePos.close();
@@ -269,33 +306,128 @@ class PlayerController extends Notifier<QueueState> {
 
   static const _saveKey = 'lastQueue';
 
+  static const _seenKey = 'cloudStateSeen';
+
   /// Queue, current track, position, shuffle and repeat: the app opens paused at the same place.
   void _save() {
-    final st = state;
     final prefs = ref.read(prefsProvider);
-    if (st.current == null) {
+    final snap = _snapshot();
+    if (snap == null) {
       prefs.remove(_saveKey);
-      return;
+    } else {
+      prefs.setString(_saveKey, jsonEncode(snap));
     }
+  }
+
+  /// Random id of this install, so a device does not take back its own state.
+  String get _deviceId {
+    final prefs = ref.read(prefsProvider);
+    var id = prefs.getString('deviceId');
+    if (id == null) {
+      final r = Random.secure();
+      id = [
+        for (var i = 0; i < 16; i++)
+          r.nextInt(256).toRadixString(16).padLeft(2, '0'),
+      ].join();
+      prefs.setString('deviceId', id);
+    }
+    return id;
+  }
+
+  /// What is saved locally and sent to the panel (null = nothing in the queue).
+  Map<String, dynamic>? _snapshot() {
+    final st = state;
+    if (st.current == null) return null;
     // Saves up to 300 tracks around the current one (radio queues can grow a lot).
     final from = max(0, st.index - 50);
     final items = st.queue.skip(from).take(300).toList();
     final pos = _sourceReady ? position : _resumeAt;
-    prefs.setString(
-      _saveKey,
-      jsonEncode({
-        'q': [for (final t in items) t.toStore()],
-        'i': st.index - from,
-        'm': st.manualCount,
-        'cn': st.contextName,
-        'cr': ?st.contextRoute,
-        'sh': st.shuffle,
-        'rp': st.repeat.index,
-        'p': pos.inMilliseconds,
-        if (st.smart) 'sm': true,
-        if (st.recommended.isNotEmpty) 'rec': st.recommended.toList(),
-      }),
-    );
+    return {
+      'q': [for (final t in items) t.toStore()],
+      'i': st.index - from,
+      'm': st.manualCount,
+      'cn': st.contextName,
+      'cr': ?st.contextRoute,
+      'sh': st.shuffle,
+      'rp': st.repeat.index,
+      'p': pos.inMilliseconds,
+      if (st.smart) 'sm': true,
+      if (st.recommended.isNotEmpty) 'rec': st.recommended.toList(),
+    };
+  }
+
+  /// Sends the queue and position to the panel, for another device to resume from.
+  Future<void> _pushCloud() async {
+    if (remote != null) return; // Jam guest: the queue is the host's
+    final snap = _snapshot();
+    if (snap == null) return;
+    final cat = ref.read(catalogProvider);
+    if (!cat.enabled || cat.token.isEmpty) return;
+    _pushedId = state.current?.id;
+    _pushedAt = DateTime.now();
+    try {
+      final up = await cat.putPlayerState({...snap, 'dev': _deviceId});
+      if (up > 0 && ref.mounted) {
+        _cloudSeen = up;
+        ref.read(prefsProvider).setInt(_seenKey, up);
+      }
+    } catch (e) {
+      debugPrint('resume: send failed: $e');
+    }
+  }
+
+  /// Takes over the queue another device of this account played last, paused at the same point.
+  /// Never touches a queue that is playing here, a Jam or a Chromecast.
+  Future<void> syncFromCloud() async {
+    if (_pulling || remote != null || _out != null || isPlaying) return;
+    if (DateTime.now().difference(_pulledAt) < const Duration(seconds: 20)) {
+      return;
+    }
+    _pulling = true;
+    final epoch = _loadEpoch;
+    try {
+      if (await apiReady() == null || !ref.mounted) return;
+      final cat = ref.read(catalogProvider);
+      if (!cat.enabled || cat.token.isEmpty) return;
+      _pulledAt = DateTime.now();
+      final j = await cat.playerState();
+      final up = (j['updated'] as num?)?.toInt() ?? 0;
+      if (!ref.mounted) return;
+      if (!takeOverCloudState(
+        updated: up,
+        seen: _cloudSeen,
+        device: j['dev'],
+        me: _deviceId,
+      )) {
+        return;
+      }
+      // Something started here meanwhile: this device's queue wins.
+      if (isPlaying ||
+          _busy ||
+          remote != null ||
+          _out != null ||
+          epoch != _loadEpoch) {
+        return;
+      }
+      final next = _restore(jsonEncode(j));
+      if (next.current == null) return;
+      _cloudSeen = up;
+      ref.read(prefsProvider).setInt(_seenKey, up);
+      await _reportStop();
+      _progressTimer?.cancel();
+      if (_sourceReady) await audio.stop();
+      _sourceReady = false;
+      _preId = null;
+      state = next;
+      _save();
+      debugPrint(
+        'resume: took the queue from another device (${next.queue.length} tracks)',
+      );
+    } catch (e) {
+      debugPrint('resume: read failed: $e');
+    } finally {
+      _pulling = false;
+    }
   }
 
   QueueState _restore(String? raw) {
@@ -355,6 +487,7 @@ class PlayerController extends Notifier<QueueState> {
         s.processingState == ProcessingState.buffering;
     if (s.playing != state.playing || buffering != state.buffering) {
       if (s.playing != state.playing) _save();
+      if (!s.playing && state.playing && _sourceReady) unawaited(_pushCloud());
       state = state.copyWith(playing: s.playing, buffering: buffering);
       final cur = state.current;
       if (cur != null && _reported?.id == cur.id) {
@@ -670,6 +803,7 @@ class PlayerController extends Notifier<QueueState> {
   Future<void> _load({required bool play, Duration? at}) async {
     final cur = state.current;
     if (cur == null) return;
+    _loadEpoch++;
     _sourceReady = false;
     _busy = true;
     _preId = null;
@@ -1133,6 +1267,7 @@ class PlayerController extends Notifier<QueueState> {
     if (_out == null) return;
     if (playing == state.playing && buffering == state.buffering) return;
     if (playing != state.playing) _save();
+    if (!playing && state.playing) unawaited(_pushCloud());
     state = state.copyWith(playing: playing, buffering: buffering);
     final cur = state.current;
     if (cur != null && _reported?.id == cur.id) {

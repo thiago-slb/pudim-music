@@ -3,6 +3,13 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 19
+- Resume on another device: every app sends its queue, position, context, shuffle and repeat to the
+  extras server on each track change, on pause and every ~15 s while playing. Opening the app (or
+  coming back to it) with nothing playing picks up what another device played last, paused at the
+  same point; play continues from there, including from Android Auto. A queue playing here, a Jam
+  or a Chromecast is never replaced. Needs the server's `/api/player/state`.
+
 ## Build 18
 - Themes change the layout, not only the colors: each one has its own mini player, navigation,
   Now Playing, list density, play button and progress bar (see [docs/themes.md](docs/themes.md)).

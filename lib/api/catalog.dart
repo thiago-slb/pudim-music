@@ -460,6 +460,15 @@ class Catalog {
     }
   }
 
+  /// Last player state any device of this account sent ({"updated": 0} when none).
+  Future<Map<String, dynamic>> playerState() => _get('/api/player/state');
+
+  /// Sends this device's player state; returns the panel's "updated" stamp (ms).
+  Future<int> putPlayerState(Map<String, dynamic> st) async =>
+      ((await _send('PUT', '/api/player/state', st))['updated'] as num?)
+          ?.toInt() ??
+      0;
+
   /// Downloads the installer ("apk" or "windows") to [path].
   Future<void> downloadUpdate(
     String kind,
