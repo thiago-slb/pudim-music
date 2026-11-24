@@ -1131,6 +1131,24 @@ abstract class L10n {
   /// **'Quando tiver um .lrc ou .txt ao lado do arquivo, ela aparece aqui.'**
   String get lyricsNoneHint;
 
+  /// No description provided for @lyricsFind.
+  ///
+  /// In pt, this message translates to:
+  /// **'Buscar letra'**
+  String get lyricsFind;
+
+  /// No description provided for @lyricsFinding.
+  ///
+  /// In pt, this message translates to:
+  /// **'Procurando a letra…'**
+  String get lyricsFinding;
+
+  /// No description provided for @lyricsNotFound.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não achei a letra desta música'**
+  String get lyricsNotFound;
+
   /// No description provided for @lyricsSynced.
   ///
   /// In pt, this message translates to:

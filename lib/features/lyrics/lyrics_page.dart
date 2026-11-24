@@ -8,6 +8,7 @@ import '../../state/session.dart';
 import '../../ui/colors.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
+import 'find_lyrics_button.dart';
 import 'lyrics_data.dart';
 import '../../ui/widgets/themed.dart';
 
@@ -61,10 +62,9 @@ class LyricsPage extends ConsumerWidget {
       decoration: bg,
       child: lyrics.when(
         loading: () => const Center(child: ThemedLoading()),
-        error: (_, _) => const _NoLyrics(),
-        data: (l) => l.isEmpty
-            ? const _NoLyrics()
-            : _LyricsView(l, key: ValueKey(cur.id)),
+        error: (_, _) => _NoLyrics(cur),
+        data: (l) =>
+            l.isEmpty ? _NoLyrics(cur) : _LyricsView(l, key: ValueKey(cur.id)),
       ),
     );
   }
@@ -134,7 +134,8 @@ TextStyle _lineStyle({required bool compact, required int state}) {
 }
 
 class _NoLyrics extends StatelessWidget {
-  const _NoLyrics();
+  final Item track;
+  const _NoLyrics(this.track);
   @override
   Widget build(BuildContext context) => Center(
     child: Column(
@@ -147,8 +148,11 @@ class _NoLyrics extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           context.l10n.lyricsNoneHint,
+          textAlign: TextAlign.center,
           style: const TextStyle(color: Colors.white70),
         ),
+        const SizedBox(height: 20),
+        FindLyricsButton(track, key: ValueKey(track.id)),
       ],
     ),
   );

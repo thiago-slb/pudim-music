@@ -683,6 +683,15 @@ class L10nKo extends L10n {
   String get lyricsNoneHint => '파일 옆에 .lrc 또는 .txt 파일이 있으면 여기에 표시됩니다.';
 
   @override
+  String get lyricsFind => '가사 찾기';
+
+  @override
+  String get lyricsFinding => '가사를 찾는 중…';
+
+  @override
+  String get lyricsNotFound => '이 곡의 가사를 찾지 못했어요';
+
+  @override
   String get lyricsSynced => '.lrc 파일의 싱크 가사';
 
   @override

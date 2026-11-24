@@ -691,6 +691,15 @@ class L10nSv extends L10n {
       'När det finns en .lrc- eller .txt-fil bredvid filen visas den här.';
 
   @override
+  String get lyricsFind => 'Hitta låttext';
+
+  @override
+  String get lyricsFinding => 'Letar efter låttext…';
+
+  @override
+  String get lyricsNotFound => 'Hittade ingen låttext för den här låten';
+
+  @override
   String get lyricsSynced => 'Synkad text från .lrc-filen';
 
   @override

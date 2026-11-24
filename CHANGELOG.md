@@ -3,6 +3,13 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 24
+- "Find lyrics" button where the lyrics card goes (Now Playing, right panel and the lyrics page)
+  when a song has none. It asks the server's own lyrics providers first (saved next to the file,
+  so every device gets them); if the server has none, it looks the song up in the public LRCLIB
+  library (closest length, synced first), sends the .lrc to the server when the account may edit
+  lyrics, and always keeps a copy on the device.
+
 ## Build 23
 - Went through every section in every theme (`test/sections_looks_test.dart` opens all 17 phone
   sections with a fake server, checks for layout errors and can save a screenshot of each).

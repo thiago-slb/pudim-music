@@ -693,6 +693,15 @@ class L10nDe extends L10n {
       'Liegt neben der Datei eine .lrc- oder .txt-Datei, erscheint sie hier.';
 
   @override
+  String get lyricsFind => 'Songtext suchen';
+
+  @override
+  String get lyricsFinding => 'Songtext wird gesucht…';
+
+  @override
+  String get lyricsNotFound => 'Kein Songtext für diesen Titel gefunden';
+
+  @override
   String get lyricsSynced => 'Synchronisierter Songtext aus der .lrc-Datei';
 
   @override

@@ -690,6 +690,15 @@ class L10nEs extends L10n {
       'Cuando haya un .lrc o .txt junto al archivo, aparecerá aquí.';
 
   @override
+  String get lyricsFind => 'Buscar letra';
+
+  @override
+  String get lyricsFinding => 'Buscando la letra…';
+
+  @override
+  String get lyricsNotFound => 'No se encontró la letra de esta canción';
+
+  @override
   String get lyricsSynced => 'Letra sincronizada del archivo .lrc';
 
   @override

@@ -691,6 +691,15 @@ class L10nFr extends L10n {
       'Quand un fichier .lrc ou .txt se trouve à côté du fichier audio, il apparaît ici.';
 
   @override
+  String get lyricsFind => 'Chercher les paroles';
+
+  @override
+  String get lyricsFinding => 'Recherche des paroles…';
+
+  @override
+  String get lyricsNotFound => 'Paroles introuvables pour ce titre';
+
+  @override
   String get lyricsSynced => 'Paroles synchronisées du fichier .lrc';
 
   @override

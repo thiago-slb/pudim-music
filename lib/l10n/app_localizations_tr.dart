@@ -686,6 +686,15 @@ class L10nTr extends L10n {
       'Dosyanın yanında bir .lrc veya .txt olduğunda burada görünür.';
 
   @override
+  String get lyricsFind => 'Şarkı sözü bul';
+
+  @override
+  String get lyricsFinding => 'Şarkı sözü aranıyor…';
+
+  @override
+  String get lyricsNotFound => 'Bu şarkının sözleri bulunamadı';
+
+  @override
   String get lyricsSynced => '.lrc dosyasından senkronize sözler';
 
   @override
