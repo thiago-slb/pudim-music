@@ -35,7 +35,6 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
         style: OutlinedButton.styleFrom(
           foregroundColor: Pm.text,
           side: BorderSide(color: Pm.muted),
-          shape: const StadiumBorder(),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           visualDensity: VisualDensity.compact,
         ),
@@ -64,7 +63,6 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Pm.elevated,
         title: Text(context.l10n.blendWith(widget.other.displayName)),
         content: Text(ctx.l10n.blendExplain),
         actions: [
@@ -205,7 +203,6 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
         final sure = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            backgroundColor: Pm.elevated,
             title: Text(ctx.l10n.blendUndoTitle),
             content: Text(ctx.l10n.blendUndoBody(widget.other.displayName)),
             actions: [

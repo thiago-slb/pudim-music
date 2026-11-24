@@ -9,6 +9,7 @@ import '../../l10n/l10n.dart';
 import '../theme.dart';
 import 'offline_button.dart';
 import 'theme_bits.dart';
+import 'themed.dart';
 import 'disk_image.dart';
 import 'user_photo.dart';
 
@@ -330,25 +331,69 @@ class Chip2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Pm.current;
+    final (deco, fg) = switch (t.style) {
+      UiStyle.retro => (bevel(pressed: selected), selected ? t.accent : t.text),
+      UiStyle.ruby => (
+        BoxDecoration(
+          color: selected ? t.text : const Color(0x1FFFFFFF),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        selected ? Colors.black : t.text,
+      ),
+      UiStyle.wave => (
+        BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          gradient: selected
+              ? LinearGradient(
+                  colors: [t.accent, Color.lerp(t.accent, Colors.pink, 0.45)!],
+                )
+              : null,
+          border: selected ? null : Border.all(color: t.muted, width: 1.5),
+        ),
+        selected ? t.onAccent : t.text,
+      ),
+      UiStyle.glass => (
+        selected
+            ? glass(radius: BorderRadius.circular(32))
+                  .copyWith(boxShadow: const [])
+            : BoxDecoration(
+                color: t.elevated,
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: t.accent.withValues(alpha: 0.4)),
+              ),
+        selected ? Colors.white : t.text,
+      ),
+      UiStyle.night => (
+        BoxDecoration(
+          color: selected ? t.text : t.highlight,
+          borderRadius: BorderRadius.circular(32),
+        ),
+        selected ? Colors.black : t.text,
+      ),
+    };
+    final retro = t.style == UiStyle.retro;
     return Padding(
       padding: EdgeInsets.only(right: gap),
-      child: Material(
-        color: selected ? Pm.text : Pm.highlight,
-        borderRadius: BorderRadius.circular(32),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(32),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
           onTap: onTap,
           child: Container(
             height: 32,
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: deco,
             child: Text(
-              label,
+              retro ? label.toUpperCase() : label,
               maxLines: 1,
               style: TextStyle(
-                color: selected ? Colors.black : Pm.text,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+                color: fg,
+                fontSize: retro ? 12.5 : 14,
+                fontWeight: t.style == UiStyle.wave && selected
+                    ? FontWeight.w800
+                    : FontWeight.w500,
+                letterSpacing: retro ? 1 : null,
                 height: 1.2,
               ),
             ),
@@ -382,15 +427,8 @@ class ChipBar extends StatelessWidget {
 class LoadingBox extends StatelessWidget {
   const LoadingBox({super.key});
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: EdgeInsets.all(48),
-      child: SizedBox(
-        width: 28,
-        height: 28,
-        child: CircularProgressIndicator(strokeWidth: 3, color: Pm.accent),
-      ),
-    ),
+  Widget build(BuildContext context) => const Center(
+    child: Padding(padding: EdgeInsets.all(48), child: ThemedLoading()),
   );
 }
 
@@ -405,9 +443,18 @@ class ErrorBox extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          const ThemedBadgeIcon(Icons.cloud_off_rounded),
+          const SizedBox(height: 16),
           Text(
-            context.l10n.widgetCommonSomethingWentWrong,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            Pm.current.style == UiStyle.retro
+                ? context.l10n.widgetCommonSomethingWentWrong.toUpperCase()
+                : context.l10n.widgetCommonSomethingWentWrong,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Pm.current.style == UiStyle.retro ? Pm.accent : null,
+            ),
           ),
           const SizedBox(height: 8),
           Text(

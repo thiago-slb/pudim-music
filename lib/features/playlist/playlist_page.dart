@@ -16,6 +16,7 @@ import '../../ui/widgets/page_header.dart';
 import '../../ui/widgets/track_table.dart';
 import '../../ui/widgets/mix_button.dart';
 import 'playlist_edit.dart';
+import '../../ui/widgets/themed.dart';
 
 /// Label for the playlist origin, from the prefix the panel uses.
 String playlistOrigin(String name) {
@@ -391,12 +392,9 @@ class _TracksPageState extends ConsumerState<TracksPage> {
         ),
         PageBody(
           child: widget.tracks.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Text(
-                    context.l10n.playlistEmpty,
-                    style: TextStyle(color: Pm.subdued),
-                  ),
+              ? EmptyState(
+                  icon: Icons.library_music_outlined,
+                  title: context.l10n.playlistEmpty,
                 )
               : TrackTable(
                   tracks: shown,

@@ -15,6 +15,7 @@ import '../widgets/downloads_bell.dart';
 import '../widgets/common.dart';
 import '../../features/chat/chat_pages.dart';
 import '../widgets/user_photo.dart';
+import '../widgets/themed.dart';
 
 /// Top bar: menu, back/forward, Home, pill search, avatar and window buttons.
 class TopBar extends ConsumerStatefulWidget {
@@ -49,6 +50,7 @@ class _TopBarState extends ConsumerState<TopBar> {
 
   @override
   Widget build(BuildContext context) {
+    final sb = searchBox(focused: _focus.hasFocus, phone: false);
     final path = GoRouterState.of(context).uri.path;
     final q = GoRouterState.of(context).uri.queryParameters['q'] ?? '';
     if (path == '/search' && _search.text != q && !_focus.hasFocus) {
@@ -97,18 +99,11 @@ class _TopBarState extends ConsumerState<TopBar> {
               constraints: const BoxConstraints(maxWidth: 480, minWidth: 260),
               child: Container(
                 height: 48,
-                decoration: BoxDecoration(
-                  color: Pm.elevated,
-                  borderRadius: BorderRadius.circular(500),
-                  border: Border.all(
-                    color: _focus.hasFocus ? Pm.text : Colors.transparent,
-                    width: 2,
-                  ),
-                ),
+                decoration: sb.box,
                 child: Row(
                   children: [
                     const SizedBox(width: 12),
-                    Icon(Icons.search, color: Pm.subdued, size: 24),
+                    Icon(Icons.search, color: sb.hint, size: 24),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Focus(
@@ -120,9 +115,11 @@ class _TopBarState extends ConsumerState<TopBar> {
                           onTap: () {
                             if (path != '/search') context.go('/search');
                           },
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: sb.text),
+                          cursorColor: sb.text,
                           decoration: InputDecoration(
                             hintText: context.l10n.topBarSearchHint,
+                            hintStyle: TextStyle(color: sb.hint),
                             isDense: true,
                           ),
                         ),

@@ -14,6 +14,8 @@ import '../../ui/widgets/disk_image.dart';
 import 'package:file_picker/file_picker.dart';
 
 import 'recap_share.dart';
+import '../../ui/widgets/theme_bits.dart';
+import '../../ui/widgets/themed.dart';
 
 /// The Recap only shows on Home in November and December (the page opens all year).
 bool recapSeason([DateTime? now]) => (now ?? DateTime.now()).month >= 11;
@@ -43,14 +45,28 @@ class RecapBanner extends ConsumerWidget {
         onTap: () => context.go('/recap'),
         child: Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Pm.radius),
-            gradient: LinearGradient(
-              colors: [Color(0xFFE8115B), Color(0xFF7A2BD6)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+          decoration: switch (Pm.current.style) {
+            UiStyle.retro => bevel(),
+            UiStyle.glass => glass(radius: BorderRadius.circular(Pm.radius)),
+            UiStyle.night => BoxDecoration(
+              borderRadius: BorderRadius.circular(Pm.radius),
+              gradient: const LinearGradient(
+                colors: [Color(0xFFE8115B), Color(0xFF7A2BD6)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
-          ),
+            _ => BoxDecoration(
+              borderRadius: BorderRadius.circular(
+                Pm.current.style == UiStyle.wave ? 24 : 12,
+              ),
+              gradient: LinearGradient(
+                colors: [Pm.accent, Color.lerp(Pm.accent, Colors.black, 0.6)!],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          },
           child: Row(
             children: [
               Expanded(
@@ -109,10 +125,9 @@ class _RecapPageState extends ConsumerState<RecapPage> {
             return ListView(
               padding: const EdgeInsets.all(32),
               children: [
-                Text(
-                  context.l10n.recapEmpty,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Pm.subdued),
+                EmptyState(
+                  icon: Icons.insights_rounded,
+                  title: context.l10n.recapEmpty,
                 ),
                 const SizedBox(height: 24),
                 const SpotifyHistoryCard(),
@@ -192,7 +207,6 @@ class _Recap extends ConsumerWidget {
           alignment: Alignment.centerLeft,
           child: FilledButton.icon(
             style: FilledButton.styleFrom(
-              shape: const StadiumBorder(),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             ),
             icon: const Icon(Icons.ios_share, size: 18),
@@ -335,10 +349,19 @@ class _Recap extends ConsumerWidget {
                     horizontal: 14,
                     vertical: 8,
                   ),
-                  decoration: BoxDecoration(
-                    color: Pm.highlight,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  decoration: Pm.current.style == UiStyle.retro
+                      ? bevel()
+                      : BoxDecoration(
+                          color: Pm.highlight,
+                          borderRadius: BorderRadius.circular(
+                            Pm.current.style == UiStyle.ruby ? 8 : 20,
+                          ),
+                          border: Pm.current.style == UiStyle.glass
+                              ? Border.all(
+                                  color: Pm.accent.withValues(alpha: 0.5),
+                                )
+                              : null,
+                        ),
                   child: Text(
                     context.l10n.recapGenreLine(
                       '${g['name']}',
@@ -448,7 +471,6 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Pm.elevated,
         title: Text(ctx.l10n.recapSpotifyRemoveTitle),
         content: Text(ctx.l10n.recapSpotifyRemoveBody),
         actions: [
@@ -513,14 +535,16 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
                 style: FilledButton.styleFrom(
                   backgroundColor: Pm.accent,
                   foregroundColor: Pm.onAccent,
-                  shape: const StadiumBorder(),
                 ),
                 onPressed: _busy ? null : _import,
                 icon: _busy
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Pm.accent,
+                        ),
                       )
                     : const Icon(Icons.upload_file, size: 18),
                 label: Text(
@@ -613,10 +637,7 @@ class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-    child: Text(
-      text,
-      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
-    ),
+    child: SmallHeading(text, size: 22),
   );
 }
 
@@ -628,10 +649,40 @@ class _Card extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     width: double.infinity,
     padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(12),
-    ),
+    // Same card color in every theme, framed in the theme's way.
+    decoration: switch (Pm.current.style) {
+      UiStyle.retro => bevel(color: Color.lerp(color, Pm.elevated, 0.55)),
+      UiStyle.glass => BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.lerp(color, Colors.white, 0.3)!,
+            color,
+            Color.lerp(color, Colors.black, 0.45)!,
+          ],
+          stops: const [0, 0.5, 1],
+        ),
+        border: Border.all(color: Colors.white38),
+      ),
+      UiStyle.wave => BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [color, Color.lerp(color, Pm.accent, 0.6)!],
+        ),
+      ),
+      UiStyle.ruby => BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      UiStyle.night => BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+      ),
+    },
     child: child,
   );
 }
@@ -646,7 +697,13 @@ class _Big extends StatelessWidget {
     children: [
       Text(
         value,
-        style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900),
+        style: Pm.current.style == UiStyle.retro
+            ? TextStyle(fontSize: 32, color: Pm.accent, letterSpacing: 2)
+            : TextStyle(
+                fontSize: Pm.current.style == UiStyle.wave ? 44 : 36,
+                fontWeight: FontWeight.w900,
+                letterSpacing: Pm.current.style == UiStyle.wave ? -1.5 : null,
+              ),
       ),
       Text(label, style: const TextStyle(color: Colors.white70)),
     ],
@@ -758,8 +815,39 @@ class _Months extends StatelessWidget {
                       height:
                           120 * ((m['minutes'] as num? ?? 0).toDouble() / most),
                       decoration: BoxDecoration(
-                        color: Pm.accent,
-                        borderRadius: BorderRadius.circular(3),
+                        color:
+                            Pm.current.style == UiStyle.night ||
+                                Pm.current.style == UiStyle.ruby
+                            ? Pm.accent
+                            : null,
+                        gradient: switch (Pm.current.style) {
+                          UiStyle.wave => LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Pm.accent, Colors.pinkAccent],
+                          ),
+                          UiStyle.glass => LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Pm.accent.withValues(alpha: 0.3),
+                              Pm.accent,
+                            ],
+                          ),
+                          UiStyle.retro => LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Pm.accent, Colors.yellow, Colors.red],
+                          ),
+                          _ => null,
+                        },
+                        borderRadius: BorderRadius.circular(
+                          switch (Pm.current.style) {
+                            UiStyle.retro => 0,
+                            UiStyle.wave => 8,
+                            _ => 3,
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 6),

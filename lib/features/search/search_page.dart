@@ -20,6 +20,7 @@ import '../../ui/widgets/actions.dart';
 import '../../ui/widgets/cards.dart';
 import '../../ui/widgets/common.dart';
 import '../../ui/widgets/track_table.dart';
+import '../../ui/widgets/themed.dart';
 
 class SearchResults {
   final List<Item> artists;
@@ -118,31 +119,17 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         final r = lib.merge(cat.value ?? CatalogSearch.empty);
         if (r.isEmpty && cat.isLoading) return const LoadingBox();
         if (r.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  context.l10n.searchNoResults(q),
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  context.l10n.searchNoResultsHint,
-                  style: TextStyle(color: Pm.subdued),
-                ),
-                if (cat.hasError) ...[
-                  const SizedBox(height: 8),
-                  Text(
+          return EmptyState(
+            icon: Icons.search_off_rounded,
+            title: context.l10n.searchNoResults(q),
+            subtitle: context.l10n.searchNoResultsHint,
+            action: !cat.hasError
+                ? null
+                : Text(
                     context.l10n.searchCatalogNoResponse('${cat.error}'),
+                    textAlign: TextAlign.center,
                     style: TextStyle(color: Pm.muted, fontSize: 12),
                   ),
-                ],
-              ],
-            ),
           );
         }
         return ListView(
@@ -462,6 +449,7 @@ class _MobileSearchFieldState extends State<_MobileSearchField> {
 
   @override
   Widget build(BuildContext context) {
+    final sb = searchBox(focused: true, phone: true);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Column(
@@ -483,24 +471,21 @@ class _MobileSearchFieldState extends State<_MobileSearchField> {
           const SizedBox(height: 16),
           Container(
             height: 46,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-            ),
+            decoration: sb.box,
             child: Row(
               children: [
                 const SizedBox(width: 12),
-                const Icon(Icons.search, color: Colors.black87),
+                Icon(Icons.search, color: sb.text.withValues(alpha: 0.85)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
                     controller: _ctrl,
                     textInputAction: TextInputAction.search,
-                    style: const TextStyle(color: Colors.black, fontSize: 15),
-                    cursorColor: Colors.black,
+                    style: TextStyle(color: sb.text, fontSize: 15),
+                    cursorColor: sb.text,
                     decoration: InputDecoration(
                       hintText: context.l10n.searchHint,
-                      hintStyle: const TextStyle(color: Colors.black54),
+                      hintStyle: TextStyle(color: sb.hint),
                       isDense: true,
                     ),
                     onChanged: (v) {
@@ -516,7 +501,7 @@ class _MobileSearchFieldState extends State<_MobileSearchField> {
                 ),
                 if (_ctrl.text.isNotEmpty)
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.black87),
+                    icon: Icon(Icons.close, color: sb.text),
                     onPressed: () {
                       _ctrl.clear();
                       setState(() {});

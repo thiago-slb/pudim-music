@@ -64,7 +64,6 @@ class DownloadButton extends ConsumerWidget {
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
       side: BorderSide(color: Pm.muted),
-      shape: const StadiumBorder(),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
     icon: const Icon(Icons.download_outlined, size: 18),
@@ -100,7 +99,6 @@ class _SavePlaylistButtonState extends ConsumerState<_SavePlaylistButton> {
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
       side: BorderSide(color: Pm.muted),
-      shape: const StadiumBorder(),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
     icon: _busy
@@ -391,7 +389,6 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Pm.text,
                             side: BorderSide(color: Pm.muted),
-                            shape: const StadiumBorder(),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,

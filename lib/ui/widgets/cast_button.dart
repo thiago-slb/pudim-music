@@ -34,10 +34,6 @@ Future<void> showCastSheet(BuildContext context, WidgetRef ref) async {
   await showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true,
-    backgroundColor: Pm.elevated,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
     builder: (_) => const _CastSheet(),
   );
 }

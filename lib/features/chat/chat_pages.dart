@@ -563,10 +563,6 @@ Future<Contact?> pickContact(
   context: context,
   useRootNavigator: true,
   isScrollControlled: true,
-  backgroundColor: Pm.elevated,
-  shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-  ),
   builder: (sheet) => Consumer(
     builder: (_, ref, _) {
       final contacts = ref.watch(contactsProvider);
@@ -659,10 +655,6 @@ Future<void> shareItem(BuildContext context, WidgetRef ref, Item it) async {
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
-    backgroundColor: Pm.elevated,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-    ),
     builder: (sheet) => _ShareSheet(share),
   );
 }

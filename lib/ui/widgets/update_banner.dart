@@ -28,7 +28,6 @@ class UpdateBanner extends ConsumerWidget {
         context: context,
         useRootNavigator: true,
         builder: (d) => AlertDialog(
-          backgroundColor: Pm.elevated,
           title: Text(d.l10n.widgetUpdateReady),
           content: next.notes.isEmpty ? null : Text(next.notes),
           actions: [

@@ -15,6 +15,8 @@ import '../widgets/actions.dart';
 import '../widgets/common.dart';
 import '../widgets/track_table.dart';
 import '../widgets/disk_image.dart';
+import '../widgets/theme_bits.dart';
+import '../widgets/themed.dart';
 
 class RightPanelView extends ConsumerWidget {
   const RightPanelView({super.key});
@@ -23,11 +25,15 @@ class RightPanelView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final panel = ref.watch(rightPanelProvider);
     return Container(
-      decoration: BoxDecoration(
-        color: Pm.base,
-        borderRadius: BorderRadius.circular(Pm.radius),
-      ),
-      clipBehavior: Clip.antiAlias,
+      decoration: Pm.current.style == UiStyle.retro
+          ? bevel(color: Pm.base)
+          : BoxDecoration(
+              color: Pm.base,
+              borderRadius: BorderRadius.circular(Pm.radius),
+            ),
+      clipBehavior: Pm.current.style == UiStyle.retro
+          ? Clip.none
+          : Clip.antiAlias,
       child: switch (panel) {
         RightPanel.queue => const QueueView(),
         _ => const _NowPlayingPanel(),
@@ -44,14 +50,7 @@ class _PanelHeader extends ConsumerWidget {
     padding: const EdgeInsets.fromLTRB(16, 12, 4, 4),
     child: Row(
       children: [
-        Expanded(
-          child: Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-        ),
+        Expanded(child: SmallHeading(title)),
         IconBtn(
           Icons.close,
           tooltip: context.l10n.commonClose,
@@ -81,15 +80,9 @@ class _NowPlayingPanel extends ConsumerWidget {
         children: [
           const _PanelHeader(''),
           Expanded(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  context.l10n.rightPanelNothingPlaying,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Pm.subdued),
-                ),
-              ),
+            child: EmptyState(
+              icon: Icons.music_note_rounded,
+              title: context.l10n.rightPanelNothingPlaying,
             ),
           ),
         ],
@@ -243,10 +236,7 @@ class AboutArtistCard extends ConsumerWidget {
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: Container(
-          decoration: BoxDecoration(
-            color: Pm.elevated,
-            borderRadius: BorderRadius.circular(Pm.radius),
-          ),
+          decoration: panelDecoration(),
           clipBehavior: Clip.antiAlias,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,10 +315,7 @@ class NextUpCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Pm.elevated,
-        borderRadius: BorderRadius.circular(Pm.radius),
-      ),
+      decoration: panelDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -401,10 +388,7 @@ class QueueView extends ConsumerWidget {
     final cur = q.current;
     Widget title(String t) => Padding(
       padding: const EdgeInsets.fromLTRB(8, 20, 8, 8),
-      child: Text(
-        t,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-      ),
+      child: SmallHeading(t),
     );
     Widget row(Item t, int queueIndex) => TrackRow(
       key: ValueKey('q$queueIndex-${t.id}'),
@@ -419,30 +403,10 @@ class QueueView extends ConsumerWidget {
         children: [
           _PanelHeader(context.l10n.commonQueue),
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.queue_music, size: 48, color: Pm.subdued),
-                  const SizedBox(height: 12),
-                  Text(
-                    context.l10n.rightPanelQueueEmptyTitle,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      context.l10n.rightPanelQueueEmptyHint,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Pm.subdued),
-                    ),
-                  ),
-                ],
-              ),
+            child: EmptyState(
+              icon: Icons.queue_music,
+              title: context.l10n.rightPanelQueueEmptyTitle,
+              subtitle: context.l10n.rightPanelQueueEmptyHint,
             ),
           ),
         ],

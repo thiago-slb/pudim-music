@@ -13,6 +13,8 @@ import '../responsive.dart';
 import '../theme.dart';
 import '../widgets/actions.dart';
 import '../widgets/common.dart';
+import '../widgets/theme_bits.dart';
+import '../widgets/themed.dart';
 
 enum LibFilter { all, playlists, albums, artists }
 
@@ -109,10 +111,12 @@ class LibrarySidebar extends ConsumerWidget {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: Pm.base,
-        borderRadius: BorderRadius.circular(Pm.radius),
-      ),
+      decoration: Pm.current.style == UiStyle.retro
+          ? bevel(color: Pm.base)
+          : BoxDecoration(
+              color: Pm.base,
+              borderRadius: BorderRadius.circular(Pm.radius),
+            ),
       child: Column(
         children: [
           Padding(
@@ -290,6 +294,44 @@ class _LibRowState extends ConsumerState<_LibRow> {
     final selected = path == e.route;
     final q = ref.watch(playerProvider);
     final playingHere = q.contextRoute == e.route;
+    final t = Pm.current;
+    final st = t.style;
+    // Selected/hover row: soft tint (night), rounded gray (ruby), gradient pill (wave), sunken
+    // black LCD line (retro) or a glossy bar (glass).
+    final Decoration rowDeco = switch (st) {
+      UiStyle.retro when selected => bevel(pressed: true, color: Colors.black),
+      UiStyle.retro => BoxDecoration(
+        color: _hover ? t.highlight : Colors.transparent,
+      ),
+      UiStyle.wave when selected => BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [t.accent.withValues(alpha: 0.55), Colors.transparent],
+        ),
+      ),
+      UiStyle.glass when selected => glass(
+        radius: BorderRadius.circular(8),
+      ).copyWith(boxShadow: const []),
+      UiStyle.ruby => BoxDecoration(
+        color: selected
+            ? const Color(0x24FFFFFF)
+            : _hover
+            ? Colors.white10
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      _ => BoxDecoration(
+        color: selected
+            ? Colors.white12
+            : _hover
+            ? Colors.white10
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(st == UiStyle.wave ? 16 : 6),
+      ),
+    };
+    final titleColor = playingHere
+        ? (st == UiStyle.glass && selected ? Colors.white : Pm.accent)
+        : (st == UiStyle.retro && selected ? Pm.accent : Pm.text);
     final cover = e.isOffline
         ? const OfflineCover()
         : e.isLiked
@@ -306,7 +348,15 @@ class _LibRowState extends ConsumerState<_LibRow> {
             ),
             child: const Icon(Icons.favorite, color: Colors.white, size: 20),
           )
-        : Cover(e.item, size: 48, round: e.item!.kind == ItemKind.artist);
+        : Cover(
+            e.item,
+            size: switch (st) {
+              UiStyle.retro => 32,
+              UiStyle.ruby => 56,
+              _ => 48,
+            },
+            round: e.item!.kind == ItemKind.artist,
+          );
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hover = true),
@@ -319,15 +369,8 @@ class _LibRowState extends ConsumerState<_LibRow> {
         child: Tooltip(
           message: widget.collapsed ? e.title : '',
           child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: selected
-                  ? Colors.white12
-                  : _hover
-                  ? Colors.white10
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(6),
-            ),
+            padding: EdgeInsets.all(st == UiStyle.retro ? 5 : 8),
+            decoration: rowDeco,
             child: Row(
               children: [
                 cover,
@@ -342,8 +385,11 @@ class _LibRowState extends ConsumerState<_LibRow> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 15,
-                            color: playingHere ? Pm.accent : Pm.text,
+                            fontSize: st == UiStyle.retro ? 13 : 15,
+                            color: titleColor,
+                            fontWeight: st == UiStyle.wave && selected
+                                ? FontWeight.w800
+                                : null,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -386,24 +432,29 @@ class _LibSearchState extends ConsumerState<_LibSearch> {
         onPressed: () => setState(() => _open = true),
       );
     }
+    final sb = searchBox(focused: true, phone: false);
     return Container(
       width: 180,
       height: 32,
-      decoration: BoxDecoration(
-        color: Pm.highlight,
-        borderRadius: BorderRadius.circular(4),
-      ),
+      decoration: Pm.current.style == UiStyle.night
+          ? BoxDecoration(
+              color: Pm.highlight,
+              borderRadius: BorderRadius.circular(4),
+            )
+          : sb.box,
       child: Row(
         children: [
           const SizedBox(width: 8),
-          Icon(Icons.search, size: 16, color: Pm.subdued),
+          Icon(Icons.search, size: 16, color: sb.hint),
           const SizedBox(width: 6),
           Expanded(
             child: TextField(
               autofocus: true,
-              style: const TextStyle(fontSize: 13),
+              style: TextStyle(fontSize: 13, color: sb.text),
+              cursorColor: sb.text,
               decoration: InputDecoration(
                 hintText: context.l10n.sidebarSearchLibrary,
+                hintStyle: TextStyle(color: sb.hint),
                 isDense: true,
               ),
               onChanged: (v) => ref.read(libQueryProvider.notifier).set(v),

@@ -59,10 +59,6 @@ class SleepTimerButton extends ConsumerWidget {
     final choice = await showModalBottomSheet<Object>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: Pm.elevated,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
       builder: (ctx) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 12, bottom: 8),
@@ -156,10 +152,6 @@ class SpeedButton extends ConsumerWidget {
         final pick = await showModalBottomSheet<double>(
           context: context,
           useRootNavigator: true,
-          backgroundColor: Pm.elevated,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          ),
           builder: (ctx) => SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(top: 12, bottom: 8),

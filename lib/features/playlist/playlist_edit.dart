@@ -95,10 +95,6 @@ Future<void> addToPlaylistSheet(
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
-    backgroundColor: Pm.elevated,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-    ),
     builder: (sheet) => ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(sheet).height * 0.75,
@@ -180,7 +176,6 @@ Future<void> newPlaylistDialog(
   final name = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Pm.elevated,
       title: Text(ctx.l10n.playlistNew),
       content: TextField(
         controller: ctl,

@@ -243,7 +243,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               style: FilledButton.styleFrom(
                                 backgroundColor: Pm.accent,
                                 foregroundColor: Pm.onAccent,
-                                shape: const StadiumBorder(),
                               ),
                               onPressed: _busy ? null : _submit,
                               child: _busy
@@ -271,7 +270,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Pm.text,
                                 side: BorderSide(color: Pm.muted),
-                                shape: const StadiumBorder(),
                               ),
                               icon: const Icon(Icons.qr_code_2, size: 20),
                               label: Text(
@@ -425,7 +423,6 @@ class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
   Widget build(BuildContext context) {
     final code = _code;
     return AlertDialog(
-      backgroundColor: Pm.elevated,
       title: const Text('Quick Connect'),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 360),
