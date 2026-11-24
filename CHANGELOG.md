@@ -3,6 +3,12 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 16
+- Themes: Settings > Appearance offers five looks, switched instantly: Verde Noite (default),
+  Vermelho, Roxo Onda, Retrô Amp (gray panels, green LCD title, level bars) and Clássico Azul
+  (glossy black and blue). Only palettes and styling inspired by other players; no logos, icons or
+  bundled fonts. See [docs/themes.md](docs/themes.md).
+
 ## Build 15
 - Android: adaptive launcher icon (dark full background, cat inside the safe zone, monochrome layer),
   so Android Auto and launchers no longer show the square art on a white plate.
