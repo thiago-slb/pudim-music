@@ -423,17 +423,21 @@ class PillBar extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: padding,
     child: scroll
-        ? SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                for (var i = 0; i < children.length; i++) ...[
-                  if (i > 0) const SizedBox(width: 8),
-                  children[i],
+        // Starts at the left even inside a Column that centers its children.
+        ? Align(
+            alignment: Alignment.centerLeft,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < children.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 8),
+                    children[i],
+                  ],
                 ],
-              ],
+              ),
             ),
           )
         : Wrap(

@@ -57,10 +57,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   }
 
   Widget _recaps(BuildContext context, List<Widget> head, double pad) {
+    // Phone: clears the floating back button.
+    final top = isCompact(context) ? 64.0 : 24.0;
     final key = (year: _year ?? DateTime.now().year, month: _month);
     final data = ref.watch(recapProvider(key));
     Widget framed(Widget child) => ListView(
-      padding: EdgeInsets.fromLTRB(pad, 24, pad, 48),
+      padding: EdgeInsets.fromLTRB(pad, top, pad, 48),
       children: [...head, child],
     );
     return data.when(
@@ -236,7 +238,12 @@ class _PlaysListState extends ConsumerState<_PlaysList> {
       rows.add(_PlayRow(p, time: d));
     }
     return ListView(
-      padding: EdgeInsets.fromLTRB(widget.pad, 24, widget.pad, 48),
+      padding: EdgeInsets.fromLTRB(
+        widget.pad,
+        isCompact(context) ? 64 : 24,
+        widget.pad,
+        48,
+      ),
       children: [
         ...widget.head,
         if (_plays.isEmpty && !_loading && _error == null)

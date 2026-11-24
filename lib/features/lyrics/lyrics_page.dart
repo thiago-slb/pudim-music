@@ -22,9 +22,9 @@ class LyricsPage extends ConsumerWidget {
       return ColoredBox(
         color: Pm.base,
         child: Center(
-          child: Text(
-            context.l10n.lyricsPlaySomething,
-            style: TextStyle(color: Pm.subdued, fontSize: 18),
+          child: EmptyState(
+            icon: Icons.lyrics_outlined,
+            title: context.l10n.lyricsPlaySomething,
           ),
         ),
       );

@@ -236,24 +236,32 @@ class MobileNavBar extends StatelessWidget {
       return Expanded(
         child: InkResponse(
           onTap: () => onTap(i),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ic,
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: color,
-                  fontWeight: sel
-                      ? (style == UiStyle.wave
-                            ? FontWeight.w800
-                            : FontWeight.w600)
-                      : FontWeight.w400,
-                ),
+          // Shrinks to fit the 64 px bar: the Wave highlight pill plus a large system font made
+          // the selected tab taller than the bar.
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ic,
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: color,
+                      fontWeight: sel
+                          ? (style == UiStyle.wave
+                                ? FontWeight.w800
+                                : FontWeight.w600)
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );

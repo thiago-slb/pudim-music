@@ -10,6 +10,7 @@ import '../../state/session.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets/common.dart';
+import '../../ui/widgets/page_header.dart';
 
 final showsProvider = FutureProvider.autoDispose<ShowsData>(
   (ref) => ref.watch(catalogProvider).shows(),
@@ -76,10 +77,7 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
         child: ListView(
           padding: EdgeInsets.fromLTRB(side, compact ? 64 : 24, side, 160),
           children: [
-            Text(
-              l.commonShows,
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
-            ),
+            pageTitle(l.commonShows, 32, maxLines: 1),
             const SizedBox(height: 4),
             Text(
               d == null
