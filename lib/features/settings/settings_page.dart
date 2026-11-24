@@ -8,6 +8,7 @@ import '../../ui/widgets/accounts.dart';
 
 import '../../audio/player.dart';
 import '../../state/app_theme.dart';
+import '../../state/updater.dart';
 import '../../state/locale.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
@@ -126,6 +127,7 @@ class SettingsPage extends ConsumerWidget {
           ],
           _Section(context.l10n.settingsSectionAbout),
           _Row(title: 'Pudim', subtitle: context.l10n.settingsBuild(appBuild)),
+          if (Platform.isAndroid || Platform.isWindows) const _UpdateRow(),
         ],
       ),
     );
@@ -588,4 +590,44 @@ class _Swatch extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// "Check for updates": runs the check now and says what happened (also when it fails).
+class _UpdateRow extends ConsumerWidget {
+  const _UpdateRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final st = ref.watch(updateStatusProvider);
+    final l = context.l10n;
+    final text = switch (st.phase) {
+      UpdatePhase.idle => null,
+      UpdatePhase.checking => l.updateChecking,
+      UpdatePhase.downloading => l.updateDownloading(
+        st.remote,
+        ((st.progress ?? 0) * 100).round(),
+      ),
+      UpdatePhase.upToDate => l.updateUpToDate(appBuild),
+      UpdatePhase.ready => l.widgetUpdateReady,
+      UpdatePhase.failed => l.updateFailed(st.error ?? ''),
+      UpdatePhase.unavailable => l.updateUnavailable,
+    };
+    final busy =
+        st.phase == UpdatePhase.checking || st.phase == UpdatePhase.downloading;
+    return _Row(
+      title: l.settingsCheckUpdates,
+      subtitle: text,
+      trailing: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Pm.text,
+          side: BorderSide(color: Pm.muted),
+          shape: const StadiumBorder(),
+        ),
+        onPressed: busy
+            ? null
+            : () => ref.read(updaterProvider.notifier).check(),
+        child: Text(l.settingsCheckUpdates),
+      ),
+    );
+  }
 }

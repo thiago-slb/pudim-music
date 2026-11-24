@@ -1511,5 +1511,14 @@
   "themeRedDesc": "Inspirado no YouTube Music: quase preto e vermelho.",
   "themeWaveDesc": "Inspirado no Deezer: violeta escuro e roxo.",
   "themeRetroDesc": "Inspirado no Winamp: painéis cinza dos anos 2000, display verde e barras de nível.",
-  "themeClassicDesc": "Inspirado no Windows Media Player: preto e azul com brilho."
+  "themeClassicDesc": "Inspirado no Windows Media Player: preto e azul com brilho.",
+  "settingsCheckUpdates": "Verificar atualizações",
+  "updateChecking": "Verificando…",
+  "updateUpToDate": "Você está na versão mais nova (build {build}).",
+  "@updateUpToDate": {"placeholders": {"build": {"type": "int"}}},
+  "updateDownloading": "Baixando a build {build}… {percent}%",
+  "@updateDownloading": {"placeholders": {"build": {"type": "int"}, "percent": {"type": "int"}}},
+  "updateFailed": "Não deu para verificar: {error}",
+  "@updateFailed": {"placeholders": {"error": {"type": "String"}}},
+  "updateUnavailable": "Sem servidor de extras configurado."
 }

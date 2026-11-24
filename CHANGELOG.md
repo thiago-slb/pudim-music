@@ -3,6 +3,13 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 17
+- Updates: Settings > About has "Check for updates", which runs the check and shows the result
+  (up to date, downloading with progress, or the error). The strip above the mini player shows the
+  download while it runs. Failures are logged (`updater:` in logcat / the console) instead of being
+  swallowed; a check before sign-in retries in 30 s, and coming back to the app checks again after
+  2 min. The app sends its build and platform so the server can log each check.
+
 ## Build 16
 - Themes: Settings > Appearance offers five looks, switched instantly: Verde Noite (default),
   Vermelho, Roxo Onda, Retrô Amp (gray panels, green LCD title, level bars) and Clássico Azul

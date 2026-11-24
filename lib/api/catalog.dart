@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
 
+import 'dart:io' show Platform;
+
+import '../version.dart';
+
 import 'models.dart';
 import '../l10n/l10n.dart';
 
@@ -435,7 +439,26 @@ class Catalog {
   // ---------- app update ----------
 
   /// {build, notes, apk: {sha256, size}, windows: {...}} from the panel.
-  Future<Map<String, dynamic>> updateInfo() => _get('/api/player/update');
+  /// Sends this app's build and platform so the server log shows who checked and what it had.
+  Future<Map<String, dynamic>> updateInfo() async {
+    try {
+      final r = await _dio.get<Map<String, dynamic>>(
+        '/api/player/update',
+        options: Options(
+          headers: {
+            'X-Pudim-Build': '$appBuild',
+            'X-Pudim-Platform': Platform.operatingSystem,
+          },
+        ),
+      );
+      return r.data ?? const {};
+    } on DioException catch (e) {
+      // Keeps the HTTP status (401 = token refused) for the log and the Settings message.
+      throw CatalogException(
+        'HTTP ${e.response?.statusCode ?? '-'} ${e.message ?? e.type.name}',
+      );
+    }
+  }
 
   /// Downloads the installer ("apk" or "windows") to [path].
   Future<void> downloadUpdate(

@@ -67,6 +67,19 @@ background), foreground = the art without its background, scaled to 66dp of the 
 monochrome layer for themed icons. The legacy PNGs stay for Android 7 and older. If the art changes,
 regenerate `ic_launcher_foreground.png` and `ic_launcher_monochrome.png` in every density.
 
+## Update notice missing without a trace (builds 11 and 15)
+
+**Cause.** Not provable afterwards: the updater swallowed every error (`catch (_) {}`), the server
+did not log the checks, and the notice only appears after the whole APK (about 25 MB) has
+downloaded, with nothing on screen meanwhile. A check before sign-in also returned silently and
+counted as done, holding the next one back.
+
+**Fix (build 17).** Every outcome is logged as `updater: ...`; Settings > About runs the check on
+demand and shows the result or the error; the strip shows download progress; a check before
+sign-in retries in 30 s and only a check that reached the server holds back the next one (2 min on
+resume). The app sends `X-Pudim-Build`/`X-Pudim-Platform` so the server log says who checked with
+which build.
+
 ## Windows data folder moved (build 8)
 
 **Cause.** The Windows data folder is `%APPDATA%\<CompanyName>\<ProductName>` from

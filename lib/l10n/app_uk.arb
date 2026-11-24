@@ -591,5 +591,11 @@
   "themeRedDesc": "У стилі YouTube Music: майже чорний і червоний.",
   "themeWaveDesc": "У стилі Deezer: темно-фіолетовий і пурпуровий.",
   "themeRetroDesc": "У стилі Winamp: сірі панелі 2000-х, зелений дисплей і індикатори рівня.",
-  "themeClassicDesc": "У стилі Windows Media Player: чорний і синій із глянцем."
+  "themeClassicDesc": "У стилі Windows Media Player: чорний і синій із глянцем.",
+  "settingsCheckUpdates": "Перевірити оновлення",
+  "updateChecking": "Перевірка…",
+  "updateUpToDate": "У вас найновіша версія (збірка {build}).",
+  "updateDownloading": "Завантаження збірки {build}… {percent}%",
+  "updateFailed": "Не вдалося перевірити: {error}",
+  "updateUnavailable": "Сервер доповнень не налаштовано."
 }

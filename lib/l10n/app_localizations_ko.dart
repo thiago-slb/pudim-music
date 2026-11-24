@@ -2200,4 +2200,28 @@ class L10nKo extends L10n {
 
   @override
   String get themeClassicDesc => 'Windows Media Player 스타일: 광택 있는 검정과 파랑.';
+
+  @override
+  String get settingsCheckUpdates => '업데이트 확인';
+
+  @override
+  String get updateChecking => '확인 중…';
+
+  @override
+  String updateUpToDate(int build) {
+    return '최신 버전입니다(빌드 $build).';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return '빌드 $build 다운로드 중… $percent%';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return '확인하지 못했습니다: $error';
+  }
+
+  @override
+  String get updateUnavailable => '추가 서버가 설정되지 않았습니다.';
 }

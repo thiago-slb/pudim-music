@@ -591,5 +591,11 @@
   "themeRedDesc": "Inspirerat av YouTube Music: nästan svart och rött.",
   "themeWaveDesc": "Inspirerat av Deezer: mörkviolett och lila.",
   "themeRetroDesc": "Inspirerat av Winamp: grå paneler från 2000-talet, grön display och nivåstaplar.",
-  "themeClassicDesc": "Inspirerat av Windows Media Player: svart och blått med glans."
+  "themeClassicDesc": "Inspirerat av Windows Media Player: svart och blått med glans.",
+  "settingsCheckUpdates": "Sök efter uppdateringar",
+  "updateChecking": "Söker…",
+  "updateUpToDate": "Du har den senaste versionen (build {build}).",
+  "updateDownloading": "Laddar ner build {build}… {percent} %",
+  "updateFailed": "Kunde inte söka: {error}",
+  "updateUnavailable": "Ingen extraserver inställd."
 }

@@ -2237,4 +2237,28 @@ class L10nEs extends L10n {
   @override
   String get themeClassicDesc =>
       'Inspirado en Windows Media Player: negro y azul con brillo.';
+
+  @override
+  String get settingsCheckUpdates => 'Buscar actualizaciones';
+
+  @override
+  String get updateChecking => 'Comprobando…';
+
+  @override
+  String updateUpToDate(int build) {
+    return 'Tienes la versión más reciente (build $build).';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return 'Descargando la build $build… $percent%';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return 'No se pudo comprobar: $error';
+  }
+
+  @override
+  String get updateUnavailable => 'No hay servidor de extras configurado.';
 }

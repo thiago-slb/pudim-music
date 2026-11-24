@@ -591,5 +591,11 @@
   "themeRedDesc": "В стиле YouTube Music: почти чёрный и красный.",
   "themeWaveDesc": "В стиле Deezer: тёмно-фиолетовый и пурпурный.",
   "themeRetroDesc": "В стиле Winamp: серые панели 2000-х, зелёный дисплей и индикаторы уровня.",
-  "themeClassicDesc": "В стиле Windows Media Player: чёрный и синий с глянцем."
+  "themeClassicDesc": "В стиле Windows Media Player: чёрный и синий с глянцем.",
+  "settingsCheckUpdates": "Проверить обновления",
+  "updateChecking": "Проверка…",
+  "updateUpToDate": "У вас последняя версия (сборка {build}).",
+  "updateDownloading": "Загрузка сборки {build}… {percent}%",
+  "updateFailed": "Не удалось проверить: {error}",
+  "updateUnavailable": "Сервер дополнений не настроен."
 }

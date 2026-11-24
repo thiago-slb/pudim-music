@@ -591,5 +591,11 @@
   "themeRedDesc": "Ispirato a YouTube Music: quasi nero e rosso.",
   "themeWaveDesc": "Ispirato a Deezer: viola scuro e porpora.",
   "themeRetroDesc": "Ispirato a Winamp: pannelli grigi anni 2000, display verde e barre di livello.",
-  "themeClassicDesc": "Ispirato a Windows Media Player: nero e blu lucido."
+  "themeClassicDesc": "Ispirato a Windows Media Player: nero e blu lucido.",
+  "settingsCheckUpdates": "Cerca aggiornamenti",
+  "updateChecking": "Verifica…",
+  "updateUpToDate": "Hai la versione più recente (build {build}).",
+  "updateDownloading": "Download della build {build}… {percent}%",
+  "updateFailed": "Impossibile verificare: {error}",
+  "updateUnavailable": "Nessun server extra configurato."
 }

@@ -591,5 +591,11 @@
   "themeRedDesc": "Inspired by YouTube Music: near-black and red.",
   "themeWaveDesc": "Inspired by Deezer: deep violet and purple.",
   "themeRetroDesc": "Inspired by Winamp: 2000s gray panels, green display and level bars.",
-  "themeClassicDesc": "Inspired by Windows Media Player: black and blue with a glossy glow."
+  "themeClassicDesc": "Inspired by Windows Media Player: black and blue with a glossy glow.",
+  "settingsCheckUpdates": "Check for updates",
+  "updateChecking": "Checking…",
+  "updateUpToDate": "You have the latest version (build {build}).",
+  "updateDownloading": "Downloading build {build}… {percent}%",
+  "updateFailed": "Could not check: {error}",
+  "updateUnavailable": "No extras server configured."
 }
