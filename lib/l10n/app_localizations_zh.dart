@@ -2173,4 +2173,28 @@ class L10nZh extends L10n {
 
   @override
   String get themeClassicDesc => 'Windows Media Player 风格：带光泽的黑色和蓝色。';
+
+  @override
+  String get settingsCheckUpdates => '检查更新';
+
+  @override
+  String get updateChecking => '正在检查…';
+
+  @override
+  String updateUpToDate(int build) {
+    return '已是最新版本（构建 $build）。';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return '正在下载构建 $build… $percent%';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return '无法检查：$error';
+  }
+
+  @override
+  String get updateUnavailable => '未配置附加服务器。';
 }

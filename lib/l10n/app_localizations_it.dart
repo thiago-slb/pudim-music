@@ -2239,4 +2239,28 @@ class L10nIt extends L10n {
   @override
   String get themeClassicDesc =>
       'Ispirato a Windows Media Player: nero e blu lucido.';
+
+  @override
+  String get settingsCheckUpdates => 'Cerca aggiornamenti';
+
+  @override
+  String get updateChecking => 'Verifica…';
+
+  @override
+  String updateUpToDate(int build) {
+    return 'Hai la versione più recente (build $build).';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return 'Download della build $build… $percent%';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return 'Impossibile verificare: $error';
+  }
+
+  @override
+  String get updateUnavailable => 'Nessun server extra configurato.';
 }

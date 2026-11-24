@@ -591,5 +591,11 @@
   "themeRedDesc": "Geïnspireerd op YouTube Music: bijna zwart en rood.",
   "themeWaveDesc": "Geïnspireerd op Deezer: donkerviolet en paars.",
   "themeRetroDesc": "Geïnspireerd op Winamp: grijze panelen uit de jaren 2000, groen display en niveaubalken.",
-  "themeClassicDesc": "Geïnspireerd op Windows Media Player: zwart en blauw met glans."
+  "themeClassicDesc": "Geïnspireerd op Windows Media Player: zwart en blauw met glans.",
+  "settingsCheckUpdates": "Controleren op updates",
+  "updateChecking": "Controleren…",
+  "updateUpToDate": "Je hebt de nieuwste versie (build {build}).",
+  "updateDownloading": "Build {build} downloaden… {percent}%",
+  "updateFailed": "Controleren mislukt: {error}",
+  "updateUnavailable": "Geen extra-server ingesteld."
 }

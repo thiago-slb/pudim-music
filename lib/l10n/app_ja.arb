@@ -591,5 +591,11 @@
   "themeRedDesc": "YouTube Music 風：ほぼ黒と赤。",
   "themeWaveDesc": "Deezer 風：深いバイオレットと紫。",
   "themeRetroDesc": "Winamp 風：2000年代のグレーのパネル、緑の表示、レベルバー。",
-  "themeClassicDesc": "Windows Media Player 風：光沢のある黒と青。"
+  "themeClassicDesc": "Windows Media Player 風：光沢のある黒と青。",
+  "settingsCheckUpdates": "アップデートを確認",
+  "updateChecking": "確認中…",
+  "updateUpToDate": "最新バージョンです（ビルド {build}）。",
+  "updateDownloading": "ビルド {build} をダウンロード中… {percent}%",
+  "updateFailed": "確認できませんでした: {error}",
+  "updateUnavailable": "追加サーバーが設定されていません。"
 }

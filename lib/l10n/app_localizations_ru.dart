@@ -2266,4 +2266,28 @@ class L10nRu extends L10n {
   @override
   String get themeClassicDesc =>
       'В стиле Windows Media Player: чёрный и синий с глянцем.';
+
+  @override
+  String get settingsCheckUpdates => 'Проверить обновления';
+
+  @override
+  String get updateChecking => 'Проверка…';
+
+  @override
+  String updateUpToDate(int build) {
+    return 'У вас последняя версия (сборка $build).';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return 'Загрузка сборки $build… $percent%';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return 'Не удалось проверить: $error';
+  }
+
+  @override
+  String get updateUnavailable => 'Сервер дополнений не настроен.';
 }

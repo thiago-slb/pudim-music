@@ -591,5 +591,11 @@
   "themeRedDesc": "YouTube Music 风格：近黑色和红色。",
   "themeWaveDesc": "Deezer 风格：深紫罗兰和紫色。",
   "themeRetroDesc": "Winamp 风格：2000 年代的灰色面板、绿色显示屏和电平条。",
-  "themeClassicDesc": "Windows Media Player 风格：带光泽的黑色和蓝色。"
+  "themeClassicDesc": "Windows Media Player 风格：带光泽的黑色和蓝色。",
+  "settingsCheckUpdates": "检查更新",
+  "updateChecking": "正在检查…",
+  "updateUpToDate": "已是最新版本（构建 {build}）。",
+  "updateDownloading": "正在下载构建 {build}… {percent}%",
+  "updateFailed": "无法检查：{error}",
+  "updateUnavailable": "未配置附加服务器。"
 }

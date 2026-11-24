@@ -3674,6 +3674,42 @@ abstract class L10n {
   /// In pt, this message translates to:
   /// **'Inspirado no Windows Media Player: preto e azul com brilho.'**
   String get themeClassicDesc;
+
+  /// No description provided for @settingsCheckUpdates.
+  ///
+  /// In pt, this message translates to:
+  /// **'Verificar atualizações'**
+  String get settingsCheckUpdates;
+
+  /// No description provided for @updateChecking.
+  ///
+  /// In pt, this message translates to:
+  /// **'Verificando…'**
+  String get updateChecking;
+
+  /// No description provided for @updateUpToDate.
+  ///
+  /// In pt, this message translates to:
+  /// **'Você está na versão mais nova (build {build}).'**
+  String updateUpToDate(int build);
+
+  /// No description provided for @updateDownloading.
+  ///
+  /// In pt, this message translates to:
+  /// **'Baixando a build {build}… {percent}%'**
+  String updateDownloading(int build, int percent);
+
+  /// No description provided for @updateFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não deu para verificar: {error}'**
+  String updateFailed(String error);
+
+  /// No description provided for @updateUnavailable.
+  ///
+  /// In pt, this message translates to:
+  /// **'Sem servidor de extras configurado.'**
+  String get updateUnavailable;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

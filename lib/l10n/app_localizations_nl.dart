@@ -2241,4 +2241,28 @@ class L10nNl extends L10n {
   @override
   String get themeClassicDesc =>
       'Geïnspireerd op Windows Media Player: zwart en blauw met glans.';
+
+  @override
+  String get settingsCheckUpdates => 'Controleren op updates';
+
+  @override
+  String get updateChecking => 'Controleren…';
+
+  @override
+  String updateUpToDate(int build) {
+    return 'Je hebt de nieuwste versie (build $build).';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return 'Build $build downloaden… $percent%';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return 'Controleren mislukt: $error';
+  }
+
+  @override
+  String get updateUnavailable => 'Geen extra-server ingesteld.';
 }

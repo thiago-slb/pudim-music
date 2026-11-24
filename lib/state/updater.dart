@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/widgets.dart' show AppLifecycleListener;
 
 import 'package:crypto/crypto.dart';
@@ -19,6 +20,36 @@ class UpdateReady {
   const UpdateReady(this.build, this.path, this.notes);
 }
 
+/// What the updater is doing, for Settings and the strip ("downloading build 16, 40%").
+class UpdateStatus {
+  final UpdatePhase phase;
+  final int remote;
+  final double? progress;
+  final String? error;
+  const UpdateStatus(this.phase, {this.remote = 0, this.progress, this.error});
+}
+
+enum UpdatePhase {
+  idle,
+  checking,
+  downloading,
+  upToDate,
+  ready,
+  failed,
+  unavailable,
+}
+
+final updateStatusProvider =
+    NotifierProvider<UpdateStatusNotifier, UpdateStatus>(
+      UpdateStatusNotifier.new,
+    );
+
+class UpdateStatusNotifier extends Notifier<UpdateStatus> {
+  @override
+  UpdateStatus build() => const UpdateStatus(UpdatePhase.idle);
+  void set(UpdateStatus s) => state = s;
+}
+
 /// Checks the extras server (when there is one) for a new version; downloads in the background and
 /// notifies when it is ready. Android opens the install screen; Windows installs silently and reopens.
 final updaterProvider = NotifierProvider<Updater, UpdateReady?>(Updater.new);
@@ -33,7 +64,15 @@ class Updater extends Notifier<UpdateReady?> {
       ? 'windows'
       : null;
 
+  /// Last check that reached the server (failed or skipped ones do not hold the next one back).
   DateTime? _checked;
+
+  void _status(UpdateStatus st) {
+    if (ref.mounted) ref.read(updateStatusProvider.notifier).set(st);
+  }
+
+  // Shows up in logcat / the console in release builds too.
+  static void _log(String m) => debugPrint('updater: $m');
 
   @override
   UpdateReady? build() {
@@ -47,7 +86,7 @@ class Updater extends Notifier<UpdateReady?> {
         onResume: () {
           final last = _checked;
           if (last == null ||
-              DateTime.now().difference(last) > const Duration(minutes: 10)) {
+              DateTime.now().difference(last) > const Duration(minutes: 2)) {
             check();
           }
         },
@@ -57,19 +96,39 @@ class Updater extends Notifier<UpdateReady?> {
     return null;
   }
 
+  /// Also called by the Settings button; the result goes to [updateStatusProvider].
   Future<void> check() async {
     final kind = _kind;
     if (kind == null || _busy) return;
+    final cat = ref.read(catalogProvider);
+    if (!cat.enabled) {
+      _log('no extras server configured');
+      _status(const UpdateStatus(UpdatePhase.unavailable));
+      return;
+    }
+    if (cat.token.isEmpty) {
+      // Still signing in: try again shortly instead of waiting for the next hour.
+      _log('not signed in yet, retrying in 30 s');
+      Timer(const Duration(seconds: 30), check);
+      return;
+    }
     _busy = true;
-    _checked = DateTime.now();
+    _status(const UpdateStatus(UpdatePhase.checking));
     try {
-      final cat = ref.read(catalogProvider);
-      if (cat.token.isEmpty || !cat.enabled) return;
       final info = await cat.updateInfo();
+      _checked = DateTime.now();
       final build = (info['build'] as num?)?.toInt() ?? 0;
       final file = info[kind];
+      _log('server has build $build, running $appBuild');
+      if (state != null && state!.build >= build) {
+        _status(UpdateStatus(UpdatePhase.ready, remote: state!.build));
+        return;
+      }
       // A newer build than the one already downloaded also counts (it was never installed).
-      if (!updateWanted(build, appBuild, state?.build) || file is! Map) return;
+      if (!updateWanted(build, appBuild, state?.build) || file is! Map) {
+        _status(UpdateStatus(UpdatePhase.upToDate, remote: build));
+        return;
+      }
       final want = '${file['sha256'] ?? ''}'.toLowerCase();
       final dir = await getTemporaryDirectory();
       final path =
@@ -77,16 +136,37 @@ class Updater extends Notifier<UpdateReady?> {
       final f = File(path);
       if (!(await f.exists() && await _sha(f) == want)) {
         final part = '$path.part';
-        await cat.downloadUpdate(kind, part);
+        _status(
+          UpdateStatus(UpdatePhase.downloading, remote: build, progress: 0),
+        );
+        await cat.downloadUpdate(
+          kind,
+          part,
+          onProgress: (got, total) {
+            if (total > 0) {
+              _status(
+                UpdateStatus(
+                  UpdatePhase.downloading,
+                  remote: build,
+                  progress: got / total,
+                ),
+              );
+            }
+          },
+        );
         if (want.isNotEmpty && await _sha(File(part)) != want) {
           await File(part).delete();
-          return; // file corrupted or swapped on the way: try again later
+          throw const FileSystemException('checksum mismatch');
         }
         await File(part).rename(path);
       }
+      _log('build $build downloaded');
       state = UpdateReady(build, path, '${info['notes'] ?? ''}');
-    } catch (_) {
-      // No panel or no internet: try on the next one.
+      _status(UpdateStatus(UpdatePhase.ready, remote: build));
+    } catch (e) {
+      // No panel, no internet or token refused: logged and shown in Settings; tries again later.
+      _log('check failed: $e');
+      _status(UpdateStatus(UpdatePhase.failed, error: '$e'));
     } finally {
       _busy = false;
     }

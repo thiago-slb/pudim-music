@@ -2259,4 +2259,28 @@ class L10nUk extends L10n {
   @override
   String get themeClassicDesc =>
       'У стилі Windows Media Player: чорний і синій із глянцем.';
+
+  @override
+  String get settingsCheckUpdates => 'Перевірити оновлення';
+
+  @override
+  String get updateChecking => 'Перевірка…';
+
+  @override
+  String updateUpToDate(int build) {
+    return 'У вас найновіша версія (збірка $build).';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return 'Завантаження збірки $build… $percent%';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return 'Не вдалося перевірити: $error';
+  }
+
+  @override
+  String get updateUnavailable => 'Сервер доповнень не налаштовано.';
 }

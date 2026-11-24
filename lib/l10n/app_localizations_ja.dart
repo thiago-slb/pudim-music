@@ -2197,4 +2197,28 @@ class L10nJa extends L10n {
 
   @override
   String get themeClassicDesc => 'Windows Media Player 風：光沢のある黒と青。';
+
+  @override
+  String get settingsCheckUpdates => 'アップデートを確認';
+
+  @override
+  String get updateChecking => '確認中…';
+
+  @override
+  String updateUpToDate(int build) {
+    return '最新バージョンです（ビルド $build）。';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return 'ビルド $build をダウンロード中… $percent%';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return '確認できませんでした: $error';
+  }
+
+  @override
+  String get updateUnavailable => '追加サーバーが設定されていません。';
 }

@@ -591,5 +591,11 @@
   "themeRedDesc": "YouTube Music'ten esinlenildi: siyaha yakın ve kırmızı.",
   "themeWaveDesc": "Deezer'dan esinlenildi: koyu menekşe ve mor.",
   "themeRetroDesc": "Winamp'tan esinlenildi: 2000'lerin gri panelleri, yeşil ekran ve seviye çubukları.",
-  "themeClassicDesc": "Windows Media Player'dan esinlenildi: parlak siyah ve mavi."
+  "themeClassicDesc": "Windows Media Player'dan esinlenildi: parlak siyah ve mavi.",
+  "settingsCheckUpdates": "Güncellemeleri denetle",
+  "updateChecking": "Denetleniyor…",
+  "updateUpToDate": "En yeni sürümdesiniz (build {build}).",
+  "updateDownloading": "Build {build} indiriliyor… %{percent}",
+  "updateFailed": "Denetlenemedi: {error}",
+  "updateUnavailable": "Ek sunucu ayarlanmamış."
 }

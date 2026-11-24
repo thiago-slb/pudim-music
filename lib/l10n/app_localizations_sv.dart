@@ -2234,4 +2234,28 @@ class L10nSv extends L10n {
   @override
   String get themeClassicDesc =>
       'Inspirerat av Windows Media Player: svart och blått med glans.';
+
+  @override
+  String get settingsCheckUpdates => 'Sök efter uppdateringar';
+
+  @override
+  String get updateChecking => 'Söker…';
+
+  @override
+  String updateUpToDate(int build) {
+    return 'Du har den senaste versionen (build $build).';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return 'Laddar ner build $build… $percent %';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return 'Kunde inte söka: $error';
+  }
+
+  @override
+  String get updateUnavailable => 'Ingen extraserver inställd.';
 }

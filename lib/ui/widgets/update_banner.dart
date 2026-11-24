@@ -48,9 +48,32 @@ class UpdateBanner extends ConsumerWidget {
         ),
       );
     });
+    final st = ref.watch(updateStatusProvider);
     return AnimatedSize(
       duration: const Duration(milliseconds: 200),
-      child: u == null
+      child: u == null && st.phase == UpdatePhase.downloading
+          ? Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+              color: Pm.elevated,
+              child: Row(
+                children: [
+                  Icon(Icons.downloading, size: 16, color: Pm.accent),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      context.l10n.updateDownloading(
+                        st.remote,
+                        ((st.progress ?? 0) * 100).round(),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: Pm.subdued, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : u == null
           ? const SizedBox(width: double.infinity)
           : Container(
               width: double.infinity,

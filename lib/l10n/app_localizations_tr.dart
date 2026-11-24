@@ -2227,4 +2227,28 @@ class L10nTr extends L10n {
   @override
   String get themeClassicDesc =>
       'Windows Media Player\'dan esinlenildi: parlak siyah ve mavi.';
+
+  @override
+  String get settingsCheckUpdates => 'Güncellemeleri denetle';
+
+  @override
+  String get updateChecking => 'Denetleniyor…';
+
+  @override
+  String updateUpToDate(int build) {
+    return 'En yeni sürümdesiniz (build $build).';
+  }
+
+  @override
+  String updateDownloading(int build, int percent) {
+    return 'Build $build indiriliyor… %$percent';
+  }
+
+  @override
+  String updateFailed(String error) {
+    return 'Denetlenemedi: $error';
+  }
+
+  @override
+  String get updateUnavailable => 'Ek sunucu ayarlanmamış.';
 }
