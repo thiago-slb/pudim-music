@@ -3,6 +3,11 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 26
+- Glass: filter pills, recent-search pills and the library sort button are glossy capsules like
+  the play orb (`glassPill`); selected ones glow in the accent, the rest use a deep tint of it.
+  They were flat dark capsules before.
+
 ## Build 25
 - Back puts each page where you left it: the app navigates with `go`, which rebuilds pages, so
   `ScrollMemory` (wrapped around every shell page in the router) records the main list's offset

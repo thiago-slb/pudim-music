@@ -147,6 +147,18 @@ BoxDecoration glass({required BorderRadius radius, Color? tint}) {
   );
 }
 
+/// Glass pill (filters, sort button): a glossy capsule like the play orb. Selected glows in the
+/// accent; the rest are the same gloss in a deep tint of it.
+BoxDecoration glassPill({required bool selected, double radius = 32}) {
+  final r = BorderRadius.circular(radius);
+  if (selected) return glass(radius: r);
+  final d = glass(radius: r, tint: Color.lerp(Pm.accent, Colors.black, 0.5));
+  return d.copyWith(
+    border: Border.all(color: Pm.accent.withValues(alpha: 0.45)),
+    boxShadow: const [],
+  );
+}
+
 /// The theme's main play/pause button: round (night, ruby, wave), bevelled key (retro) or
 /// glossy orb (glass).
 class ThemedPlayButton extends StatelessWidget {
