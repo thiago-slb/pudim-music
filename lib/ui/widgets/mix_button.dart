@@ -77,7 +77,6 @@ Future<void> runMix(BuildContext context, WidgetRef ref, String kind) async {
   final ok = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Pm.elevated,
       title: Text(
         desc
             ? ctx.l10n.widgetMixNewDiscoveriesTitle
@@ -245,7 +244,6 @@ class _Invite extends ConsumerWidget {
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
       side: BorderSide(color: Pm.muted),
-      shape: const StadiumBorder(),
     ),
     icon: info.running
         ? const SizedBox(
@@ -275,7 +273,6 @@ class _MadeInvite extends ConsumerWidget {
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
       side: BorderSide(color: Pm.muted),
-      shape: const StadiumBorder(),
     ),
     icon: running
         ? const SizedBox(

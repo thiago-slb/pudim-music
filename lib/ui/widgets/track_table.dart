@@ -10,6 +10,7 @@ import '../theme.dart';
 import 'actions.dart';
 import 'common.dart';
 import 'offline_button.dart';
+import 'theme_bits.dart';
 
 /// Spotify-style track table: # / Title / Album / (Added on) / duration.
 class TrackTable extends ConsumerWidget {
@@ -90,14 +91,34 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final st = TextStyle(color: Pm.subdued, fontSize: 13.5);
-    return Container(
-      height: 36,
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: const BoxDecoration(
+    final t = Pm.current;
+    final retro = t.style == UiStyle.retro;
+    final st = TextStyle(
+      color: switch (t.style) {
+        UiStyle.retro => t.accent,
+        UiStyle.glass => Colors.white,
+        _ => Pm.subdued,
+      },
+      fontSize: retro ? 12 : 13.5,
+      letterSpacing: retro ? 1.2 : null,
+      fontWeight: t.style == UiStyle.glass ? FontWeight.w700 : null,
+    );
+    // Retro: raised column keys; glass: a glossy table header; others a hairline.
+    final Decoration deco = switch (t.style) {
+      UiStyle.retro => bevel(),
+      UiStyle.glass => glass(
+        radius: BorderRadius.circular(6),
+      ).copyWith(boxShadow: const []),
+      UiStyle.ruby => const BoxDecoration(),
+      _ => const BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.white12)),
       ),
+    };
+    return Container(
+      height: retro ? 28 : 36,
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: deco,
       child: Row(
         children: [
           SizedBox(
@@ -107,10 +128,23 @@ class _Header extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             flex: 4,
-            child: Text(context.l10n.widgetTracksTitle, style: st),
+            child: Text(
+              retro
+                  ? context.l10n.widgetTracksTitle.toUpperCase()
+                  : context.l10n.widgetTracksTitle,
+              style: st,
+            ),
           ),
           if (showAlbum)
-            Expanded(flex: 3, child: Text(context.l10n.commonAlbum, style: st)),
+            Expanded(
+              flex: 3,
+              child: Text(
+                retro
+                    ? context.l10n.commonAlbum.toUpperCase()
+                    : context.l10n.commonAlbum,
+                style: st,
+              ),
+            ),
           if (showDate)
             Expanded(
               flex: 2,
@@ -119,7 +153,7 @@ class _Header extends StatelessWidget {
           const SizedBox(width: 40),
           SizedBox(
             width: 56,
-            child: Icon(Icons.schedule, size: 16, color: Pm.subdued),
+            child: Icon(Icons.schedule, size: 16, color: st.color),
           ),
           const SizedBox(width: 32),
         ],

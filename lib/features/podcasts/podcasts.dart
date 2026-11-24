@@ -611,7 +611,6 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
             style: OutlinedButton.styleFrom(
               foregroundColor: Pm.text,
               side: BorderSide(color: Pm.muted),
-              shape: const StadiumBorder(),
             ),
             onPressed: () async {
               try {

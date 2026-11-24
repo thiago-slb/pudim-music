@@ -20,6 +20,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../api/catalog.dart';
 import '../../ui/widgets/actions.dart';
 import '../../version.dart';
+import '../../ui/widgets/page_header.dart';
+import '../../ui/widgets/theme_bits.dart';
+import '../../ui/widgets/themed.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -37,10 +40,7 @@ class SettingsPage extends ConsumerWidget {
             ? const EdgeInsets.fromLTRB(16, 64, 16, 32)
             : const EdgeInsets.fromLTRB(32, 24, 32, 64),
         children: [
-          Text(
-            context.l10n.commonSettings,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
-          ),
+          pageTitle(context.l10n.commonSettings, 32, maxLines: 1),
           const SizedBox(height: 24),
           _Section(context.l10n.settingsSectionAccount),
           _Row(
@@ -50,7 +50,6 @@ class SettingsPage extends ConsumerWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: Pm.text,
                 side: BorderSide(color: Pm.muted),
-                shape: const StadiumBorder(),
               ),
               onPressed: () => context.go('/profile'),
               child: Text(context.l10n.commonEdit),
@@ -63,7 +62,6 @@ class SettingsPage extends ConsumerWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: Pm.text,
                 side: BorderSide(color: Pm.muted),
-                shape: const StadiumBorder(),
               ),
               onPressed: () async {
                 await ref.read(playerProvider.notifier).stop();
@@ -97,7 +95,6 @@ class SettingsPage extends ConsumerWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: Pm.text,
                 side: BorderSide(color: Pm.muted),
-                shape: const StadiumBorder(),
               ),
               onPressed: () => _editExtras(context, ref, extras),
               child: Text(
@@ -143,7 +140,6 @@ Future<void> _editExtras(
   final url = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Pm.elevated,
       title: Text(ctx.l10n.settingsExtrasServer),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -184,13 +180,53 @@ class _Section extends StatelessWidget {
   final String title;
   const _Section(this.title);
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 24, bottom: 8),
-    child: Text(
-      title,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final t = Pm.current;
+    // Retro: a raised group label; glass: a glossy tab; wave: big and heavy; ruby: plain.
+    final Widget label = switch (t.style) {
+      UiStyle.retro => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: bevel(),
+        child: Text(
+          title.toUpperCase(),
+          style: TextStyle(color: t.accent, fontSize: 13, letterSpacing: 1.5),
+        ),
+      ),
+      UiStyle.glass => Row(
+        children: [
+          TypeLabel(title),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Container(height: 1, color: t.accent.withValues(alpha: 0.5)),
+          ),
+        ],
+      ),
+      UiStyle.wave => Text(
+        title,
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w900,
+          letterSpacing: -0.5,
+          foreground: Paint()
+            ..shader = LinearGradient(colors: [t.text, t.accent])
+                .createShader(const Rect.fromLTWH(0, 0, 240, 24)),
+        ),
+      ),
+      UiStyle.ruby => Text(
+        title,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+      ),
+      UiStyle.night => Text(
+        title,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+      ),
+    };
+    return Padding(
+      padding: const EdgeInsets.only(top: 24, bottom: 8),
+      child: label,
+    );
+  }
 }
 
 class _Row extends StatelessWidget {
@@ -199,8 +235,20 @@ class _Row extends StatelessWidget {
   final Widget? trailing;
   const _Row({required this.title, this.subtitle, this.trailing});
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(vertical: 8),
+    // Retro and glass draw table-like rows; the others stay open.
+    decoration: switch (Pm.current.style) {
+      UiStyle.retro => BoxDecoration(
+        border: Border(bottom: BorderSide(color: Pm.highlight)),
+      ),
+      UiStyle.glass => BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Pm.accent.withValues(alpha: 0.2)),
+        ),
+      ),
+      _ => null,
+    },
     child: Row(
       children: [
         Expanded(
@@ -290,7 +338,6 @@ class _LastfmRowState extends ConsumerState<_LastfmRow> {
   ButtonStyle get _outlined => OutlinedButton.styleFrom(
     foregroundColor: Pm.text,
     side: BorderSide(color: Pm.muted),
-    shape: const StadiumBorder(),
   );
 
   @override
@@ -746,7 +793,6 @@ class _UpdateRow extends ConsumerWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: Pm.text,
           side: BorderSide(color: Pm.muted),
-          shape: const StadiumBorder(),
         ),
         onPressed: busy
             ? null

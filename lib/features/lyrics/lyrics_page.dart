@@ -9,6 +9,7 @@ import '../../ui/colors.dart';
 import '../../ui/responsive.dart';
 import '../../ui/theme.dart';
 import 'lyrics_data.dart';
+import '../../ui/widgets/themed.dart';
 
 /// Full-screen lyrics, in the cover color, with the current line highlighted.
 class LyricsPage extends ConsumerWidget {
@@ -34,18 +35,101 @@ class LyricsPage extends ConsumerWidget {
         ? fallbackColor
         : ref.watch(coverColorProvider(url)).value ?? fallbackColor;
     final lyrics = ref.watch(lyricsProvider(cur.id));
+    final t = Pm.current;
+    // Night keeps the cover color; the others use their own backdrop.
+    final bg = switch (t.style) {
+      UiStyle.night => BoxDecoration(color: darken(color, 0.15)),
+      UiStyle.ruby => BoxDecoration(color: t.base),
+      UiStyle.retro => const BoxDecoration(color: Colors.black),
+      UiStyle.wave => BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color.lerp(color, t.accent, 0.6)!, t.base],
+        ),
+      ),
+      UiStyle.glass => BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color.lerp(color, t.accent, 0.5)!, t.press, t.black],
+        ),
+      ),
+    };
     return AnimatedContainer(
       duration: const Duration(milliseconds: 400),
-      color: darken(color, 0.15),
+      decoration: bg,
       child: lyrics.when(
-        loading: () =>
-            const Center(child: CircularProgressIndicator(color: Colors.white)),
+        loading: () => const Center(child: ThemedLoading()),
         error: (_, _) => const _NoLyrics(),
         data: (l) => l.isEmpty
             ? const _NoLyrics()
             : _LyricsView(l, key: ValueKey(cur.id)),
       ),
     );
+  }
+}
+
+/// Line look per theme; [state] is -1 sung, 0 current (or unsynced), 1 still to come.
+TextStyle _lineStyle({required bool compact, required int state}) {
+  final t = Pm.current;
+  final size = compact ? 24.0 : 32.0;
+  switch (t.style) {
+    case UiStyle.retro:
+      return TextStyle(
+        fontFamily: t.fontFamily,
+        fontFamilyFallback: t.fontFamilyFallback,
+        fontSize: size * 0.75,
+        height: 1.5,
+        color: state == 0
+            ? t.accent
+            : t.accent.withValues(alpha: state < 0 ? 0.5 : 0.25),
+      );
+    case UiStyle.glass:
+      return TextStyle(
+        fontSize: size,
+        height: 1.3,
+        fontWeight: FontWeight.w700,
+        color: state == 0
+            ? Colors.white
+            : Colors.white.withValues(alpha: state < 0 ? 0.55 : 0.3),
+        shadows: state == 0
+            ? [Shadow(color: t.accent, blurRadius: 16)]
+            : const [],
+      );
+    case UiStyle.ruby:
+      return TextStyle(
+        fontFamily: t.fontFamily,
+        fontSize: size * 0.85,
+        height: 1.35,
+        fontWeight: state == 0 ? FontWeight.w700 : FontWeight.w500,
+        color: state == 0
+            ? Colors.white
+            : Colors.white.withValues(alpha: state < 0 ? 0.5 : 0.35),
+      );
+    case UiStyle.wave:
+      return TextStyle(
+        fontFamily: t.fontFamily,
+        fontSize: size * 1.1,
+        height: 1.2,
+        fontWeight: FontWeight.w900,
+        letterSpacing: -0.5,
+        color: state == 0
+            ? Colors.white
+            : Colors.white.withValues(alpha: state < 0 ? 0.6 : 0.3),
+      );
+    case UiStyle.night:
+      return TextStyle(
+        fontFamily: 'Segoe UI',
+        fontSize: size,
+        height: 1.3,
+        fontWeight: FontWeight.w800,
+        color: state == 0
+            ? Colors.white
+            : state < 0
+            ? Colors.white.withValues(alpha: 0.7)
+            : Colors.black.withValues(alpha: 0.75),
+      );
   }
 }
 
@@ -132,18 +216,9 @@ class _LyricsViewState extends ConsumerState<_LyricsView> {
                           : null,
                       child: AnimatedDefaultTextStyle(
                         duration: const Duration(milliseconds: 200),
-                        style: TextStyle(
-                          fontFamily: 'Segoe UI',
-                          fontSize: compact ? 24 : 32,
-                          height: 1.3,
-                          fontWeight: FontWeight.w800,
-                          color: !l.synced
-                              ? Colors.white
-                              : i == idx
-                              ? Colors.white
-                              : i < idx
-                              ? Colors.white.withValues(alpha: 0.7)
-                              : Colors.black.withValues(alpha: 0.75),
+                        style: _lineStyle(
+                          compact: compact,
+                          state: !l.synced || i == idx ? 0 : (i < idx ? -1 : 1),
                         ),
                         child: Text(
                           l.lines[i].text.isEmpty ? '♪' : l.lines[i].text,

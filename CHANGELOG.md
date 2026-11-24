@@ -3,6 +3,12 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 20
+- Themes reach the inner pages: album, playlist and artist headers, search field and results
+  chips, library list, queue, lyrics, recap, settings, dialogs, menus, bottom sheets, toasts,
+  loading and empty states each follow the theme's own style (see [docs/themes.md](docs/themes.md)).
+  Pages no longer hard-code dialog, sheet or button shapes.
+
 ## Build 19
 - Resume on another device: every app sends its queue, position, context, shuffle and repeat to the
   extras server on each track change, on pause and every ~15 s while playing. Opening the app (or

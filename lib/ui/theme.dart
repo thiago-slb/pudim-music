@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'widgets/themed.dart';
+
 /// Which layout family a theme uses: mini player, navigation, Now Playing, lists and buttons.
 enum UiStyle {
   /// Dark, rounded cards, floating mini player, bottom bar.
@@ -246,6 +248,21 @@ ThemeData buildTheme([AppTheme? theme]) {
     hoverColor: Colors.white10,
   );
   final small = BorderRadius.circular(t.radius == 0 ? 0 : 4);
+  // Floating surfaces (menus, dialogs, sheets) and buttons in the theme's language.
+  final surface = switch (t.style) {
+    UiStyle.retro => t.elevated,
+    UiStyle.ruby => const Color(0xFF212121),
+    UiStyle.wave => Color.lerp(t.elevated, t.accent, 0.12)!,
+    UiStyle.glass => t.elevated,
+    UiStyle.night => t.highlight,
+  };
+  final OutlinedBorder buttonShape = switch (t.style) {
+    UiStyle.retro => const BevelBorder(),
+    UiStyle.ruby => RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(18),
+    ),
+    UiStyle.night || UiStyle.wave || UiStyle.glass => const StadiumBorder(),
+  };
   return base.copyWith(
     textTheme: base.textTheme.apply(bodyColor: t.text, displayColor: t.text),
     iconTheme: IconThemeData(color: t.subdued),
@@ -263,9 +280,62 @@ ThemeData buildTheme([AppTheme? theme]) {
       thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
     ),
     popupMenuTheme: PopupMenuThemeData(
-      color: t.highlight,
-      shape: RoundedRectangleBorder(borderRadius: small),
+      color: surface,
+      shape: surfaceShape(t),
       textStyle: TextStyle(color: t.text, fontSize: 14),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: surface,
+      shape: surfaceShape(t, 16),
+      titleTextStyle: TextStyle(
+        color: t.style == UiStyle.retro ? t.accent : t.text,
+        fontFamily: t.fontFamily,
+        fontSize: t.style == UiStyle.wave ? 24 : 20,
+        fontWeight: t.style == UiStyle.wave ? FontWeight.w900 : FontWeight.w700,
+        letterSpacing: t.style == UiStyle.retro ? 1.2 : null,
+      ),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: surface,
+      modalBackgroundColor: surface,
+      shape: sheetShape(t),
+      dragHandleColor: t.muted,
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: t.accent,
+      linearTrackColor: t.highlight,
+    ),
+    dividerTheme: DividerThemeData(
+      color: t.style == UiStyle.retro ? t.muted : Colors.white12,
+      thickness: t.style == UiStyle.retro ? 2 : 1,
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? t.onAccent : t.subdued,
+      ),
+      trackColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? t.accent : t.highlight,
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: t.text,
+        side: BorderSide(color: t.style == UiStyle.glass ? t.accent : t.muted),
+        shape: buttonShape,
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: t.accent,
+        foregroundColor: t.onAccent,
+        shape: buttonShape,
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: t.style == UiStyle.night ? t.text : t.accent,
+        shape: buttonShape,
+      ),
     ),
     scrollbarTheme: ScrollbarThemeData(
       thumbColor: WidgetStateProperty.all(Colors.white24),
@@ -277,8 +347,24 @@ ThemeData buildTheme([AppTheme? theme]) {
       hintStyle: TextStyle(color: t.subdued),
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: t.lcd ? t.elevated : const Color(0xFF3D91F4),
-      contentTextStyle: TextStyle(color: t.lcd ? t.accent : Colors.white),
+      backgroundColor: switch (t.style) {
+        UiStyle.retro => t.elevated,
+        UiStyle.ruby => const Color(0xFFF1F1F1),
+        UiStyle.wave => t.accent,
+        UiStyle.glass => t.press,
+        UiStyle.night => const Color(0xFF3D91F4),
+      },
+      contentTextStyle: TextStyle(
+        color: switch (t.style) {
+          UiStyle.retro => t.accent,
+          UiStyle.ruby => Colors.black,
+          UiStyle.wave => t.onAccent,
+          _ => Colors.white,
+        },
+        fontFamily: t.fontFamily,
+        fontWeight: t.style == UiStyle.wave ? FontWeight.w800 : null,
+      ),
+      shape: surfaceShape(t, t.style == UiStyle.wave ? 24 : null),
       behavior: SnackBarBehavior.floating,
     ),
   );

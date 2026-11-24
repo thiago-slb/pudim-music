@@ -45,11 +45,7 @@ class DownloadsBell extends ConsumerWidget {
       showModalBottomSheet<void>(
         context: context,
         useRootNavigator: true,
-        backgroundColor: Pm.elevated,
         isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-        ),
         builder: (sheet) => ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.sizeOf(sheet).height * 0.75,
@@ -146,7 +142,6 @@ class _JobTile extends ConsumerWidget {
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Pm.elevated,
         title: Text(job.kind == 'artist' ? job.artist : job.title),
         content: SizedBox(
           width: 480,

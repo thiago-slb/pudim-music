@@ -26,7 +26,6 @@ void toast(BuildContext context, String msg) {
         content: Text(msg, textAlign: TextAlign.center),
         width: 360,
         duration: const Duration(seconds: 2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
 }
@@ -423,11 +422,7 @@ Future<void> showItemMenu(
     final chosen = await showModalBottomSheet<_MenuEntry>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: Pm.elevated,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-      ),
       builder: (sheet) => SafeArea(
         child: ConstrainedBox(
           constraints: BoxConstraints(

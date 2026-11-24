@@ -88,7 +88,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Pm.elevated,
         title: Text(ctx.l10n.profileRenameTitle),
         content: Text(ctx.l10n.profileRenameBody(name)),
         actions: [
@@ -287,7 +286,6 @@ class _Save extends StatelessWidget {
       style: FilledButton.styleFrom(
         backgroundColor: Pm.accent,
         foregroundColor: Pm.onAccent,
-        shape: const StadiumBorder(),
       ),
       onPressed: busy ? null : onPressed,
       child: busy

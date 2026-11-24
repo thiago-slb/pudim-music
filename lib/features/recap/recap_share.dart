@@ -194,7 +194,6 @@ class _ShareCardsState extends ConsumerState<_ShareCards> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Pm.text,
                   side: BorderSide(color: Pm.muted),
-                  shape: const StadiumBorder(),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 12,
@@ -208,7 +207,6 @@ class _ShareCardsState extends ConsumerState<_ShareCards> {
                 const SizedBox(width: 12),
                 FilledButton.icon(
                   style: FilledButton.styleFrom(
-                    shape: const StadiumBorder(),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 18,
                       vertical: 12,

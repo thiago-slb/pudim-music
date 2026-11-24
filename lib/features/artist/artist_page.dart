@@ -150,12 +150,31 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                         errorBuilder: (_, _, _) =>
                             Container(color: Pm.highlight),
                       ),
-                    const DecoratedBox(
+                    DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Color(0x99000000)],
+                          colors: switch (Pm.current.style) {
+                            UiStyle.ruby => [Colors.transparent, Pm.base],
+                            UiStyle.wave => [
+                              Pm.accent.withValues(alpha: 0.15),
+                              Color.lerp(Pm.accent, Pm.base, 0.55)!,
+                            ],
+                            UiStyle.glass => [
+                              Colors.transparent,
+                              Pm.accent.withValues(alpha: 0.35),
+                              Pm.base,
+                            ],
+                            UiStyle.retro => [
+                              Colors.transparent,
+                              Pm.base.withValues(alpha: 0.9),
+                            ],
+                            UiStyle.night => [
+                              Colors.transparent,
+                              const Color(0x99000000),
+                            ],
+                          },
                         ),
                       ),
                     ),
@@ -166,16 +185,10 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          pageTitle(
                             a.name,
+                            isCompact(context) ? 40 : 88,
                             maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: isCompact(context) ? 40 : 88,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -2,
-                              height: 1.05,
-                            ),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -198,7 +211,12 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Color(0xFF2A2A2A), Pm.base],
+                    colors: [
+                      Pm.current.style == UiStyle.night
+                          ? const Color(0xFF2A2A2A)
+                          : Pm.base,
+                      Pm.base,
+                    ],
                   ),
                 ),
                 child: ActionBar(
@@ -227,7 +245,6 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Pm.text,
                         side: BorderSide(color: Pm.muted),
-                        shape: const StadiumBorder(),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 12,

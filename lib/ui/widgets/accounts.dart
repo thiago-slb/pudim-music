@@ -50,7 +50,6 @@ class AccountsList extends ConsumerWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Pm.text,
                       side: BorderSide(color: Pm.muted),
-                      shape: const StadiumBorder(),
                     ),
                     onPressed: () => switchAccount(ref, a.id),
                     child: Text(l.accountsSwitch),

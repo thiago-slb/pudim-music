@@ -43,10 +43,6 @@ Future<void> showJamSheet(BuildContext context) => showModalBottomSheet<void>(
   context: context,
   useRootNavigator: true,
   isScrollControlled: true,
-  backgroundColor: Pm.elevated,
-  shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-  ),
   builder: (_) => const _JamSheet(),
 );
 

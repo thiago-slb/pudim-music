@@ -181,7 +181,6 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                     style: FilledButton.styleFrom(
                       backgroundColor: Pm.accent,
                       foregroundColor: Pm.onAccent,
-                      shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 12,
@@ -287,7 +286,6 @@ class _Chip extends StatelessWidget {
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
       side: BorderSide(color: Pm.muted),
-      shape: const StadiumBorder(),
       visualDensity: VisualDensity.compact,
     ),
     onPressed: onTap,
