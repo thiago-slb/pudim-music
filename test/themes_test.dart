@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pudim_music/state/app_theme.dart';
@@ -10,6 +13,29 @@ double _contrast(Color a, Color b) {
 }
 
 void main() {
+  test('no brand names in theme names or descriptions (any language)', () {
+    final brands = RegExp(
+      r'spotify|youtube|deezer|winamp|windows media|media player|apple music|tidal',
+      caseSensitive: false,
+    );
+    for (final t in appThemes) {
+      expect(brands.hasMatch(t.name), isFalse, reason: t.name);
+    }
+    for (final f in Directory('lib/l10n').listSync()) {
+      if (!f.path.endsWith('.arb')) continue;
+      final m = jsonDecode(File(f.path).readAsStringSync()) as Map;
+      for (final e in m.entries) {
+        if ('${e.key}'.startsWith('theme')) {
+          expect(
+            brands.hasMatch('${e.value}'),
+            isFalse,
+            reason: '${f.path} ${e.key}',
+          );
+        }
+      }
+    }
+  });
+
   test('five themes with unique, stable ids; default first', () {
     expect(appThemes.map((t) => t.id), [
       'night',
@@ -20,7 +46,7 @@ void main() {
     ]);
     expect(themeById(null).id, 'night');
     expect(themeById('gone').id, 'night');
-    expect(themeById('retro').name, 'Retrô Amp');
+    expect(themeById('retro').name, 'Retrô');
   });
 
   test('every theme builds and stays readable', () {

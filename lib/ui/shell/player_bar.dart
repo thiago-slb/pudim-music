@@ -132,32 +132,12 @@ class _Controls extends ConsumerWidget {
             const SizedBox(width: 8),
             Tooltip(
               message: q.playing ? l10n.commonPause : l10n.playerBarPlay,
-              child: Material(
-                color: Pm.text,
-                shape: const CircleBorder(),
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: hasTrack ? c.togglePlay : null,
-                  child: SizedBox(
-                    width: 34,
-                    height: 34,
-                    child: q.buffering
-                        ? const Padding(
-                            padding: EdgeInsets.all(9),
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.black,
-                            ),
-                          )
-                        : Icon(
-                            q.playing
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            color: Colors.black,
-                            size: 24,
-                          ),
-                  ),
-                ),
+              child: ThemedPlayButton(
+                size: 34,
+                light: true,
+                playing: q.playing,
+                busy: q.buffering,
+                onPressed: hasTrack ? c.togglePlay : null,
               ),
             ),
             const SizedBox(width: 8),

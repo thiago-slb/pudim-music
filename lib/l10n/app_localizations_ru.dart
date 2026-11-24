@@ -2251,21 +2251,23 @@ class L10nRu extends L10n {
 
   @override
   String get themeNightDesc =>
-      'По умолчанию. В стиле Spotify: чёрный и зелёный.';
+      'Тёмная, скруглённые карточки и плавающий мини-плеер.';
 
   @override
-  String get themeRedDesc => 'В стиле YouTube Music: почти чёрный и красный.';
+  String get themeRedDesc =>
+      'Чистый чёрный с красным, большие квадратные обложки, мини-плеер у панели.';
 
   @override
-  String get themeWaveDesc => 'В стиле Deezer: тёмно-фиолетовый и пурпурный.';
+  String get themeWaveDesc =>
+      'Фиолетовые градиенты, жирный шрифт и мини-плеер-таблетка.';
 
   @override
   String get themeRetroDesc =>
-      'В стиле Winamp: серые панели 2000-х, зелёный дисплей и индикаторы уровня.';
+      'Серое объёмное окно, зелёный дисплей с бегущей строкой и текстовые списки.';
 
   @override
   String get themeClassicDesc =>
-      'В стиле Windows Media Player: чёрный и синий с глянцем.';
+      'Глянцевое сине-чёрное стекло, кнопка-шар, визуализатор и списки-таблицы.';
 
   @override
   String get settingsCheckUpdates => 'Проверить обновления';

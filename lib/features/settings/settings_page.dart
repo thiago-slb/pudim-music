@@ -512,7 +512,7 @@ class _ThemePicker extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    _Swatch(t),
+                    ThemePreview(t),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(
@@ -544,52 +544,177 @@ class _ThemePicker extends ConsumerWidget {
   }
 }
 
-/// Miniature of a theme: its background, a panel and the accent.
-class _Swatch extends StatelessWidget {
+/// Miniature phone screen in a theme's layout: content blocks, mini player shape and navigation.
+class ThemePreview extends StatelessWidget {
   final AppTheme t;
-  const _Swatch(this.t);
+  const ThemePreview(this.t, {super.key});
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: 56,
-    height: 40,
-    decoration: BoxDecoration(
-      color: t.black,
-      borderRadius: BorderRadius.circular(t.radius == 0 ? 0 : 6),
-      border: Border.all(color: t.highlight),
-    ),
-    clipBehavior: Clip.antiAlias,
-    child: Column(
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              Container(width: 16, color: t.elevated),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Center(
-                  child: Container(
-                    height: 8,
-                    margin: const EdgeInsets.only(right: 6),
-                    decoration: BoxDecoration(
-                      color: t.accent,
-                      borderRadius: BorderRadius.circular(
-                        t.radius == 0 ? 0 : 4,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+  Widget build(BuildContext context) {
+    final st = t.style;
+    Widget block(double h, {Color? c}) => Container(
+      height: h,
+      margin: const EdgeInsets.only(bottom: 3),
+      decoration: BoxDecoration(
+        color: c ?? t.elevated,
+        borderRadius: BorderRadius.circular(t.coverRadius / 3),
+      ),
+    );
+    final Widget mini = switch (st) {
+      UiStyle.ruby => Container(
+        height: 9,
+        color: t.elevated,
+        alignment: Alignment.topLeft,
+        child: Container(height: 1.5, width: 24, color: t.accent),
+      ),
+      UiStyle.wave => Container(
+        height: 9,
+        margin: const EdgeInsets.symmetric(horizontal: 3),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          gradient: LinearGradient(colors: [t.accent, t.black]),
+        ),
+      ),
+      UiStyle.retro => Container(
+        height: 10,
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        decoration: BoxDecoration(
+          color: t.highlight,
+          border: Border.all(color: const Color(0xFF8A8A98)),
+        ),
+        padding: const EdgeInsets.all(2),
+        child: Container(
+          color: Colors.black,
+          alignment: Alignment.centerLeft,
+          child: Container(height: 2, width: 18, color: t.accent),
+        ),
+      ),
+      UiStyle.glass => Container(
+        height: 9,
+        margin: const EdgeInsets.symmetric(horizontal: 3),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [t.press, t.black],
+          ),
+          border: Border.all(
+            color: t.accent.withValues(alpha: 0.7),
+            width: 0.8,
           ),
         ),
-        Container(
-          height: 10,
-          decoration: t.bar ?? BoxDecoration(color: t.base),
+      ),
+      UiStyle.night => Container(
+        height: 8,
+        margin: const EdgeInsets.symmetric(horizontal: 3),
+        decoration: BoxDecoration(
+          color: t.highlight,
+          borderRadius: BorderRadius.circular(2),
         ),
-      ],
-    ),
-  );
+      ),
+    };
+    final nav = Container(
+      height: 8,
+      color: t.black,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          for (var i = 0; i < 4; i++)
+            Container(
+              width: 6,
+              height: 3,
+              decoration: BoxDecoration(
+                color: i == 0
+                    ? (st == UiStyle.night || st == UiStyle.ruby
+                          ? t.text
+                          : t.accent)
+                    : t.muted,
+                borderRadius: BorderRadius.circular(
+                  st == UiStyle.retro ? 0 : 2,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+    final Widget content = switch (st) {
+      UiStyle.retro || UiStyle.glass => Column(
+        children: [
+          for (var i = 0; i < 5; i++)
+            Container(
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 2),
+              color: i == 1
+                  ? t.accent.withValues(alpha: 0.5)
+                  : (st == UiStyle.glass && i.isEven
+                        ? t.elevated
+                        : t.highlight.withValues(alpha: 0.5)),
+            ),
+        ],
+      ),
+      UiStyle.ruby => Row(
+        children: [
+          Expanded(child: block(22)),
+          const SizedBox(width: 3),
+          Expanded(child: block(22)),
+        ],
+      ),
+      UiStyle.wave => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 5,
+            width: 30,
+            color: t.text,
+            margin: const EdgeInsets.only(bottom: 3),
+          ),
+          block(16, c: t.accent.withValues(alpha: 0.6)),
+        ],
+      ),
+      UiStyle.night => Column(
+        children: [
+          block(10),
+          Row(
+            children: [
+              Expanded(child: block(12)),
+              const SizedBox(width: 3),
+              Expanded(child: block(12)),
+            ],
+          ),
+        ],
+      ),
+    };
+    final hero = t.hero;
+    return Container(
+      width: 52,
+      height: 74,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(t.radius == 0 ? 0 : 5),
+        border: Border.all(color: t.highlight, width: 1.5),
+        gradient: hero == null
+            ? null
+            : LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: hero,
+              ),
+        color: hero == null ? t.base : null,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          if (st == UiStyle.retro) nav,
+          Expanded(
+            child: Padding(padding: const EdgeInsets.all(4), child: content),
+          ),
+          mini,
+          const SizedBox(height: 2),
+          if (st != UiStyle.retro) nav,
+        ],
+      ),
+    );
+  }
 }
 
 /// "Check for updates": runs the check now and says what happened (also when it fails).

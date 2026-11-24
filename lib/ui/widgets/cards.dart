@@ -78,7 +78,12 @@ class _MediaCardState extends ConsumerState<MediaCard> {
             children: [
               Stack(
                 children: [
-                  Cover(it, size: coverSize, round: round, radius: 6),
+                  Cover(
+                    it,
+                    size: coverSize,
+                    round: round,
+                    radius: Pm.current.coverRadius,
+                  ),
                   Positioned(
                     right: 8,
                     bottom: 8,

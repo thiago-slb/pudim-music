@@ -3,6 +3,12 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 18
+- Themes change the layout, not only the colors: each one has its own mini player, navigation,
+  Now Playing, list density, play button and progress bar (see [docs/themes.md](docs/themes.md)).
+  Renamed Noite, Rubi, Onda, Retrô and Vidro, with a miniature preview and descriptions that name
+  no other product.
+
 ## Build 17
 - Updates: Settings > About has "Check for updates", which runs the check and shows the result
   (up to date, downloading with progress, or the error). The strip above the mini player shows the

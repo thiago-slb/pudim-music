@@ -110,3 +110,316 @@ class _LevelBarsState extends State<LevelBars>
     );
   }
 }
+
+/// Raised 3D edge (light top-left, dark bottom-right); [pressed] sinks it.
+BoxDecoration bevel({Color? color, bool pressed = false}) {
+  const light = Color(0xFF8A8A98), dark = Color(0xFF0E0E12);
+  final hi = pressed ? dark : light, lo = pressed ? light : dark;
+  return BoxDecoration(
+    color: color ?? Pm.elevated,
+    border: Border(
+      top: BorderSide(color: hi, width: 2),
+      left: BorderSide(color: hi, width: 2),
+      bottom: BorderSide(color: lo, width: 2),
+      right: BorderSide(color: lo, width: 2),
+    ),
+  );
+}
+
+/// Glossy glass fill: bright top half, deep bottom half, thin light rim.
+BoxDecoration glass({required BorderRadius radius, Color? tint}) {
+  final c = tint ?? Pm.accent;
+  return BoxDecoration(
+    borderRadius: radius,
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Color.lerp(c, Colors.white, 0.45)!,
+        Color.lerp(c, Colors.black, 0.15)!,
+        Color.lerp(c, Colors.black, 0.55)!,
+        Color.lerp(c, Colors.black, 0.35)!,
+      ],
+      stops: const [0, 0.48, 0.52, 1],
+    ),
+    border: Border.all(color: Colors.white38),
+    boxShadow: [BoxShadow(color: c.withValues(alpha: 0.45), blurRadius: 14)],
+  );
+}
+
+/// The theme's main play/pause button: round (night, ruby, wave), bevelled key (retro) or
+/// glossy orb (glass).
+class ThemedPlayButton extends StatelessWidget {
+  final double size;
+  final bool playing;
+  final bool busy;
+  final VoidCallback? onPressed;
+
+  /// Light button on dark backgrounds (Now Playing) instead of the accent color.
+  final bool light;
+  const ThemedPlayButton({
+    super.key,
+    this.size = 56,
+    this.playing = false,
+    this.busy = false,
+    this.light = false,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final icon = playing ? Icons.pause_rounded : Icons.play_arrow_rounded;
+    switch (Pm.current.style) {
+      case UiStyle.retro:
+        return GestureDetector(
+          onTap: onPressed,
+          child: Container(
+            width: size,
+            height: size * 0.75,
+            decoration: bevel(),
+            alignment: Alignment.center,
+            child: Icon(icon, color: Pm.accent, size: size * 0.5),
+          ),
+        );
+      case UiStyle.glass:
+        return GestureDetector(
+          onTap: onPressed,
+          child: Container(
+            width: size,
+            height: size,
+            decoration: glass(radius: BorderRadius.circular(size)),
+            alignment: Alignment.center,
+            child: busy
+                ? SizedBox(
+                    width: size * 0.4,
+                    height: size * 0.4,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 3,
+                      color: Colors.white,
+                    ),
+                  )
+                : Icon(
+                    icon,
+                    color: Colors.white,
+                    size: size * 0.55,
+                    shadows: const [Shadow(blurRadius: 8)],
+                  ),
+          ),
+        );
+      default:
+        final bg = light ? Pm.text : Pm.accent;
+        final fg = light ? Pm.black : Pm.onAccent;
+        return Material(
+          color: bg,
+          shape: const CircleBorder(),
+          elevation: light ? 0 : 4,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onPressed,
+            child: SizedBox(
+              width: size,
+              height: size,
+              child: busy
+                  ? Padding(
+                      padding: EdgeInsets.all(size * 0.32),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        color: fg,
+                      ),
+                    )
+                  : Icon(icon, color: fg, size: size * 0.6),
+            ),
+          ),
+        );
+    }
+  }
+}
+
+/// Small square transport key (retro): bevelled, sinks while pressed.
+class RetroKey extends StatefulWidget {
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final bool on;
+  final double width;
+  const RetroKey(
+    this.icon, {
+    super.key,
+    this.onPressed,
+    this.on = false,
+    this.width = 40,
+  });
+
+  @override
+  State<RetroKey> createState() => _RetroKeyState();
+}
+
+class _RetroKeyState extends State<RetroKey> {
+  bool _down = false;
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    onTapDown: (_) => setState(() => _down = true),
+    onTapCancel: () => setState(() => _down = false),
+    onTapUp: (_) {
+      setState(() => _down = false);
+      widget.onPressed?.call();
+    },
+    child: Container(
+      width: widget.width,
+      height: 28,
+      decoration: bevel(pressed: _down),
+      alignment: Alignment.center,
+      child: Icon(
+        widget.icon,
+        size: 18,
+        color: widget.on ? Pm.accent : Pm.text,
+      ),
+    ),
+  );
+}
+
+/// Text that scrolls sideways when it does not fit (the LCD title).
+class Marquee extends StatefulWidget {
+  final String text;
+  final TextStyle style;
+  const Marquee(this.text, {super.key, required this.style});
+
+  @override
+  State<Marquee> createState() => _MarqueeState();
+}
+
+class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 12),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (_, box) {
+      final style = DefaultTextStyle.of(context).style.merge(widget.style);
+      final tp = TextPainter(
+        text: TextSpan(text: widget.text, style: style),
+        maxLines: 1,
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final h = tp.height;
+      if (tp.width <= box.maxWidth) {
+        return SizedBox(
+          height: h,
+          child: Text(widget.text, style: style, maxLines: 1),
+        );
+      }
+      final loop = tp.width + 48;
+      return SizedBox(
+        height: h,
+        child: ClipRect(
+          child: AnimatedBuilder(
+            animation: _c,
+            builder: (_, _) => Stack(
+              clipBehavior: Clip.none,
+              children: [
+                for (final dx in [0.0, loop])
+                  Positioned(
+                    left: dx - _c.value * loop,
+                    top: 0,
+                    child: Text(
+                      widget.text,
+                      style: style,
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+/// Animated spectrum-like bars (glass Now Playing). Decorative: not driven by the audio.
+class Visualizer extends StatefulWidget {
+  final bool playing;
+  final int bars;
+  final double height;
+  const Visualizer({
+    super.key,
+    required this.playing,
+    this.bars = 32,
+    this.height = 80,
+  });
+
+  @override
+  State<Visualizer> createState() => _VisualizerState();
+}
+
+class _VisualizerState extends State<Visualizer>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 3),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.playing) _c.repeat();
+  }
+
+  @override
+  void didUpdateWidget(Visualizer old) {
+    super.didUpdateWidget(old);
+    if (widget.playing && !_c.isAnimating) _c.repeat();
+    if (!widget.playing && _c.isAnimating) _c.stop();
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  double _level(int i) {
+    if (!widget.playing) return 0.06;
+    final t = _c.value * 2 * pi;
+    final v = (sin(t * (2 + i % 4) + i * 0.9) * cos(t + i * 0.37)).abs();
+    return 0.12 + 0.88 * v;
+  }
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: widget.height,
+    child: AnimatedBuilder(
+      animation: _c,
+      builder: (_, _) => Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (var i = 0; i < widget.bars; i++)
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                height: widget.height * _level(i),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(2),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Pm.accent.withValues(alpha: 0.25), Pm.accent],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
+}

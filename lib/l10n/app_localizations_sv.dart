@@ -2217,23 +2217,23 @@ class L10nSv extends L10n {
   String get settingsThemeSubtitle => 'Byter färger direkt.';
 
   @override
-  String get themeNightDesc =>
-      'Standard. Inspirerat av Spotifys stil: svart och grönt.';
+  String get themeNightDesc => 'Mörkt, rundade kort och svävande minispelare.';
 
   @override
   String get themeRedDesc =>
-      'Inspirerat av YouTube Music: nästan svart och rött.';
+      'Helsvart med rött, stora fyrkantiga omslag, minispelare vid fältet.';
 
   @override
-  String get themeWaveDesc => 'Inspirerat av Deezer: mörkviolett och lila.';
+  String get themeWaveDesc =>
+      'Lila toningar, kraftig text och minispelare som piller.';
 
   @override
   String get themeRetroDesc =>
-      'Inspirerat av Winamp: grå paneler från 2000-talet, grön display och nivåstaplar.';
+      'Grått fönster i relief, grön display med rullande titel och textlistor.';
 
   @override
   String get themeClassicDesc =>
-      'Inspirerat av Windows Media Player: svart och blått med glans.';
+      'Blankt blått och svart glas, klotknapp, visualiserare och tabellistor.';
 
   @override
   String get settingsCheckUpdates => 'Sök efter uppdateringar';

@@ -2184,19 +2184,19 @@ class L10nJa extends L10n {
   String get settingsThemeSubtitle => 'すぐに色が変わります。';
 
   @override
-  String get themeNightDesc => '標準。Spotify 風：黒と緑。';
+  String get themeNightDesc => 'ダーク、角丸カード、浮かぶミニプレーヤー。';
 
   @override
-  String get themeRedDesc => 'YouTube Music 風：ほぼ黒と赤。';
+  String get themeRedDesc => '純黒と赤、大きな正方形のジャケット、バーに付いたミニプレーヤー。';
 
   @override
-  String get themeWaveDesc => 'Deezer 風：深いバイオレットと紫。';
+  String get themeWaveDesc => '紫のグラデーション、太い文字、ピル型ミニプレーヤー。';
 
   @override
-  String get themeRetroDesc => 'Winamp 風：2000年代のグレーのパネル、緑の表示、レベルバー。';
+  String get themeRetroDesc => '立体的なグレーのウィンドウ、流れるタイトルの緑の表示、テキストリスト。';
 
   @override
-  String get themeClassicDesc => 'Windows Media Player 風：光沢のある黒と青。';
+  String get themeClassicDesc => '光沢のある青と黒のガラス、球形ボタン、ビジュアライザー、表形式のリスト。';
 
   @override
   String get settingsCheckUpdates => 'アップデートを確認';

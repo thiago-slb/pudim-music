@@ -2222,21 +2222,23 @@ class L10nEs extends L10n {
 
   @override
   String get themeNightDesc =>
-      'Predeterminado. Inspirado en el estilo de Spotify: negro y verde.';
+      'Oscuro, tarjetas redondeadas y mini reproductor flotante.';
 
   @override
-  String get themeRedDesc => 'Inspirado en YouTube Music: casi negro y rojo.';
+  String get themeRedDesc =>
+      'Negro puro con rojo, portadas grandes y cuadradas, mini reproductor pegado a la barra.';
 
   @override
-  String get themeWaveDesc => 'Inspirado en Deezer: violeta oscuro y morado.';
+  String get themeWaveDesc =>
+      'Morado con degradados, letras fuertes y mini reproductor en píldora.';
 
   @override
   String get themeRetroDesc =>
-      'Inspirado en Winamp: paneles grises de los 2000, pantalla verde y barras de nivel.';
+      'Ventana gris en relieve, pantalla verde con título deslizante y listas de texto.';
 
   @override
   String get themeClassicDesc =>
-      'Inspirado en Windows Media Player: negro y azul con brillo.';
+      'Azul y negro con brillo de cristal, botón esfera, visualizador y listas en tabla.';
 
   @override
   String get settingsCheckUpdates => 'Buscar actualizaciones';

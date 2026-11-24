@@ -2210,23 +2210,23 @@ class L10nTr extends L10n {
   String get settingsThemeSubtitle => 'Renkleri hemen değiştirir.';
 
   @override
-  String get themeNightDesc =>
-      'Varsayılan. Spotify görünümünden esinlenildi: siyah ve yeşil.';
+  String get themeNightDesc => 'Koyu, yuvarlak kartlar ve yüzen mini oynatıcı.';
 
   @override
   String get themeRedDesc =>
-      'YouTube Music\'ten esinlenildi: siyaha yakın ve kırmızı.';
+      'Saf siyah ve kırmızı, büyük kare kapaklar, çubuğa yapışık mini oynatıcı.';
 
   @override
-  String get themeWaveDesc => 'Deezer\'dan esinlenildi: koyu menekşe ve mor.';
+  String get themeWaveDesc =>
+      'Mor geçişler, güçlü yazı ve hap şeklinde mini oynatıcı.';
 
   @override
   String get themeRetroDesc =>
-      'Winamp\'tan esinlenildi: 2000\'lerin gri panelleri, yeşil ekran ve seviye çubukları.';
+      'Kabartmalı gri pencere, kayan başlıklı yeşil ekran ve metin listeleri.';
 
   @override
   String get themeClassicDesc =>
-      'Windows Media Player\'dan esinlenildi: parlak siyah ve mavi.';
+      'Parlak mavi-siyah cam, küre düğme, görselleştirici ve tablo listeleri.';
 
   @override
   String get settingsCheckUpdates => 'Güncellemeleri denetle';

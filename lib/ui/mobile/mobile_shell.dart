@@ -81,6 +81,7 @@ class _MobileShellState extends ConsumerState<MobileShell> {
         break;
       }
     }
+    final retro = Pm.current.style == UiStyle.retro;
     return PopScope(
       canPop: _stack.length <= 1,
       onPopInvokedWithResult: (didPop, _) {
@@ -90,15 +91,29 @@ class _MobileShellState extends ConsumerState<MobileShell> {
         backgroundColor: Pm.base,
         body: Column(
           children: [
+            if (retro)
+              SafeArea(
+                bottom: false,
+                child: _NavBar(
+                  index: tab,
+                  tabs: _tabs,
+                  top: true,
+                  onTap: (i) => _openTab(_tabs[i]),
+                ),
+              ),
             Expanded(
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: SafeArea(bottom: false, child: widget.child),
+                    child: SafeArea(
+                      bottom: false,
+                      top: !retro,
+                      child: widget.child,
+                    ),
                   ),
                   if (!isRoot || path == '/settings')
                     Positioned(
-                      top: MediaQuery.paddingOf(context).top + 8,
+                      top: (retro ? 0 : MediaQuery.paddingOf(context).top) + 8,
                       left: 8,
                       child: Material(
                         color: Colors.black54,
@@ -119,11 +134,13 @@ class _MobileShellState extends ConsumerState<MobileShell> {
             const MiniPlayer(),
           ],
         ),
-        bottomNavigationBar: _NavBar(
-          index: tab,
-          tabs: _tabs,
-          onTap: (i) => _openTab(_tabs[i]),
-        ),
+        bottomNavigationBar: retro
+            ? SizedBox(height: MediaQuery.paddingOf(context).bottom)
+            : _NavBar(
+                index: tab,
+                tabs: _tabs,
+                onTap: (i) => _openTab(_tabs[i]),
+              ),
       ),
     );
   }
@@ -133,31 +150,110 @@ class _NavBar extends StatelessWidget {
   final int index;
   final List<String> tabs;
   final ValueChanged<int> onTap;
-  const _NavBar({required this.index, required this.tabs, required this.onTap});
+
+  /// Retro: a strip of square tabs at the top instead of the bottom bar.
+  final bool top;
+  const _NavBar({
+    required this.index,
+    required this.tabs,
+    required this.onTap,
+    this.top = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final items = <(int, IconData, IconData, String)>[
+      (0, Icons.home_outlined, Icons.home_filled, l10n.commonHome),
+      (1, Icons.search, Icons.manage_search, l10n.commonSearch),
+      if (tabs.contains('/shows'))
+        (2, Icons.event_outlined, Icons.event, l10n.commonShows),
+      (
+        tabs.indexOf('/library'),
+        Icons.library_music_outlined,
+        Icons.library_music,
+        l10n.commonYourLibrary,
+      ),
+    ];
+    final style = Pm.current.style;
+    if (top) {
+      return Container(
+        color: Pm.black,
+        padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+        child: Row(
+          children: [
+            for (final (i, _, _, label) in items)
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => onTap(i),
+                  child: Container(
+                    height: 30,
+                    margin: const EdgeInsets.only(right: 2),
+                    decoration: bevel(
+                      pressed: i == index,
+                      color: i == index ? Pm.black : Pm.elevated,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      label.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        letterSpacing: 1,
+                        color: i == index ? Pm.accent : Pm.text,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
     Widget item(int i, IconData icon, IconData selIcon, String label) {
       final sel = i == index;
+      final color = sel
+          ? (style == UiStyle.glass ? Pm.accent : Pm.text)
+          : Pm.subdued;
+      Widget ic = Icon(sel ? selIcon : icon, color: color, size: 26);
+      if (style == UiStyle.wave && sel) {
+        // Highlighted pill behind the selected tab.
+        ic = Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+          decoration: BoxDecoration(
+            color: Pm.accent.withValues(alpha: 0.28),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ic,
+        );
+      } else if (style == UiStyle.glass && sel) {
+        ic = Icon(
+          selIcon,
+          color: color,
+          size: 26,
+          shadows: [Shadow(color: Pm.accent, blurRadius: 12)],
+        );
+      }
       return Expanded(
         child: InkResponse(
           onTap: () => onTap(i),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                sel ? selIcon : icon,
-                color: sel ? Pm.text : Pm.subdued,
-                size: 26,
-              ),
+              ic,
               const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 11,
-                  color: sel ? Pm.text : Pm.subdued,
-                  fontWeight: sel ? FontWeight.w600 : FontWeight.w400,
+                  color: color,
+                  fontWeight: sel
+                      ? (style == UiStyle.wave
+                            ? FontWeight.w800
+                            : FontWeight.w600)
+                      : FontWeight.w400,
                 ),
               ),
             ],
@@ -166,29 +262,36 @@ class _NavBar extends StatelessWidget {
       );
     }
 
-    return Container(
-      decoration: BoxDecoration(
+    final decoration = switch (style) {
+      UiStyle.ruby => BoxDecoration(
+        color: Pm.black,
+        border: Border(top: BorderSide(color: Pm.highlight)),
+      ),
+      UiStyle.glass => BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xE6000000), Pm.black],
+          colors: [Pm.highlight, Pm.black],
+        ),
+        border: Border(
+          top: BorderSide(color: Pm.accent.withValues(alpha: 0.6)),
         ),
       ),
+      UiStyle.wave => BoxDecoration(color: Pm.black),
+      _ => BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [const Color(0xE6000000), Pm.black],
+        ),
+      ),
+    };
+    return Container(
+      decoration: decoration,
       padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
       height: 64 + MediaQuery.paddingOf(context).bottom,
       child: Row(
-        children: [
-          item(0, Icons.home_outlined, Icons.home_filled, l10n.commonHome),
-          item(1, Icons.search, Icons.manage_search, l10n.commonSearch),
-          if (tabs.contains('/shows'))
-            item(2, Icons.event_outlined, Icons.event, l10n.commonShows),
-          item(
-            tabs.indexOf('/library'),
-            Icons.library_music_outlined,
-            Icons.library_music,
-            l10n.commonYourLibrary,
-          ),
-        ],
+        children: [for (final (i, a, b, l) in items) item(i, a, b, l)],
       ),
     );
   }
@@ -201,7 +304,8 @@ Color currentCoverColor(WidgetRef ref, Item track) {
   return ref.watch(coverColorProvider(url)).value ?? fallbackColor;
 }
 
-/// Mini player above the bar: tap or drag up opens Now Playing.
+/// Mini player above the bar: tap or drag up opens Now Playing. Its shape follows the theme:
+/// floating card, flat full-width strip, pill, bevelled LCD panel or glass.
 class MiniPlayer extends ConsumerWidget {
   const MiniPlayer({super.key});
 
@@ -211,24 +315,211 @@ class MiniPlayer extends ConsumerWidget {
     final cur = q.current;
     if (cur == null) return const SizedBox.shrink();
     final c = ref.read(playerProvider.notifier);
-    final bg = darken(currentCoverColor(ref, cur), 0.2);
-    return GestureDetector(
-      onTap: () => context.push('/playing'),
-      onVerticalDragEnd: (d) {
-        if ((d.primaryVelocity ?? 0) < -200) context.push('/playing');
-      },
-      onHorizontalDragEnd: (d) {
-        final v = d.primaryVelocity ?? 0;
-        if (v < -300) c.next();
-        if (v > 300) c.previous();
-      },
-      child: AnimatedContainer(
+    final style = Pm.current.style;
+    final l10n = context.l10n;
+
+    Widget playBtn({double size = 32}) => IconButton(
+      icon: q.buffering
+          ? SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Pm.text),
+            )
+          : Icon(
+              q.playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
+              color: Pm.text,
+              size: size,
+            ),
+      tooltip: q.playing ? l10n.commonPause : l10n.playerBarPlay,
+      onPressed: c.togglePlay,
+    );
+    final fav = IconButton(
+      icon: Icon(
+        cur.favorite ? Icons.check_circle : Icons.add_circle_outline,
+        color: cur.favorite ? Pm.accent : Pm.text,
+      ),
+      tooltip: cur.favorite
+          ? l10n.commonRemoveFromLiked
+          : l10n.commonAddToLiked,
+      onPressed: () => toggleFavorite(context, ref, cur),
+    );
+    Widget titles({Color? sub, double size = 14, FontWeight? weight}) => Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          cur.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: size,
+            fontWeight: weight ?? FontWeight.w600,
+          ),
+        ),
+        Text(
+          cur.artistLine,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: sub ?? Colors.white70, fontSize: 12.5),
+        ),
+      ],
+    );
+
+    final Widget body = switch (style) {
+      // Flat strip glued to the bar, progress line on top, square cover.
+      UiStyle.ruby => Container(
+        color: Pm.elevated,
+        height: 64,
+        child: Column(
+          children: [
+            const _MiniProgress(height: 2),
+            Expanded(
+              child: Row(
+                children: [
+                  Cover(cur, size: 62, radius: 0),
+                  const SizedBox(width: 12),
+                  Expanded(child: titles(sub: Pm.subdued)),
+                  playBtn(),
+                  IconButton(
+                    icon: Icon(Icons.skip_next_rounded, color: Pm.text),
+                    tooltip: l10n.rightPanelNextUp,
+                    onPressed: c.next,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      // Floating pill with a gradient and a round cover.
+      UiStyle.wave => Container(
+        margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+        height: 60,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          gradient: LinearGradient(
+            colors: [Pm.accent, Color.lerp(Pm.accent, Pm.black, 0.55)!],
+          ),
+          boxShadow: [
+            BoxShadow(color: Pm.accent.withValues(alpha: 0.35), blurRadius: 16),
+          ],
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 6),
+            Cover(cur, size: 48, round: true),
+            const SizedBox(width: 12),
+            Expanded(child: titles(weight: FontWeight.w800)),
+            fav,
+            playBtn(),
+            const SizedBox(width: 4),
+          ],
+        ),
+      ),
+      // Bevelled panel: LCD with scrolling title, level bars and small transport keys.
+      UiStyle.retro => Container(
+        margin: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+        padding: const EdgeInsets.all(6),
+        decoration: bevel(),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF000000),
+                  border: Border.all(color: const Color(0xFF111116), width: 2),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Marquee(
+                            '${cur.artistLine} - ${cur.name}',
+                            style: TextStyle(color: Pm.accent, fontSize: 13),
+                          ),
+                          const _MiniTime(),
+                        ],
+                      ),
+                    ),
+                    LevelBars(playing: q.playing, height: 22),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            RetroKey(Icons.skip_previous, width: 32, onPressed: c.previous),
+            const SizedBox(width: 2),
+            RetroKey(
+              q.playing ? Icons.pause : Icons.play_arrow,
+              width: 36,
+              on: q.playing,
+              onPressed: c.togglePlay,
+            ),
+            const SizedBox(width: 2),
+            RetroKey(Icons.skip_next, width: 32, onPressed: c.next),
+          ],
+        ),
+      ),
+      // Glass capsule with an orb play button.
+      UiStyle.glass => Container(
+        margin: const EdgeInsets.fromLTRB(8, 0, 8, 6),
+        height: 62,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Pm.press, Pm.elevated, Pm.black],
+            stops: const [0, 0.5, 1],
+          ),
+          border: Border.all(color: Pm.accent.withValues(alpha: 0.5)),
+          boxShadow: [
+            BoxShadow(color: Pm.accent.withValues(alpha: 0.25), blurRadius: 12),
+          ],
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Cover(cur, size: 44, radius: Pm.current.coverRadius),
+                  const SizedBox(width: 10),
+                  Expanded(child: titles(sub: Pm.subdued)),
+                  fav,
+                  ThemedPlayButton(
+                    size: 44,
+                    playing: q.playing,
+                    busy: q.buffering,
+                    onPressed: c.togglePlay,
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14),
+              child: _MiniProgress(height: 2),
+            ),
+            const SizedBox(height: 3),
+          ],
+        ),
+      ),
+      // Default: floating card in the cover color.
+      UiStyle.night => AnimatedContainer(
         duration: const Duration(milliseconds: 400),
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
         height: 58,
-        decoration: Pm.current.bar != null
-            ? playerBarDecoration(radius: BorderRadius.circular(Pm.radius))
-            : BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+        decoration: BoxDecoration(
+          color: darken(currentCoverColor(ref, cur), 0.2),
+          borderRadius: BorderRadius.circular(6),
+        ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           children: [
@@ -238,70 +529,9 @@ class MiniPlayer extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Cover(cur, size: 40),
                   const SizedBox(width: 10),
-                  Expanded(
-                    child: LcdPanel(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            cur.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            cur.artistLine,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: lcdTextColor() ?? Colors.white70,
-                              fontSize: 12.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  LevelBars(playing: q.playing, height: 14),
-                  IconButton(
-                    icon: Icon(
-                      cur.favorite
-                          ? Icons.check_circle
-                          : Icons.add_circle_outline,
-                      color: cur.favorite ? Pm.accent : Pm.text,
-                    ),
-                    tooltip: cur.favorite
-                        ? context.l10n.commonRemoveFromLiked
-                        : context.l10n.commonAddToLiked,
-                    onPressed: () => toggleFavorite(context, ref, cur),
-                  ),
-                  IconButton(
-                    icon: q.buffering
-                        ? SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Pm.text,
-                            ),
-                          )
-                        : Icon(
-                            q.playing
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            color: Pm.text,
-                            size: 32,
-                          ),
-                    tooltip: q.playing
-                        ? context.l10n.commonPause
-                        : context.l10n.playerBarPlay,
-                    onPressed: c.togglePlay,
-                  ),
+                  Expanded(child: titles()),
+                  fav,
+                  playBtn(),
                   const SizedBox(width: 4),
                 ],
               ),
@@ -313,12 +543,25 @@ class MiniPlayer extends ConsumerWidget {
           ],
         ),
       ),
+    };
+    return GestureDetector(
+      onTap: () => context.push('/playing'),
+      onVerticalDragEnd: (d) {
+        if ((d.primaryVelocity ?? 0) < -200) context.push('/playing');
+      },
+      onHorizontalDragEnd: (d) {
+        final v = d.primaryVelocity ?? 0;
+        if (v < -300) c.next();
+        if (v > 300) c.previous();
+      },
+      child: body,
     );
   }
 }
 
 class _MiniProgress extends ConsumerWidget {
-  const _MiniProgress();
+  final double height;
+  const _MiniProgress({this.height = 2});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pos = ref.watch(positionProvider).value ?? Duration.zero;
@@ -326,13 +569,31 @@ class _MiniProgress extends ConsumerWidget {
     final v = dur.inMilliseconds <= 0
         ? 0.0
         : (pos.inMilliseconds / dur.inMilliseconds).clamp(0.0, 1.0);
+    final style = Pm.current.style;
     return ClipRRect(
       borderRadius: BorderRadius.circular(1),
       child: LinearProgressIndicator(
         value: v,
-        minHeight: 2,
-        color: Pm.text,
+        minHeight: height,
+        color: style == UiStyle.night ? Pm.text : Pm.accent,
         backgroundColor: Colors.white24,
+      ),
+    );
+  }
+}
+
+/// Elapsed time in LCD digits (retro mini player).
+class _MiniTime extends ConsumerWidget {
+  const _MiniTime();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pos = ref.watch(positionProvider).value ?? Duration.zero;
+    return Text(
+      formatDuration(pos),
+      style: TextStyle(
+        color: Pm.accent.withValues(alpha: 0.75),
+        fontSize: 11,
+        fontFeatures: const [FontFeature.tabularFigures()],
       ),
     );
   }

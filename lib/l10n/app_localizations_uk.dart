@@ -2244,21 +2244,24 @@ class L10nUk extends L10n {
   String get settingsThemeSubtitle => 'Змінює кольори одразу.';
 
   @override
-  String get themeNightDesc => 'Типова. У стилі Spotify: чорний і зелений.';
+  String get themeNightDesc =>
+      'Темна, заокруглені картки й плавучий міні-плеєр.';
 
   @override
-  String get themeRedDesc => 'У стилі YouTube Music: майже чорний і червоний.';
+  String get themeRedDesc =>
+      'Чистий чорний із червоним, великі квадратні обкладинки, міні-плеєр біля панелі.';
 
   @override
-  String get themeWaveDesc => 'У стилі Deezer: темно-фіолетовий і пурпуровий.';
+  String get themeWaveDesc =>
+      'Фіолетові градієнти, жирний шрифт і міні-плеєр-пігулка.';
 
   @override
   String get themeRetroDesc =>
-      'У стилі Winamp: сірі панелі 2000-х, зелений дисплей і індикатори рівня.';
+      'Сіре обʼємне вікно, зелений дисплей із біжучим рядком і текстові списки.';
 
   @override
   String get themeClassicDesc =>
-      'У стилі Windows Media Player: чорний і синій із глянцем.';
+      'Глянцеве синьо-чорне скло, кнопка-куля, візуалізатор і списки-таблиці.';
 
   @override
   String get settingsCheckUpdates => 'Перевірити оновлення';

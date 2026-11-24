@@ -2249,22 +2249,23 @@ class L10nPl extends L10n {
 
   @override
   String get themeNightDesc =>
-      'Domyślny. Inspirowany wyglądem Spotify: czerń i zieleń.';
+      'Ciemny, zaokrąglone karty i pływający miniodtwarzacz.';
 
   @override
   String get themeRedDesc =>
-      'Inspirowany YouTube Music: prawie czarny i czerwony.';
+      'Czysta czerń z czerwienią, duże kwadratowe okładki, miniodtwarzacz przy pasku.';
 
   @override
-  String get themeWaveDesc => 'Inspirowany Deezerem: ciemny fiolet i purpura.';
+  String get themeWaveDesc =>
+      'Fioletowe gradienty, mocne litery i miniodtwarzacz w kształcie pigułki.';
 
   @override
   String get themeRetroDesc =>
-      'Inspirowany Winampem: szare panele z lat 2000, zielony wyświetlacz i paski poziomu.';
+      'Szare okno z wypukłą ramką, zielony wyświetlacz z przewijanym tytułem i listy tekstowe.';
 
   @override
   String get themeClassicDesc =>
-      'Inspirowany Windows Media Player: czerń i błękit z połyskiem.';
+      'Błyszczące niebiesko-czarne szkło, przycisk kula, wizualizacja i listy w tabeli.';
 
   @override
   String get settingsCheckUpdates => 'Sprawdź aktualizacje';
