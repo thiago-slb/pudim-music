@@ -40,13 +40,13 @@ class SleepTimerButton extends ConsumerWidget {
       onPressed: () => _pick(context, ref),
       icon: Badge(
         isLabelVisible: s.until != null,
-        backgroundColor: Pm.green,
-        textColor: Colors.black,
+        backgroundColor: Pm.accent,
+        textColor: Pm.onAccent,
         label: Text(s.until == null ? '' : '${(s.left.inSeconds / 60).ceil()}'),
         child: Icon(
           s.active ? Icons.bedtime : Icons.bedtime_outlined,
           size: size,
-          color: s.active ? Pm.green : Pm.subdued,
+          color: s.active ? Pm.accent : Pm.subdued,
         ),
       ),
     );
@@ -88,21 +88,18 @@ class SleepTimerButton extends ConsumerWidget {
               ),
               if (s.active)
                 ListTile(
-                  leading: const Icon(Icons.close, color: Pm.subdued),
+                  leading: Icon(Icons.close, color: Pm.subdued),
                   title: Text(ctx.l10n.widgetSleepTurnOff),
                   onTap: () => Navigator.pop(ctx, 'off'),
                 ),
               for (final m in options)
                 ListTile(
-                  leading: const Icon(Icons.timer_outlined, color: Pm.subdued),
+                  leading: Icon(Icons.timer_outlined, color: Pm.subdued),
                   title: Text(_duration(ctx.l10n, m)),
                   onTap: () => Navigator.pop(ctx, m),
                 ),
               ListTile(
-                leading: const Icon(
-                  Icons.music_off_outlined,
-                  color: Pm.subdued,
-                ),
+                leading: Icon(Icons.music_off_outlined, color: Pm.subdued),
                 title: Text(ctx.l10n.widgetSleepEndOfSong),
                 onTap: () => Navigator.pop(ctx, 'end'),
               ),
@@ -150,7 +147,7 @@ class SpeedButton extends ConsumerWidget {
     final v = ref.watch(speedProvider).value ?? 1.0;
     return TextButton(
       style: TextButton.styleFrom(
-        foregroundColor: v == 1.0 ? Pm.subdued : Pm.green,
+        foregroundColor: v == 1.0 ? Pm.subdued : Pm.accent,
         minimumSize: const Size(44, 36),
         padding: const EdgeInsets.symmetric(horizontal: 8),
       ),
@@ -186,7 +183,7 @@ class SpeedButton extends ConsumerWidget {
                         label(s, Localizations.localeOf(ctx).languageCode),
                       ),
                       trailing: s == v
-                          ? const Icon(Icons.check, color: Pm.green)
+                          ? Icon(Icons.check, color: Pm.accent)
                           : null,
                       onTap: () => Navigator.pop(ctx, s),
                     ),

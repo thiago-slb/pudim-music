@@ -14,6 +14,7 @@ import 'audio/windows_media_controls.dart';
 import 'router.dart';
 import 'l10n/l10n.dart';
 import 'l10n/delegates.dart';
+import 'state/app_theme.dart';
 import 'state/locale.dart';
 import 'state/session.dart';
 import 'state/legacy_data.dart';
@@ -55,7 +56,7 @@ Future<void> main() async {
     // CarPlay (iOS): the car's lists request the folders through this channel.
     if (Platform.isIOS) CarPlayBridge.init();
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         systemNavigationBarColor: Pm.black,
       ),
@@ -68,7 +69,7 @@ Future<void> main() async {
   if (isDesktop) {
     await windowManager.ensureInitialized();
     await windowManager.waitUntilReadyToShow(
-      const WindowOptions(
+      WindowOptions(
         title: 'Pudim',
         size: Size(1400, 880),
         minimumSize: Size(900, 600),
@@ -108,6 +109,7 @@ class PudimMusicApp extends ConsumerWidget {
       ref.watch(jamProvider);
     }
     final locale = ref.watch(localeProvider);
+    final look = ref.watch(appThemeProvider);
     if (session.isLoading && !session.hasValue) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -116,17 +118,17 @@ class PudimMusicApp extends ConsumerWidget {
         supportedLocales: L10n.supportedLocales,
         localeListResolutionCallback: (device, _) => resolveAppLocale(device),
         builder: _keepL10n,
-        theme: buildTheme(),
-        home: const Scaffold(
+        theme: buildTheme(look),
+        home: Scaffold(
           backgroundColor: Pm.black,
-          body: Center(child: CircularProgressIndicator(color: Pm.green)),
+          body: Center(child: CircularProgressIndicator(color: Pm.accent)),
         ),
       );
     }
     return MaterialApp.router(
       title: 'Pudim',
       debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
+      theme: buildTheme(look),
       locale: locale,
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: L10n.supportedLocales,

@@ -90,7 +90,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const st = TextStyle(color: Pm.subdued, fontSize: 13.5);
+    final st = TextStyle(color: Pm.subdued, fontSize: 13.5);
     return Container(
       height: 36,
       margin: const EdgeInsets.only(bottom: 8),
@@ -100,7 +100,7 @@ class _Header extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const SizedBox(
+          SizedBox(
             width: 32,
             child: Text('#', style: st, textAlign: TextAlign.center),
           ),
@@ -117,7 +117,7 @@ class _Header extends StatelessWidget {
               child: Text(context.l10n.widgetTracksDateAdded, style: st),
             ),
           const SizedBox(width: 40),
-          const SizedBox(
+          SizedBox(
             width: 56,
             child: Icon(Icons.schedule, size: 16, color: Pm.subdued),
           ),
@@ -163,7 +163,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
     final t = widget.track;
     final q = ref.watch(playerProvider);
     final isCurrent = q.current?.id == t.id;
-    final titleColor = isCurrent ? Pm.green : Pm.text;
+    final titleColor = isCurrent ? Pm.accent : Pm.text;
     // Smart Shuffle recommendation (queue only)
     final rec = widget.queueIndex != null && q.recommended.contains(t.id);
     if (isCompact(context)) return _compact(t, isCurrent, q.playing, rec);
@@ -187,7 +187,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
         '${widget.number}',
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: isCurrent ? Pm.green : Pm.subdued,
+          color: isCurrent ? Pm.accent : Pm.subdued,
           fontSize: 15,
         ),
       );
@@ -243,10 +243,10 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                           Row(
                             children: [
                               if (rec) ...[
-                                const Icon(
+                                Icon(
                                   Icons.auto_awesome,
                                   size: 13,
-                                  color: Pm.green,
+                                  color: Pm.accent,
                                 ),
                                 const SizedBox(width: 4),
                               ],
@@ -257,7 +257,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                                     '  •  ${context.l10n.widgetTracksAddedBy(widget.addedBy!)}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Pm.muted,
                                       fontSize: 13,
                                     ),
@@ -276,7 +276,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                   flex: 3,
                   child: TextLink(
                     t.album ?? '',
-                    style: const TextStyle(color: Pm.subdued, fontSize: 14),
+                    style: TextStyle(color: Pm.subdued, fontSize: 14),
                     onTap: t.albumId == null
                         ? null
                         : () => context.go('/album/${t.albumId}'),
@@ -287,7 +287,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                   flex: 2,
                   child: Text(
                     _date(context, t.dateCreated),
-                    style: const TextStyle(color: Pm.subdued, fontSize: 14),
+                    style: TextStyle(color: Pm.subdued, fontSize: 14),
                   ),
                 ),
               SizedBox(
@@ -300,7 +300,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                               ? Icons.check_circle
                               : Icons.add_circle_outline,
                           size: 18,
-                          color: t.favorite ? Pm.green : Pm.subdued,
+                          color: t.favorite ? Pm.accent : Pm.subdued,
                         ),
                       )
                     : null,
@@ -310,7 +310,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                 child: Text(
                   formatDuration(t.duration),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Pm.subdued, fontSize: 14),
+                  style: TextStyle(color: Pm.subdued, fontSize: 14),
                 ),
               ),
               SizedBox(
@@ -326,7 +326,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                             queueIndex: widget.queueIndex,
                             playlistId: widget.playlistId,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.more_horiz,
                             size: 20,
                             color: Pm.text,
@@ -372,7 +372,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                         '${widget.number}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: isCurrent ? Pm.green : Pm.subdued,
+                          color: isCurrent ? Pm.accent : Pm.subdued,
                           fontSize: 14,
                         ),
                       ),
@@ -388,7 +388,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: isCurrent ? Pm.green : Pm.text,
+                      color: isCurrent ? Pm.accent : Pm.text,
                       fontSize: 15.5,
                       fontWeight: FontWeight.w500,
                     ),
@@ -397,19 +397,11 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                   Row(
                     children: [
                       if (t.favorite) ...[
-                        const Icon(
-                          Icons.check_circle,
-                          size: 13,
-                          color: Pm.green,
-                        ),
+                        Icon(Icons.check_circle, size: 13, color: Pm.accent),
                         const SizedBox(width: 4),
                       ],
                       if (rec) ...[
-                        const Icon(
-                          Icons.auto_awesome,
-                          size: 13,
-                          color: Pm.green,
-                        ),
+                        Icon(Icons.auto_awesome, size: 13, color: Pm.accent),
                         const SizedBox(width: 4),
                       ],
                       if (t.cloud) const CloudBadge(size: 13),
@@ -421,10 +413,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
                               : '${t.artistLine}  •  ${context.l10n.widgetTracksAddedBy(widget.addedBy!)}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Pm.subdued,
-                            fontSize: 13,
-                          ),
+                          style: TextStyle(color: Pm.subdued, fontSize: 13),
                         ),
                       ),
                     ],
@@ -433,7 +422,7 @@ class _TrackRowState extends ConsumerState<TrackRow> {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.more_vert, color: Pm.subdued, size: 20),
+              icon: Icon(Icons.more_vert, color: Pm.subdued, size: 20),
               tooltip: context.l10n.widgetTracksMoreOptions,
               onPressed: () => showItemMenu(
                 context,
@@ -492,7 +481,7 @@ class _EqualizerState extends State<_Equalizer>
               width: 2.5,
               height: h(p),
               margin: const EdgeInsets.symmetric(horizontal: 1),
-              color: Pm.green,
+              color: Pm.accent,
             ),
         ],
       );

@@ -583,5 +583,13 @@
   "castSearchAgain": "Erneut suchen",
   "castStop": "Streaming beenden",
   "castPlayingOn": "Läuft auf {name}",
-  "castFailed": "Verbindung mit {name} fehlgeschlagen"
+  "castFailed": "Verbindung mit {name} fehlgeschlagen",
+  "settingsSectionAppearance": "Darstellung",
+  "settingsTheme": "Design",
+  "settingsThemeSubtitle": "Ändert die Farben sofort.",
+  "themeNightDesc": "Standard. Inspiriert vom Spotify-Look: Schwarz und Grün.",
+  "themeRedDesc": "Inspiriert von YouTube Music: fast Schwarz und Rot.",
+  "themeWaveDesc": "Inspiriert von Deezer: dunkles Violett und Lila.",
+  "themeRetroDesc": "Inspiriert von Winamp: graue 2000er-Panels, grünes Display und Pegelbalken.",
+  "themeClassicDesc": "Inspiriert vom Windows Media Player: Schwarz und Blau mit Glanz."
 }

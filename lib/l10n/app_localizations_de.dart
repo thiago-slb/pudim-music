@@ -2215,4 +2215,33 @@ class L10nDe extends L10n {
   String castFailed(String name) {
     return 'Verbindung mit $name fehlgeschlagen';
   }
+
+  @override
+  String get settingsSectionAppearance => 'Darstellung';
+
+  @override
+  String get settingsTheme => 'Design';
+
+  @override
+  String get settingsThemeSubtitle => 'Ändert die Farben sofort.';
+
+  @override
+  String get themeNightDesc =>
+      'Standard. Inspiriert vom Spotify-Look: Schwarz und Grün.';
+
+  @override
+  String get themeRedDesc =>
+      'Inspiriert von YouTube Music: fast Schwarz und Rot.';
+
+  @override
+  String get themeWaveDesc =>
+      'Inspiriert von Deezer: dunkles Violett und Lila.';
+
+  @override
+  String get themeRetroDesc =>
+      'Inspiriert von Winamp: graue 2000er-Panels, grünes Display und Pegelbalken.';
+
+  @override
+  String get themeClassicDesc =>
+      'Inspiriert vom Windows Media Player: Schwarz und Blau mit Glanz.';
 }

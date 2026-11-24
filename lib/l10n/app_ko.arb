@@ -583,5 +583,13 @@
   "castSearchAgain": "다시 찾기",
   "castStop": "전송 중지",
   "castPlayingOn": "{name}에서 재생 중",
-  "castFailed": "{name}에 연결할 수 없습니다"
+  "castFailed": "{name}에 연결할 수 없습니다",
+  "settingsSectionAppearance": "모양",
+  "settingsTheme": "테마",
+  "settingsThemeSubtitle": "색상이 바로 바뀝니다.",
+  "themeNightDesc": "기본값. Spotify 스타일: 검정과 초록.",
+  "themeRedDesc": "YouTube Music 스타일: 거의 검정과 빨강.",
+  "themeWaveDesc": "Deezer 스타일: 짙은 바이올렛과 보라.",
+  "themeRetroDesc": "Winamp 스타일: 2000년대 회색 패널, 초록 디스플레이, 레벨 막대.",
+  "themeClassicDesc": "Windows Media Player 스타일: 광택 있는 검정과 파랑."
 }

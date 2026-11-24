@@ -182,7 +182,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               padding: const EdgeInsets.only(top: 8),
               child: Text(
                 l.profileExtrasUnreachable,
-                style: const TextStyle(color: Pm.subdued),
+                style: TextStyle(color: Pm.subdued),
               ),
             ),
           ConstrainedBox(
@@ -244,7 +244,7 @@ class _Help extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 8),
-    child: Text(text, style: const TextStyle(color: Pm.subdued, fontSize: 13)),
+    child: Text(text, style: TextStyle(color: Pm.subdued, fontSize: 13)),
   );
 }
 
@@ -285,8 +285,8 @@ class _Save extends StatelessWidget {
     alignment: Alignment.centerLeft,
     child: FilledButton(
       style: FilledButton.styleFrom(
-        backgroundColor: Pm.green,
-        foregroundColor: Colors.black,
+        backgroundColor: Pm.accent,
+        foregroundColor: Pm.onAccent,
         shape: const StadiumBorder(),
       ),
       onPressed: busy ? null : onPressed,

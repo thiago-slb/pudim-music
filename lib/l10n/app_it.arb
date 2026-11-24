@@ -583,5 +583,13 @@
   "castSearchAgain": "Cerca di nuovo",
   "castStop": "Interrompi trasmissione",
   "castPlayingOn": "In riproduzione su {name}",
-  "castFailed": "Impossibile connettersi a {name}"
+  "castFailed": "Impossibile connettersi a {name}",
+  "settingsSectionAppearance": "Aspetto",
+  "settingsTheme": "Tema",
+  "settingsThemeSubtitle": "Cambia subito i colori.",
+  "themeNightDesc": "Predefinito. Ispirato allo stile di Spotify: nero e verde.",
+  "themeRedDesc": "Ispirato a YouTube Music: quasi nero e rosso.",
+  "themeWaveDesc": "Ispirato a Deezer: viola scuro e porpora.",
+  "themeRetroDesc": "Ispirato a Winamp: pannelli grigi anni 2000, display verde e barre di livello.",
+  "themeClassicDesc": "Ispirato a Windows Media Player: nero e blu lucido."
 }

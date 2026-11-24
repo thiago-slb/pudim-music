@@ -87,7 +87,7 @@ class _NowPlayingPanel extends ConsumerWidget {
                 child: Text(
                   context.l10n.rightPanelNothingPlaying,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Pm.subdued),
+                  style: TextStyle(color: Pm.subdued),
                 ),
               ),
             ),
@@ -124,10 +124,7 @@ class _NowPlayingPanel extends ConsumerWidget {
                         ),
                         ArtistLinks(
                           cur,
-                          style: const TextStyle(
-                            color: Pm.subdued,
-                            fontSize: 15,
-                          ),
+                          style: TextStyle(color: Pm.subdued, fontSize: 15),
                         ),
                       ],
                     ),
@@ -305,7 +302,7 @@ class AboutArtistCard extends ConsumerWidget {
                         _strip(it.overview!),
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Pm.subdued, fontSize: 14),
+                        style: TextStyle(color: Pm.subdued, fontSize: 14),
                       ),
                     ],
                   ],
@@ -348,7 +345,7 @@ class NextUpCard extends ConsumerWidget {
               ),
               TextLink(
                 context.l10n.rightPanelOpenQueue,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Pm.subdued,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -380,7 +377,7 @@ class NextUpCard extends ConsumerWidget {
                       next.artistLine,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Pm.subdued, fontSize: 13),
+                      style: TextStyle(color: Pm.subdued, fontSize: 13),
                     ),
                   ],
                 ),
@@ -426,7 +423,7 @@ class QueueView extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.queue_music, size: 48, color: Pm.subdued),
+                  Icon(Icons.queue_music, size: 48, color: Pm.subdued),
                   const SizedBox(height: 12),
                   Text(
                     context.l10n.rightPanelQueueEmptyTitle,
@@ -441,7 +438,7 @@ class QueueView extends ConsumerWidget {
                     child: Text(
                       context.l10n.rightPanelQueueEmptyHint,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Pm.subdued),
+                      style: TextStyle(color: Pm.subdued),
                     ),
                   ),
                 ],

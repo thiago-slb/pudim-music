@@ -23,7 +23,7 @@ class LyricsPage extends ConsumerWidget {
         child: Center(
           child: Text(
             context.l10n.lyricsPlaySomething,
-            style: const TextStyle(color: Pm.subdued, fontSize: 18),
+            style: TextStyle(color: Pm.subdued, fontSize: 18),
           ),
         ),
       );

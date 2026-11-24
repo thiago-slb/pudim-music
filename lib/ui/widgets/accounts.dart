@@ -35,21 +35,21 @@ class AccountsList extends ConsumerWidget {
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: CircleAvatar(
-              backgroundColor: a.id == active ? Pm.green : Pm.elevated,
-              foregroundColor: a.id == active ? Colors.black : Pm.text,
+              backgroundColor: a.id == active ? Pm.accent : Pm.elevated,
+              foregroundColor: a.id == active ? Pm.onAccent : Pm.text,
               child: Text(
                 a.userName.isEmpty ? '?' : a.userName[0].toUpperCase(),
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
             title: Text(a.userName),
-            subtitle: Text(a.host, style: const TextStyle(color: Pm.subdued)),
+            subtitle: Text(a.host, style: TextStyle(color: Pm.subdued)),
             trailing: a.id == active
-                ? Text(l.accountsInUse, style: const TextStyle(color: Pm.green))
+                ? Text(l.accountsInUse, style: TextStyle(color: Pm.accent))
                 : OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Pm.text,
-                      side: const BorderSide(color: Pm.muted),
+                      side: BorderSide(color: Pm.muted),
                       shape: const StadiumBorder(),
                     ),
                     onPressed: () => switchAccount(ref, a.id),

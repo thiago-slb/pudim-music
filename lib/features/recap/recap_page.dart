@@ -45,7 +45,7 @@ class RecapBanner extends ConsumerWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Pm.radius),
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               colors: [Color(0xFFE8115B), Color(0xFF7A2BD6)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -112,7 +112,7 @@ class _RecapPageState extends ConsumerState<RecapPage> {
                 Text(
                   context.l10n.recapEmpty,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Pm.subdued),
+                  style: TextStyle(color: Pm.subdued),
                 ),
                 const SizedBox(height: 24),
                 const SpotifyHistoryCard(),
@@ -313,10 +313,7 @@ class _Recap extends ConsumerWidget {
                             '${a['artist']}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Pm.subdued,
-                              fontSize: 13,
-                            ),
+                            style: TextStyle(color: Pm.subdued, fontSize: 13),
                           ),
                         ],
                       ),
@@ -514,8 +511,8 @@ class _SpotifyHistoryCardState extends ConsumerState<SpotifyHistoryCard> {
             children: [
               FilledButton.icon(
                 style: FilledButton.styleFrom(
-                  backgroundColor: Pm.green,
-                  foregroundColor: Colors.black,
+                  backgroundColor: Pm.accent,
+                  foregroundColor: Pm.onAccent,
                   shape: const StadiumBorder(),
                 ),
                 onPressed: _busy ? null : _import,
@@ -761,14 +758,14 @@ class _Months extends StatelessWidget {
                       height:
                           120 * ((m['minutes'] as num? ?? 0).toDouble() / most),
                       decoration: BoxDecoration(
-                        color: Pm.green,
+                        color: Pm.accent,
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       _month(context, '${m['month']}', short: true),
-                      style: const TextStyle(color: Pm.subdued, fontSize: 11),
+                      style: TextStyle(color: Pm.subdued, fontSize: 11),
                     ),
                   ],
                 ),
@@ -789,7 +786,7 @@ class _Fact extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 6),
     child: Row(
       children: [
-        Icon(icon, size: 20, color: Pm.green),
+        Icon(icon, size: 20, color: Pm.accent),
         const SizedBox(width: 12),
         Expanded(child: Text(text, style: const TextStyle(fontSize: 15))),
       ],

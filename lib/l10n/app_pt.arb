@@ -1503,5 +1503,13 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsSectionAppearance": "Aparência",
+  "settingsTheme": "Tema",
+  "settingsThemeSubtitle": "Muda as cores na hora.",
+  "themeNightDesc": "Padrão. Inspirado no visual do Spotify: preto e verde.",
+  "themeRedDesc": "Inspirado no YouTube Music: quase preto e vermelho.",
+  "themeWaveDesc": "Inspirado no Deezer: violeta escuro e roxo.",
+  "themeRetroDesc": "Inspirado no Winamp: painéis cinza dos anos 2000, display verde e barras de nível.",
+  "themeClassicDesc": "Inspirado no Windows Media Player: preto e azul com brilho."
 }

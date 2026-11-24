@@ -194,7 +194,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                 ),
               ),
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -226,7 +226,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Pm.text,
-                        side: const BorderSide(color: Pm.muted),
+                        side: BorderSide(color: Pm.muted),
                         shape: const StadiumBorder(),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -284,7 +284,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                             _showMore
                                 ? context.l10n.artistShowLess
                                 : context.l10n.artistShowMore,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Pm.subdued,
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -300,12 +300,12 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                           Stack(
                             children: [
                               Cover(a, size: 72, round: true),
-                              const Positioned(
+                              Positioned(
                                 right: 0,
                                 bottom: 0,
                                 child: CircleAvatar(
                                   radius: 11,
-                                  backgroundColor: Pm.green,
+                                  backgroundColor: Pm.accent,
                                   child: Icon(
                                     Icons.favorite,
                                     size: 12,
@@ -333,7 +333,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                               ),
                               Text(
                                 context.l10n.artistFrom(a.name),
-                                style: const TextStyle(color: Pm.subdued),
+                                style: TextStyle(color: Pm.subdued),
                               ),
                             ],
                           ),
@@ -398,7 +398,7 @@ class _ArtistPageState extends ConsumerState<ArtistPage> {
                         constraints: const BoxConstraints(maxWidth: 760),
                         child: Text(
                           a.overview!.replaceAll(RegExp(r'<[^>]*>'), ''),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Pm.subdued,
                             fontSize: 15,
                             height: 1.5,

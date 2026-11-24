@@ -122,7 +122,7 @@ class BigHeader extends StatelessWidget {
                     const SizedBox(height: 12),
                     if (description != null) ...[
                       DefaultTextStyle(
-                        style: const TextStyle(color: Pm.subdued, fontSize: 14),
+                        style: TextStyle(color: Pm.subdued, fontSize: 14),
                         child: description!,
                       ),
                       const SizedBox(height: 8),
@@ -186,7 +186,7 @@ extension on BigHeader {
           const SizedBox(height: 6),
           if (description != null) ...[
             DefaultTextStyle(
-              style: const TextStyle(color: Pm.subdued, fontSize: 13),
+              style: TextStyle(color: Pm.subdued, fontSize: 13),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               child: description!,
@@ -194,12 +194,12 @@ extension on BigHeader {
             const SizedBox(height: 6),
           ],
           DefaultTextStyle(
-            style: const TextStyle(color: Pm.subdued, fontSize: 13),
+            style: TextStyle(color: Pm.subdued, fontSize: 13),
             child: Row(
               children: [
                 Text(
                   '$type • ',
-                  style: const TextStyle(color: Pm.subdued, fontSize: 13),
+                  style: TextStyle(color: Pm.subdued, fontSize: 13),
                 ),
                 Flexible(child: meta),
               ],

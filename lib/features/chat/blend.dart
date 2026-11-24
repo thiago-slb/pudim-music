@@ -34,7 +34,7 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
       child: OutlinedButton.icon(
         style: OutlinedButton.styleFrom(
           foregroundColor: Pm.text,
-          side: const BorderSide(color: Pm.muted),
+          side: BorderSide(color: Pm.muted),
           shape: const StadiumBorder(),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           visualDensity: VisualDensity.compact,
@@ -151,7 +151,7 @@ class _BlendButtonState extends ConsumerState<BlendButton> {
                 Text(
                   ctx.l10n.blendInCommon(b.common.join(', ')),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Pm.subdued),
+                  style: TextStyle(color: Pm.subdued),
                 ),
               ],
               const SizedBox(height: 20),

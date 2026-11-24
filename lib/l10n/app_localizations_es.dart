@@ -2210,4 +2210,31 @@ class L10nEs extends L10n {
   String castFailed(String name) {
     return 'No se pudo conectar con $name';
   }
+
+  @override
+  String get settingsSectionAppearance => 'Apariencia';
+
+  @override
+  String get settingsTheme => 'Tema';
+
+  @override
+  String get settingsThemeSubtitle => 'Cambia los colores al instante.';
+
+  @override
+  String get themeNightDesc =>
+      'Predeterminado. Inspirado en el estilo de Spotify: negro y verde.';
+
+  @override
+  String get themeRedDesc => 'Inspirado en YouTube Music: casi negro y rojo.';
+
+  @override
+  String get themeWaveDesc => 'Inspirado en Deezer: violeta oscuro y morado.';
+
+  @override
+  String get themeRetroDesc =>
+      'Inspirado en Winamp: paneles grises de los 2000, pantalla verde y barras de nivel.';
+
+  @override
+  String get themeClassicDesc =>
+      'Inspirado en Windows Media Player: negro y azul con brillo.';
 }

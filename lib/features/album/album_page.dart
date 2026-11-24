@@ -110,7 +110,7 @@ class AlbumPage extends ConsumerWidget {
                   if (a.year != null) Text(' • ${a.year}'),
                   Text(
                     ' • ${context.l10n.albumSongsAndTime(d.tracks.length, formatTotal(total))}',
-                    style: const TextStyle(color: Pm.subdued),
+                    style: TextStyle(color: Pm.subdued),
                   ),
                   if (tag != null) ...[
                     const SizedBox(width: 8),
@@ -197,7 +197,7 @@ class AlbumPage extends ConsumerWidget {
                         padding: const EdgeInsets.fromLTRB(16, 16, 0, 8),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.album_outlined,
                               size: 18,
                               color: Pm.subdued,
@@ -205,7 +205,7 @@ class AlbumPage extends ConsumerWidget {
                             const SizedBox(width: 12),
                             Text(
                               context.l10n.albumDisc(disc),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Pm.subdued,
                                 fontWeight: FontWeight.w700,
                               ),

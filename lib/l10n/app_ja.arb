@@ -583,5 +583,13 @@
   "castSearchAgain": "再検索",
   "castStop": "キャストを停止",
   "castPlayingOn": "{name} で再生中",
-  "castFailed": "{name} に接続できませんでした"
+  "castFailed": "{name} に接続できませんでした",
+  "settingsSectionAppearance": "外観",
+  "settingsTheme": "テーマ",
+  "settingsThemeSubtitle": "すぐに色が変わります。",
+  "themeNightDesc": "標準。Spotify 風：黒と緑。",
+  "themeRedDesc": "YouTube Music 風：ほぼ黒と赤。",
+  "themeWaveDesc": "Deezer 風：深いバイオレットと紫。",
+  "themeRetroDesc": "Winamp 風：2000年代のグレーのパネル、緑の表示、レベルバー。",
+  "themeClassicDesc": "Windows Media Player 風：光沢のある黒と青。"
 }

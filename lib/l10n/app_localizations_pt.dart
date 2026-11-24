@@ -2202,4 +2202,32 @@ class L10nPt extends L10n {
   String castFailed(String name) {
     return 'Não deu para conectar em $name';
   }
+
+  @override
+  String get settingsSectionAppearance => 'Aparência';
+
+  @override
+  String get settingsTheme => 'Tema';
+
+  @override
+  String get settingsThemeSubtitle => 'Muda as cores na hora.';
+
+  @override
+  String get themeNightDesc =>
+      'Padrão. Inspirado no visual do Spotify: preto e verde.';
+
+  @override
+  String get themeRedDesc =>
+      'Inspirado no YouTube Music: quase preto e vermelho.';
+
+  @override
+  String get themeWaveDesc => 'Inspirado no Deezer: violeta escuro e roxo.';
+
+  @override
+  String get themeRetroDesc =>
+      'Inspirado no Winamp: painéis cinza dos anos 2000, display verde e barras de nível.';
+
+  @override
+  String get themeClassicDesc =>
+      'Inspirado no Windows Media Player: preto e azul com brilho.';
 }

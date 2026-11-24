@@ -2199,4 +2199,32 @@ class L10nTr extends L10n {
   String castFailed(String name) {
     return '$name cihazına bağlanılamadı';
   }
+
+  @override
+  String get settingsSectionAppearance => 'Görünüm';
+
+  @override
+  String get settingsTheme => 'Tema';
+
+  @override
+  String get settingsThemeSubtitle => 'Renkleri hemen değiştirir.';
+
+  @override
+  String get themeNightDesc =>
+      'Varsayılan. Spotify görünümünden esinlenildi: siyah ve yeşil.';
+
+  @override
+  String get themeRedDesc =>
+      'YouTube Music\'ten esinlenildi: siyaha yakın ve kırmızı.';
+
+  @override
+  String get themeWaveDesc => 'Deezer\'dan esinlenildi: koyu menekşe ve mor.';
+
+  @override
+  String get themeRetroDesc =>
+      'Winamp\'tan esinlenildi: 2000\'lerin gri panelleri, yeşil ekran ve seviye çubukları.';
+
+  @override
+  String get themeClassicDesc =>
+      'Windows Media Player\'dan esinlenildi: parlak siyah ve mavi.';
 }

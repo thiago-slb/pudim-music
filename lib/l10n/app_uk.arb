@@ -583,5 +583,13 @@
   "castSearchAgain": "Шукати знову",
   "castStop": "Зупинити трансляцію",
   "castPlayingOn": "Грає на {name}",
-  "castFailed": "Не вдалося підключитися до {name}"
+  "castFailed": "Не вдалося підключитися до {name}",
+  "settingsSectionAppearance": "Вигляд",
+  "settingsTheme": "Тема",
+  "settingsThemeSubtitle": "Змінює кольори одразу.",
+  "themeNightDesc": "Типова. У стилі Spotify: чорний і зелений.",
+  "themeRedDesc": "У стилі YouTube Music: майже чорний і червоний.",
+  "themeWaveDesc": "У стилі Deezer: темно-фіолетовий і пурпуровий.",
+  "themeRetroDesc": "У стилі Winamp: сірі панелі 2000-х, зелений дисплей і індикатори рівня.",
+  "themeClassicDesc": "У стилі Windows Media Player: чорний і синій із глянцем."
 }

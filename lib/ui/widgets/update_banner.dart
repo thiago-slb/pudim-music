@@ -58,7 +58,7 @@ class UpdateBanner extends ConsumerWidget {
               color: const Color(0xFF1B3A26),
               child: Row(
                 children: [
-                  const Icon(Icons.system_update, size: 16, color: Pm.green),
+                  Icon(Icons.system_update, size: 16, color: Pm.accent),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -66,12 +66,12 @@ class UpdateBanner extends ConsumerWidget {
                           ? context.l10n.widgetUpdateReady
                           : context.l10n.widgetUpdateReadyNotes(u.notes),
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Pm.text, fontSize: 12),
+                      style: TextStyle(color: Pm.text, fontSize: 12),
                     ),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
-                      foregroundColor: Pm.green,
+                      foregroundColor: Pm.accent,
                       visualDensity: VisualDensity.compact,
                     ),
                     onPressed: () async {

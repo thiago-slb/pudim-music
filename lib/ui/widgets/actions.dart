@@ -460,7 +460,7 @@ Future<void> showItemMenu(
                               it.artistLine,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(color: Pm.subdued),
+                              style: TextStyle(color: Pm.subdued),
                             ),
                         ],
                       ),
@@ -509,7 +509,7 @@ Future<void> showItemMenu(
                 if (e.shortcut != null)
                   Text(
                     e.shortcut!,
-                    style: const TextStyle(color: Pm.muted, fontSize: 12),
+                    style: TextStyle(color: Pm.muted, fontSize: 12),
                   ),
               ],
             ),

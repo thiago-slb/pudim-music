@@ -26,8 +26,8 @@ class DownloadsBell extends ConsumerWidget {
       onPressed: () => _open(context, ref),
       icon: Badge(
         isLabelVisible: badge > 0,
-        backgroundColor: st.active > 0 ? Pm.subdued : Pm.green,
-        textColor: Colors.black,
+        backgroundColor: st.active > 0 ? Pm.subdued : Pm.accent,
+        textColor: Pm.onAccent,
         label: Text('$badge'),
         child: Icon(
           st.active > 0 ? Icons.downloading : Icons.notifications_none,
@@ -106,7 +106,7 @@ class DownloadsPanel extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             child: Text(
               context.l10n.widgetDownloadsBellEmpty,
-              style: const TextStyle(color: Pm.subdued),
+              style: TextStyle(color: Pm.subdued),
             ),
           )
         else
@@ -173,10 +173,7 @@ class _JobTile extends ConsumerWidget {
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
                             l,
-                            style: const TextStyle(
-                              color: Pm.subdued,
-                              fontSize: 12.5,
-                            ),
+                            style: TextStyle(color: Pm.subdued, fontSize: 12.5),
                           ),
                         ),
                     ],
@@ -211,7 +208,7 @@ class _JobTile extends ConsumerWidget {
     };
     final color = j.active
         ? Pm.subdued
-        : (j.failed ? const Color(0xFFE57373) : Pm.green);
+        : (j.failed ? const Color(0xFFE57373) : Pm.accent);
     return ListTile(
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(j.kind == 'artist' ? 24 : 4),
@@ -240,7 +237,7 @@ class _JobTile extends ConsumerWidget {
             j.kind == 'artist' ? what : '$what • ${j.artist}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Pm.subdued, fontSize: 12.5),
+            style: TextStyle(color: Pm.subdued, fontSize: 12.5),
           ),
           Row(
             children: [
@@ -268,7 +265,7 @@ class _JobTile extends ConsumerWidget {
       isThreeLine: true,
       // Discreet controls: they only show up in the ⋮.
       trailing: PopupMenuButton<String>(
-        icon: const Icon(Icons.more_vert, size: 18, color: Pm.muted),
+        icon: Icon(Icons.more_vert, size: 18, color: Pm.muted),
         tooltip: context.l10n.widgetDownloadsBellOptions,
         color: Pm.elevated,
         onSelected: (v) => switch (v) {

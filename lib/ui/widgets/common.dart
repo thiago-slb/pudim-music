@@ -123,7 +123,7 @@ class GreenPlayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return HoverScale(
       child: Material(
-        color: Pm.green,
+        color: Pm.accent,
         shape: const CircleBorder(),
         elevation: 4,
         child: InkWell(
@@ -229,7 +229,7 @@ class ArtistLinks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final list = item.artists.isNotEmpty ? item.artists : item.albumArtists;
-    final st = style ?? const TextStyle(color: Pm.subdued, fontSize: 13.5);
+    final st = style ?? TextStyle(color: Pm.subdued, fontSize: 13.5);
     if (list.isEmpty) return const SizedBox.shrink();
     return DefaultTextStyle(
       style: st,
@@ -285,7 +285,7 @@ class SectionHeader extends StatelessWidget {
                 if (overline != null)
                   Text(
                     overline!,
-                    style: const TextStyle(color: Pm.subdued, fontSize: 13),
+                    style: TextStyle(color: Pm.subdued, fontSize: 13),
                   ),
                 Text(
                   title,
@@ -297,7 +297,7 @@ class SectionHeader extends StatelessWidget {
                 if (subtitle != null)
                   Text(
                     subtitle!,
-                    style: const TextStyle(color: Pm.subdued, fontSize: 13),
+                    style: TextStyle(color: Pm.subdued, fontSize: 13),
                   ),
               ],
             ),
@@ -306,7 +306,7 @@ class SectionHeader extends StatelessWidget {
             TextLink(
               context.l10n.widgetCommonShowAll,
               onTap: onShowAll,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Pm.subdued,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -387,13 +387,13 @@ class ChipBar extends StatelessWidget {
 class LoadingBox extends StatelessWidget {
   const LoadingBox({super.key});
   @override
-  Widget build(BuildContext context) => const Center(
+  Widget build(BuildContext context) => Center(
     child: Padding(
       padding: EdgeInsets.all(48),
       child: SizedBox(
         width: 28,
         height: 28,
-        child: CircularProgressIndicator(strokeWidth: 3, color: Pm.green),
+        child: CircularProgressIndicator(strokeWidth: 3, color: Pm.accent),
       ),
     ),
   );
@@ -417,7 +417,7 @@ class ErrorBox extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             '$error',
-            style: const TextStyle(color: Pm.subdued),
+            style: TextStyle(color: Pm.subdued),
             textAlign: TextAlign.center,
           ),
           if (onRetry != null) ...[
@@ -434,7 +434,7 @@ class ErrorBox extends ConsumerWidget {
             const SizedBox(height: 12),
             TextButton.icon(
               onPressed: () => context.go('/collection/offline'),
-              icon: const Icon(Icons.arrow_circle_down, color: Pm.green),
+              icon: Icon(Icons.arrow_circle_down, color: Pm.accent),
               label: Text(context.l10n.widgetCommonListenDownloaded),
             ),
           ],
@@ -464,7 +464,7 @@ class IconBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = color ?? (active ? Pm.green : Pm.subdued);
+    final c = color ?? (active ? Pm.accent : Pm.subdued);
     return Tooltip(
       message: tooltip,
       child: IconButton(

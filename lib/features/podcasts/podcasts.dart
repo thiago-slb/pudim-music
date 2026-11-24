@@ -88,14 +88,14 @@ class _Art extends StatelessWidget {
       child: url.isEmpty
           ? Container(
               color: Pm.highlight,
-              child: const Icon(Icons.podcasts, color: Pm.muted),
+              child: Icon(Icons.podcasts, color: Pm.muted),
             )
           : Image(
               image: DiskImage(url),
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) => Container(
                 color: Pm.highlight,
-                child: const Icon(Icons.podcasts, color: Pm.muted),
+                child: Icon(Icons.podcasts, color: Pm.muted),
               ),
             ),
     ),
@@ -153,10 +153,7 @@ class PodcastShelf extends StatelessWidget {
                           s.author,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Pm.subdued,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: Pm.subdued, fontSize: 12),
                         ),
                       ],
                     ),
@@ -217,7 +214,7 @@ class EpisodeTile extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: playing ? Pm.green : Pm.text,
+                      color: playing ? Pm.accent : Pm.text,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -225,14 +222,14 @@ class EpisodeTile extends ConsumerWidget {
                     info,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Pm.subdued, fontSize: 12),
+                    style: TextStyle(color: Pm.subdued, fontSize: 12),
                   ),
                   if (e.description.isNotEmpty)
                     Text(
                       e.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Pm.muted, fontSize: 12),
+                      style: TextStyle(color: Pm.muted, fontSize: 12),
                     ),
                   if (frac > 0)
                     Padding(
@@ -242,7 +239,7 @@ class EpisodeTile extends ConsumerWidget {
                         child: LinearProgressIndicator(
                           value: frac,
                           minHeight: 3,
-                          color: Pm.green,
+                          color: Pm.accent,
                           backgroundColor: Pm.highlight,
                         ),
                       ),
@@ -252,7 +249,7 @@ class EpisodeTile extends ConsumerWidget {
             ),
             Icon(
               playing ? Icons.graphic_eq : Icons.play_circle_outline,
-              color: playing ? Pm.green : Pm.subdued,
+              color: playing ? Pm.accent : Pm.subdued,
             ),
           ],
         ),
@@ -305,11 +302,11 @@ class _PodcastsHomeState extends ConsumerState<PodcastsHome> {
             },
             decoration: InputDecoration(
               hintText: context.l10n.podcastsSearchHint,
-              prefixIcon: const Icon(Icons.search, color: Pm.subdued),
+              prefixIcon: Icon(Icons.search, color: Pm.subdued),
               suffixIcon: _query.isEmpty
                   ? null
                   : IconButton(
-                      icon: const Icon(Icons.close, color: Pm.subdued),
+                      icon: Icon(Icons.close, color: Pm.subdued),
                       onPressed: () => setState(() {
                         _q.clear();
                         _query = '';
@@ -340,7 +337,7 @@ class _PodcastsHomeState extends ConsumerState<PodcastsHome> {
                     padding: const EdgeInsets.all(16),
                     child: Text(
                       context.l10n.podcastsNothingFound,
-                      style: const TextStyle(color: Pm.subdued),
+                      style: TextStyle(color: Pm.subdued),
                     ),
                   )
                 : Column(
@@ -363,7 +360,7 @@ class _PodcastsHomeState extends ConsumerState<PodcastsHome> {
                             ].where((x) => x.isNotEmpty).join(' · '),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: Pm.subdued),
+                            style: TextStyle(color: Pm.subdued),
                           ),
                           onTap: () => context.push('/podcast/${s.id}'),
                         ),
@@ -562,7 +559,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
           _q.isEmpty
               ? context.l10n.podcastsNoEpisodes
               : context.l10n.podcastsNoEpisodeMatch(_q),
-          style: const TextStyle(color: Pm.subdued),
+          style: TextStyle(color: Pm.subdued),
         ),
       );
     }
@@ -585,7 +582,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
               children: [
                 Text(
                   context.l10n.podcastsKind,
-                  style: const TextStyle(color: Pm.subdued, fontSize: 13),
+                  style: TextStyle(color: Pm.subdued, fontSize: 13),
                 ),
                 Text(
                   p.show.title,
@@ -594,7 +591,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                Text(p.show.author, style: const TextStyle(color: Pm.subdued)),
+                Text(p.show.author, style: TextStyle(color: Pm.subdued)),
               ],
             ),
           ),
@@ -613,7 +610,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
           OutlinedButton(
             style: OutlinedButton.styleFrom(
               foregroundColor: Pm.text,
-              side: const BorderSide(color: Pm.muted),
+              side: BorderSide(color: Pm.muted),
               shape: const StadiumBorder(),
             ),
             onPressed: () async {
@@ -644,7 +641,7 @@ class _PodcastPageViewState extends ConsumerState<PodcastPageView> {
             p.show.description,
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Pm.subdued, height: 1.4),
+            style: TextStyle(color: Pm.subdued, height: 1.4),
           ),
         ),
       const SizedBox(height: 16),

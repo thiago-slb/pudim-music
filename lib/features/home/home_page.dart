@@ -148,7 +148,7 @@ class HomePage extends ConsumerWidget {
     final inner = isCompact(context) ? 6.0 : 12.0;
     final name = ref.watch(sessionProvider).value?.userName ?? '';
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -438,7 +438,7 @@ class _RadioCardState extends ConsumerState<_RadioCard> {
                 context.l10n.homeRadioWith(a.name),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Pm.subdued, fontSize: 13.5),
+                style: TextStyle(color: Pm.subdued, fontSize: 13.5),
               ),
             ],
           ),

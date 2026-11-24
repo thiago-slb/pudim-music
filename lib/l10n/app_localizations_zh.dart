@@ -2149,4 +2149,28 @@ class L10nZh extends L10n {
   String castFailed(String name) {
     return '无法连接到 $name';
   }
+
+  @override
+  String get settingsSectionAppearance => '外观';
+
+  @override
+  String get settingsTheme => '主题';
+
+  @override
+  String get settingsThemeSubtitle => '立即更改颜色。';
+
+  @override
+  String get themeNightDesc => '默认。Spotify 风格：黑色和绿色。';
+
+  @override
+  String get themeRedDesc => 'YouTube Music 风格：近黑色和红色。';
+
+  @override
+  String get themeWaveDesc => 'Deezer 风格：深紫罗兰和紫色。';
+
+  @override
+  String get themeRetroDesc => 'Winamp 风格：2000 年代的灰色面板、绿色显示屏和电平条。';
+
+  @override
+  String get themeClassicDesc => 'Windows Media Player 风格：带光泽的黑色和蓝色。';
 }
