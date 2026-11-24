@@ -3,6 +3,17 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 27
+- Android Auto review:
+  - Covers in the car folders: the car only loads content:// images, so server covers go through
+    a small `CarArtProvider` (downloads once, cached, only from the app's own server).
+  - The car shows the queue ("Up next", a window of 100 around the current track) and jumps to
+    the tapped one.
+  - Like, shuffle and repeat buttons in the car (and the expanded notification), showing the
+    current state; shuffle/repeat also work from the assistant.
+  - Search in the car (typed or spoken), playing the results from the chosen song.
+  - Without a connection the car still lists Downloaded songs and plays them.
+  `test/media_session_test.dart`.
 ## Build 26
 - Glass: filter pills, recent-search pills and the library sort button are glossy capsules like
   the play orb (`glassPill`); selected ones glow in the accent, the rest use a deep tint of it.
