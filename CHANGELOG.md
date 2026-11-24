@@ -3,6 +3,10 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 15
+- Android: adaptive launcher icon (dark full background, cat inside the safe zone, monochrome layer),
+  so Android Auto and launchers no longer show the square art on a white plate.
+
 ## Build 14
 - Fix a track playing twice at the end (seen in Android Auto): when the player moved on to the
   preloaded track without the queue following, "next" replayed it. The queue now catches up from the
