@@ -344,16 +344,21 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     return carArtUri(url, base: _base, appId: _appId!);
   }
 
-  /// `content://APP_ID.carart/img?u=URL` for covers on [base]; others stay as they are.
+  /// `content://APP_ID.carart/img?u=URL` for covers on [base], `?f=PATH` for covers saved with
+  /// downloads (the car cannot open the app's files); others stay as they are.
   static Uri carArtUri(String url, {String? base, required String appId}) {
-    if (base == null || appId.isEmpty || !url.startsWith('$base/')) {
+    final file = url.startsWith('file://');
+    if (appId.isEmpty ||
+        (!file && (base == null || !url.startsWith('$base/')))) {
       return Uri.parse(url);
     }
     return Uri(
       scheme: 'content',
       host: '$appId.carart',
       path: '/img',
-      queryParameters: {'u': url},
+      queryParameters: file
+          ? {'f': Uri.parse(url).toFilePath(windows: false)}
+          : {'u': url},
     );
   }
 

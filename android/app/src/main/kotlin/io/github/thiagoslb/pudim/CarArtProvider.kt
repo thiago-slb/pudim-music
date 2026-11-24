@@ -21,6 +21,13 @@ class CarArtProvider : ContentProvider() {
 
     override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor? {
         val ctx = context ?: return null
+        // Cover saved with a download: only files inside the app's own folder.
+        uri.getQueryParameter("f")?.let { path ->
+            val f = File(path).canonicalFile
+            val home = File(ctx.applicationInfo.dataDir).canonicalFile
+            if (!f.path.startsWith(home.path + File.separator) || !f.isFile) return null
+            return ParcelFileDescriptor.open(f, ParcelFileDescriptor.MODE_READ_ONLY)
+        }
         val url = uri.getQueryParameter("u") ?: return null
         val base = ctx.getSharedPreferences("FlutterSharedPreferences", 0)
             .getString("flutter.carArtBase", null) ?: return null

@@ -1084,7 +1084,14 @@ class PlayerController extends Notifier<QueueState> {
       artist: t.artistLine,
       album: t.album,
       duration: d == Duration.zero ? null : d,
-      artUri: art == null ? null : Uri.parse(art),
+      // A cover saved with the download wins: it works offline, and the server may no longer
+      // have it under that id (the app shows the same saved file).
+      artUri: switch (ref
+          .read(offlineProvider.notifier)
+          .coverFile(t.imageItemId)) {
+        final f? when f.existsSync() => Uri.file(f.path),
+        _ => art == null ? null : Uri.parse(art),
+      },
     );
   }
 

@@ -13,6 +13,8 @@ published to the extras server and installed by the in-app updater; see [docs/up
     current state; shuffle/repeat also work from the assistant.
   - Search in the car (typed or spoken), playing the results from the chosen song.
   - Without a connection the car still lists Downloaded songs and plays them.
+  - Downloaded songs show the cover saved with the download in the car, notification and lock
+    screen (the server may not have it under that id anymore; the app already used the saved one).
   `test/media_session_test.dart`.
 ## Build 26
 - Glass: filter pills, recent-search pills and the library sort button are glossy capsules like

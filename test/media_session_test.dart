@@ -42,6 +42,17 @@ void main() {
       ).scheme,
       'https',
     );
+    // Cover saved with a download: served as a file through the provider.
+    final saved = MediaSession.carArtUri(
+      'file:///data/user/0/my.app/files/covers/al1.jpg',
+      base: base,
+      appId: 'my.app',
+    );
+    expect(saved.host, 'my.app.carart');
+    expect(
+      saved.queryParameters['f'],
+      '/data/user/0/my.app/files/covers/al1.jpg',
+    );
   });
 
   test('like, shuffle and repeat buttons follow the player state', () {
