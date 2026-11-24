@@ -23,6 +23,10 @@ class DiskImage extends ImageProvider<DiskImage> {
   );
   static final _inFlight = <String, Future<Uint8List>>{};
 
+  /// Lets tests serve the covers.
+  @visibleForTesting
+  static set adapter(HttpClientAdapter a) => _dio.httpClientAdapter = a;
+
   /// Called in main: covers folder and cleanup if it goes over 400 MB.
   static Future<void> init(String basePath) async {
     final d = Directory('$basePath${Platform.pathSeparator}imgcache');

@@ -11,6 +11,8 @@ import '../../ui/widgets/actions.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../ui/widgets/user_photo.dart';
+import '../../ui/widgets/page_header.dart';
+import '../../ui/widgets/themed.dart';
 
 final meProvider = FutureProvider.autoDispose<Contact>(
   (ref) => ref.watch(catalogProvider).me(),
@@ -144,10 +146,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ? const EdgeInsets.fromLTRB(16, 64, 16, 160)
             : const EdgeInsets.fromLTRB(32, 24, 32, 64),
         children: [
-          Text(
-            l.commonProfile,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
-          ),
+          pageTitle(l.commonProfile, 32, maxLines: 1),
           const SizedBox(height: 20),
           Row(
             children: [
@@ -230,10 +229,7 @@ class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(top: 28, bottom: 4),
-    child: Text(
-      text,
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-    ),
+    child: SmallHeading(text, size: 18),
   );
 }
 

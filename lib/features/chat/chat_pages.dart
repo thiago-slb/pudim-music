@@ -16,6 +16,7 @@ import '../../ui/widgets/user_photo.dart';
 import '../../state/jam.dart';
 import '../../l10n/l10n.dart';
 import 'blend.dart';
+import '../../ui/widgets/page_header.dart';
 
 final contactsProvider = FutureProvider.autoDispose<List<Contact>>(
   (ref) => ref.watch(catalogProvider).contacts(),
@@ -94,10 +95,7 @@ class ChatsPage extends ConsumerWidget {
             160,
           ),
           children: [
-            Text(
-              context.l10n.chatChats,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
-            ),
+            pageTitle(context.l10n.chatChats, 28, maxLines: 1),
             const SizedBox(height: 12),
             for (final c in chats)
               ListTile(

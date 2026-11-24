@@ -21,6 +21,7 @@ import '../../ui/widgets/cards.dart';
 import '../../ui/widgets/common.dart';
 import '../../ui/widgets/track_table.dart';
 import '../../ui/widgets/themed.dart';
+import '../../ui/widgets/page_header.dart';
 
 class SearchResults {
   final List<Item> artists;
@@ -456,11 +457,12 @@ class _MobileSearchFieldState extends State<_MobileSearchField> {
             children: [
               const UserAvatar(),
               const SizedBox(width: 12),
-              Text(
-                context.l10n.commonSearch,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
+              Expanded(
+                child: pageTitle(
+                  context.l10n.commonSearch,
+                  24,
+                  compact: true,
+                  maxLines: 1,
                 ),
               ),
             ],

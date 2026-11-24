@@ -3,6 +3,18 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 23
+- Went through every section in every theme (`test/sections_looks_test.dart` opens all 17 phone
+  sections with a fake server, checks for layout errors and can save a screenshot of each).
+  Fixed what it found:
+  - The library filter pills were centered; sideways pill rows now start at the left.
+  - History: the back arrow sat on top of the title.
+  - Search, Profile, Chats and Concerts titles (and the Profile section heading) now use the
+    theme's page title instead of plain bold text.
+  - Lyrics with nothing playing shows the themed empty state.
+  - Wave: the selected bottom tab was 6 px taller than the bar (clipped with large fonts); the
+    tabs now shrink to fit.
+
 ## Build 22
 - Your Library follows the theme like the other pages: the theme's gradient behind the header,
   the title in the theme's page-title style (LCD text in Retrô, glow in Glass), the filter pills in

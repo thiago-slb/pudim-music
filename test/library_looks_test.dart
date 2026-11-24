@@ -99,6 +99,8 @@ void main() {
       expect(pills, findsNWidgets(3));
       final rects = [for (var i = 0; i < 3; i++) tester.getRect(pills.at(i))];
       expect(rects.map((r) => r.top).toSet().length, 1);
+      // Starts at the left edge, not centered in the panel.
+      expect(rects.first.left, lessThan(40));
       for (final r in rects) {
         expect(r.width, lessThan(200));
       }
