@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/jellyfin.dart';
 import '../api/models.dart';
@@ -29,6 +31,13 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
         androidStopForegroundOnPause: true,
         fastForwardInterval: Duration(seconds: 15),
         rewindInterval: Duration(seconds: 15),
+        // The car offers search; folders show as lists unless they ask for a grid.
+        androidBrowsableRootExtras: {
+          'android.media.browse.SEARCH_SUPPORTED': true,
+          'android.media.browse.CONTENT_STYLE_SUPPORTED': true,
+          'android.media.browse.CONTENT_STYLE_BROWSABLE_HINT': 1,
+          'android.media.browse.CONTENT_STYLE_PLAYABLE_HINT': 1,
+        },
       ),
     );
   }
@@ -57,6 +66,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
       // Gapless advance changes the playing source before the queue catches up.
       ..add(a.currentIndexStream.listen((_) => _pushItem()));
     _pushItem();
+    _pushQueue(c.queue);
     _broadcast();
   }
 
@@ -64,10 +74,18 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
   void update(QueueState? prev, QueueState next) {
     final a = prev?.current, b = next.current;
     if (a?.id != b?.id || a?.favorite != b?.favorite) _pushItem();
+    if (!identical(prev?.queue, next.queue) ||
+        prev?.index != next.index ||
+        prev?.contextName != next.contextName) {
+      _pushQueue(next);
+    }
     if (prev?.playing != next.playing ||
         prev?.buffering != next.buffering ||
         prev?.castingTo != next.castingTo ||
-        prev?.index != next.index) {
+        prev?.index != next.index ||
+        prev?.shuffle != next.shuffle ||
+        prev?.repeat != next.repeat ||
+        a?.favorite != b?.favorite) {
       _broadcast();
     }
   }
@@ -84,6 +102,33 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     } catch (_) {
       // no session yet: the cover and the rest arrive on the next change
     }
+  }
+
+  /// Position of the first queue track sent to the car: only a window around the current one
+  /// goes, since a long queue does not fit in one message to the system.
+  int _queueOffset = 0;
+
+  /// The queue the car shows under "Up next" (tap one to jump to it).
+  void _pushQueue(QueueState st) {
+    final c = _c;
+    if (c == null) return;
+    try {
+      final w = queueWindow(st.index, st.queue.length);
+      _queueOffset = w.from;
+      queue.add([
+        for (var i = w.from; i < w.to; i++)
+          c.mediaItemOf(st.queue[i]).copyWith(id: 'q|$i|${st.queue[i].id}'),
+      ]);
+      queueTitle.add(st.contextName);
+    } catch (_) {
+      // no session yet: goes with the next change
+    }
+  }
+
+  /// Part of the queue sent to the car: 10 before the current track and up to 100 in all.
+  static ({int from, int to}) queueWindow(int index, int length) {
+    final from = (index - 10).clamp(0, length);
+    return (from: from, to: (from + 100).clamp(0, length));
   }
 
   /// The track the car and the notification should show: the queue's current one, unless the player
@@ -112,11 +157,15 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
           MediaControl.skipToPrevious,
           if (playing) MediaControl.pause else MediaControl.play,
           MediaControl.skipToNext,
+          ...extraControls(st),
         ],
         systemActions: const {
           MediaAction.seek,
           MediaAction.seekForward,
           MediaAction.seekBackward,
+          MediaAction.skipToQueueItem,
+          MediaAction.setShuffleMode,
+          MediaAction.setRepeatMode,
         },
         androidCompactActionIndices: const [0, 1, 2],
         processingState: st.current == null || !c.sourceReady
@@ -134,9 +183,54 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
         updatePosition: c.position,
         bufferedPosition: st.casting ? c.position : a.bufferedPosition,
         speed: st.casting ? 1.0 : a.speed,
-        queueIndex: st.index < 0 ? null : st.index,
+        queueIndex: st.index < 0 ? null : st.index - _queueOffset,
+        shuffleMode: st.shuffle
+            ? AudioServiceShuffleMode.all
+            : AudioServiceShuffleMode.none,
+        repeatMode: switch (st.repeat) {
+          RepeatMode.off => AudioServiceRepeatMode.none,
+          RepeatMode.all => AudioServiceRepeatMode.all,
+          RepeatMode.one => AudioServiceRepeatMode.one,
+        },
       ),
     );
+  }
+
+  /// Like, shuffle and repeat: extra buttons in the car (and the expanded notification). The
+  /// icon shows the current state; the label says what a tap does.
+  static List<MediaControl> extraControls(QueueState st) {
+    final cur = st.current;
+    final l = appL10n;
+    return [
+      if (cur != null && !cur.isCatalog)
+        MediaControl.custom(
+          androidIcon: cur.favorite
+              ? 'drawable/ic_car_liked'
+              : 'drawable/ic_car_like',
+          label: cur.favorite ? l.commonRemoveFromLiked : l.commonAddToLiked,
+          name: 'like',
+        ),
+      MediaControl.custom(
+        androidIcon: st.shuffle
+            ? 'drawable/ic_car_shuffle_on'
+            : 'drawable/ic_car_shuffle',
+        label: st.shuffle ? l.playerBarShuffleOff : l.playerBarShuffleOn,
+        name: 'shuffle',
+      ),
+      MediaControl.custom(
+        androidIcon: switch (st.repeat) {
+          RepeatMode.off => 'drawable/ic_car_repeat',
+          RepeatMode.all => 'drawable/ic_car_repeat_on',
+          RepeatMode.one => 'drawable/ic_car_repeat_one',
+        },
+        label: switch (st.repeat) {
+          RepeatMode.off => l.playerBarRepeatOn,
+          RepeatMode.all => l.playerBarRepeatOne,
+          RepeatMode.one => l.playerBarRepeatOff,
+        },
+        name: 'repeat',
+      ),
+    ];
   }
 
   // ---------- buttons ----------
@@ -163,7 +257,50 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
   Future<void> seek(Duration position) async => _c?.seek(position);
 
   @override
-  Future<void> skipToQueueItem(int index) async => _c?.jumpTo(index);
+  Future<void> skipToQueueItem(int index) async =>
+      _c?.jumpTo(index + _queueOffset);
+
+  @override
+  Future<dynamic> customAction(
+    String name, [
+    Map<String, dynamic>? extras,
+  ]) async {
+    final c = _c;
+    if (c == null) return;
+    switch (name) {
+      case 'like':
+        await c.toggleCurrentFavorite();
+      case 'shuffle':
+        c.toggleShuffle();
+      case 'repeat':
+        c.cycleRepeat();
+    }
+  }
+
+  @override
+  Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
+    final c = _c;
+    if (c == null) return;
+    final on = shuffleMode != AudioServiceShuffleMode.none;
+    // In a playlist shuffle cycles through Smart Shuffle: taps until it lands where asked.
+    for (var i = 0; i < 3 && c.queue.shuffle != on; i++) {
+      c.toggleShuffle();
+    }
+  }
+
+  @override
+  Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
+    final c = _c;
+    if (c == null) return;
+    final want = switch (repeatMode) {
+      AudioServiceRepeatMode.none => RepeatMode.off,
+      AudioServiceRepeatMode.one => RepeatMode.one,
+      _ => RepeatMode.all,
+    };
+    for (var i = 0; i < 3 && c.queue.repeat != want; i++) {
+      c.cycleRepeat();
+    }
+  }
 
   // ---------- Android Auto: folders ----------
 
@@ -181,9 +318,59 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     id: id,
     title: title,
     playable: false,
-    artUri: art == null ? null : Uri.parse(art),
+    artUri: _carArt(art),
     extras: grid ? _hintGrid : null,
   );
+
+  /// Server the car covers come from (see [carArtUri]).
+  String? _base;
+  static String? _appId;
+
+  /// The car only loads content:// covers: server covers go through CarArtProvider.
+  Uri? _carArt(String? url) {
+    if (url == null) return null;
+    if (!Platform.isAndroid) return Uri.parse(url);
+    try {
+      _appId ??= File('/proc/self/cmdline')
+          .readAsStringSync()
+          .split('\u0000')
+          .first
+          .split(':')
+          .first
+          .trim();
+    } catch (_) {
+      return Uri.parse(url);
+    }
+    return carArtUri(url, base: _base, appId: _appId!);
+  }
+
+  /// `content://APP_ID.carart/img?u=URL` for covers on [base], `?f=PATH` for covers saved with
+  /// downloads (the car cannot open the app's files); others stay as they are.
+  static Uri carArtUri(String url, {String? base, required String appId}) {
+    final file = url.startsWith('file://');
+    if (appId.isEmpty ||
+        (!file && (base == null || !url.startsWith('$base/')))) {
+      return Uri.parse(url);
+    }
+    return Uri(
+      scheme: 'content',
+      host: '$appId.carart',
+      path: '/img',
+      queryParameters: file
+          ? {'f': Uri.parse(url).toFilePath(windows: false)}
+          : {'u': url},
+    );
+  }
+
+  /// Tells CarArtProvider which server it may fetch covers from.
+  Future<void> _allowCovers(Jellyfin api) async {
+    if (_base == api.baseUrl) return;
+    _base = api.baseUrl;
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setString('carArtBase', api.baseUrl);
+    } catch (_) {}
+  }
 
   @override
   Future<List<MediaItem>> getChildren(
@@ -196,8 +383,19 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
       final t = c.queue.current;
       return t == null ? const [] : [_track('now', t, c)];
     }
+    // Downloaded songs work without the server (no signal on the road).
+    if (parentMediaId == 'offline') {
+      final list = await _tracksOf('offline', null, c);
+      return [for (final t in list) _track('offline', t, c)];
+    }
     final api = await c.apiReady();
-    if (api == null) return const [];
+    if (api == null) {
+      return parentMediaId == AudioService.browsableRootId &&
+              c.offlineTracks().isNotEmpty
+          ? [_folder('offline', appL10n.commonDownloaded)]
+          : const [];
+    }
+    await _allowCovers(api);
     try {
       if (parentMediaId == AudioService.browsableRootId) {
         return [
@@ -258,29 +456,34 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     title: a.name,
     artist: a.artistLine,
     playable: false,
-    artUri: switch (api.imageUrl(a.imageItemId)) {
-      final u? => Uri.parse(u),
-      null => null,
-    },
+    artUri: _carArt(api.imageUrl(a.imageItemId)),
   );
 
   MediaItem _track(String ctx, Item t, PlayerController c) {
     final m = c.mediaItemOf(t);
-    return m.copyWith(id: '$ctx|${t.id}', playable: true);
+    return m.copyWith(
+      id: '$ctx|${t.id}',
+      playable: true,
+      artUri: _carArt(m.artUri?.toString()),
+    );
   }
 
   Future<List<Item>> _tracksOf(
     String ctx,
-    Jellyfin api,
+    Jellyfin? api,
     PlayerController c,
   ) async {
     final List<Item> list;
-    if (ctx == 'recent') {
+    if (ctx == 'offline') {
+      list = c.offlineTracks();
+    } else if (api == null) {
+      list = const [];
+    } else if (ctx.startsWith('search:')) {
+      list = await api.search(ctx.substring(7), 'Audio', limit: 30);
+    } else if (ctx == 'recent') {
       list = await api.recentlyPlayedTracks(limit: 50);
     } else if (ctx == 'liked') {
       list = await api.favoriteTracks();
-    } else if (ctx == 'offline') {
-      list = c.offlineTracks();
     } else if (ctx.startsWith('pl:')) {
       list = await api.playlistTracks(ctx.substring(3));
     } else if (ctx.startsWith('al:')) {
@@ -310,21 +513,46 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     final ctx = mediaId.substring(0, cut);
     final id = mediaId.substring(cut + 1);
     if (ctx == 'now') return play();
-    final api = await c.apiReady();
-    if (api == null) return;
-    final tracks = _lists[ctx] ?? await _tracksOf(ctx, api, c);
+    final tracks =
+        _lists[ctx] ??
+        await _tracksOf(ctx, ctx == 'offline' ? null : await c.apiReady(), c);
     final i = tracks.indexWhere((t) => t.id == id);
     if (i < 0) return;
     await c.playList(
       tracks,
       start: i,
-      contextName: _titles[ctx] ?? _ctxNames[ctx] ?? '',
+      contextName:
+          _titles[ctx] ??
+          _ctxNames[ctx] ??
+          (ctx.startsWith('search:')
+              ? appL10n.audioSearchContext(ctx.substring(7))
+              : ''),
       contextRoute: ctx.startsWith('pl:')
           ? '/playlist/${ctx.substring(3)}'
           : ctx.startsWith('al:')
           ? '/album/${ctx.substring(3)}'
           : null,
     );
+  }
+
+  /// Search typed or spoken in the car: songs; tapping one plays the results from it.
+  @override
+  Future<List<MediaItem>> search(
+    String query, [
+    Map<String, dynamic>? extras,
+  ]) async {
+    final c = _c;
+    final q = query.trim();
+    if (c == null || q.isEmpty) return const [];
+    final api = await c.apiReady();
+    if (api == null) return const [];
+    await _allowCovers(api);
+    try {
+      final ctx = 'search:$q';
+      return [for (final t in await _tracksOf(ctx, api, c)) _track(ctx, t, c)];
+    } catch (_) {
+      return const [];
+    }
   }
 
   /// "Ok Google, play … on Pudim".

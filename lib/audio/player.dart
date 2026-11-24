@@ -14,6 +14,7 @@ import '../api/catalog.dart';
 import '../api/jellyfin.dart';
 import '../api/models.dart';
 import '../state/downloads.dart';
+import '../state/library.dart';
 import '../state/offline.dart';
 import '../state/session.dart';
 import '../api/response_cache.dart';
@@ -1083,7 +1084,14 @@ class PlayerController extends Notifier<QueueState> {
       artist: t.artistLine,
       album: t.album,
       duration: d == Duration.zero ? null : d,
-      artUri: art == null ? null : Uri.parse(art),
+      // A cover saved with the download wins: it works offline, and the server may no longer
+      // have it under that id (the app shows the same saved file).
+      artUri: switch (ref
+          .read(offlineProvider.notifier)
+          .coverFile(t.imageItemId)) {
+        final f? when f.existsSync() => Uri.file(f.path),
+        _ => art == null ? null : Uri.parse(art),
+      },
     );
   }
 
@@ -1382,6 +1390,17 @@ class PlayerController extends Notifier<QueueState> {
           .toList();
       state = state.copyWith(queue: [...head, ...rest], shuffle: false);
     }
+  }
+
+  /// Likes or unlikes the playing track (car and notification button).
+  Future<void> toggleCurrentFavorite() async {
+    final cur = state.current;
+    if (cur == null || cur.isCatalog) return;
+    final fav = !cur.favorite;
+    await _api.setFavorite(cur.id, fav);
+    updateItem(cur.copyWith(favorite: fav));
+    ref.invalidate(libraryProvider);
+    ref.invalidate(likedTracksProvider);
   }
 
   void cycleRepeat() {
