@@ -57,6 +57,16 @@ is on. It is used when the player's current index changes (a second signal besid
 discontinuity), in `_autoAdvanced` when `_preId` is stale, and when a track ends, before choosing the
 next one. Guard: `test/queue_catch_up_test.dart`.
 
+## White plate around the icon in Android Auto (build 15)
+
+**Cause.** The launcher icon was only legacy square PNGs (`mipmap-*/ic_launcher.png`). Android Auto
+and recent launchers draw legacy icons shrunk inside a white circle.
+
+**Fix.** `mipmap-anydpi-v26/ic_launcher.xml` adaptive icon: background color `#0E0E0E` (the art's own
+background), foreground = the art without its background, scaled to 66dp of the 108dp canvas, plus a
+monochrome layer for themed icons. The legacy PNGs stay for Android 7 and older. If the art changes,
+regenerate `ic_launcher_foreground.png` and `ic_launcher_monochrome.png` in every density.
+
 ## Windows data folder moved (build 8)
 
 **Cause.** The Windows data folder is `%APPDATA%\<CompanyName>\<ProductName>` from
