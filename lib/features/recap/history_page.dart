@@ -28,19 +28,15 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final pad = isCompact(context) ? 12.0 : 32.0;
-    final modes = Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    final modes = PillBar(
       children: [
         Chip2(
           l.historyRecaps,
-          gap: 0,
           selected: !_plays,
           onTap: () => setState(() => _plays = false),
         ),
         Chip2(
           l.historyPlays,
-          gap: 0,
           selected: _plays,
           onTap: () => setState(() => _plays = true),
         ),
@@ -96,14 +92,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         // Wrap: the pills flow onto more lines on a narrow screen.
         final selectors = <Widget>[
           if (years.length > 1) ...[
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
+            PillBar(
               children: [
                 for (final y in years)
                   Chip2(
                     '$y',
-                    gap: 0,
                     selected: y == key.year,
                     onTap: () => setState(() {
                       _year = y;
@@ -115,20 +108,16 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
             const SizedBox(height: 8),
           ],
           if (months.length > 1) ...[
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
+            PillBar(
               children: [
                 Chip2(
                   context.l10n.historyWholeYear,
-                  gap: 0,
                   selected: key.month == null,
                   onTap: () => setState(() => _month = null),
                 ),
                 for (final m in months)
                   Chip2(
                     monthName(m),
-                    gap: 0,
                     selected: key.month == m,
                     onTap: () => setState(() => _month = m),
                   ),

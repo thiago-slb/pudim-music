@@ -185,6 +185,7 @@ class LibrarySidebar extends ConsumerWidget {
                           LibFilter.artists => l10n.commonArtists,
                           LibFilter.all => l10n.commonAll,
                         },
+                        gap: 8,
                         selected: filter == f,
                         onTap: () => ref
                             .read(libFilterProvider.notifier)

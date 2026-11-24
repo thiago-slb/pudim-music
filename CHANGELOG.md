@@ -11,6 +11,11 @@ published to the extras server and installed by the in-app updater; see [docs/up
   every year and of each month (pills that wrap on narrow screens) and the full list of plays,
   imported history included, loading 100 at a time. Needs the server's `/api/player/history`
   and `month` on `/api/player/recap`.
+- Pills: every group (Shows upcoming/past, History years and months, recent searches, artist and
+  search filters, library filters, Home tabs) goes through one `PillBar`, and each pill is only as
+  wide as its label. A pill inside a wrapping group took the whole line, so they stacked one under
+  the other. Pills also grow with large system fonts. `test/pills_test.dart` checks one line at
+  360 dp in every theme, at normal and large font.
 
 ## Build 20
 - Themes reach the inner pages: album, playlist and artist headers, search field and results
