@@ -357,17 +357,7 @@ class Chip2 extends StatelessWidget {
         ),
         selected ? t.onAccent : t.text,
       ),
-      UiStyle.glass => (
-        selected
-            ? glass(radius: BorderRadius.circular(32))
-                  .copyWith(boxShadow: const [])
-            : BoxDecoration(
-                color: t.elevated,
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: t.accent.withValues(alpha: 0.4)),
-              ),
-        selected ? Colors.white : t.text,
-      ),
+      UiStyle.glass => (glassPill(selected: selected), Colors.white),
       UiStyle.night => (
         BoxDecoration(
           color: selected ? t.text : t.highlight,

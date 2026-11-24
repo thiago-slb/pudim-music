@@ -546,11 +546,7 @@ Decoration? _sortDeco() {
       borderRadius: BorderRadius.circular(32),
       border: Border.all(color: t.muted, width: 1.5),
     ),
-    UiStyle.glass => BoxDecoration(
-      color: t.elevated,
-      borderRadius: BorderRadius.circular(32),
-      border: Border.all(color: t.accent.withValues(alpha: 0.4)),
-    ),
+    UiStyle.glass => glassPill(selected: false),
     UiStyle.night || UiStyle.ruby => null,
   };
 }
