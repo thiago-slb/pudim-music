@@ -3,6 +3,11 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 25
+- Back puts each page where you left it: the app navigates with `go`, which rebuilds pages, so
+  `ScrollMemory` (wrapped around every shell page in the router) records the main list's offset
+  per location and restores it once the list is long enough again (gives up after 4 s, or as soon
+  as you scroll). New visits still start at the top. `test/scroll_memory_test.dart`.
 ## Build 24
 - "Find lyrics" button where the lyrics card goes (Now Playing, right panel and the lyrics page)
   when a song has none. It asks the server's own lyrics providers first (saved next to the file,
