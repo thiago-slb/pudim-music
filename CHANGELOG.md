@@ -3,6 +3,13 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 22
+- Your Library follows the theme like the other pages: the theme's gradient behind the header,
+  the title in the theme's page-title style (LCD text in Retrô, glow in Glass), the filter pills in
+  the shared `PillBar` (one sideways line that grows with large fonts instead of a fixed 48 px row)
+  and the sort button framed per theme. `test/library_looks_test.dart` renders the header in every
+  theme and checks the pills share a line.
+
 ## Build 21
 - Retrô theme: the phone tabs are back at the bottom as a row of raised bevel keys (the open one
   pressed in). The thin strip at the top read as a title bar, so the navigation looked gone. A

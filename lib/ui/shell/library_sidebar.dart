@@ -15,6 +15,7 @@ import '../widgets/actions.dart';
 import '../widgets/common.dart';
 import '../widgets/theme_bits.dart';
 import '../widgets/themed.dart';
+import '../widgets/page_header.dart';
 
 enum LibFilter { all, playlists, albums, artists }
 
@@ -110,12 +111,21 @@ class LibrarySidebar extends ConsumerWidget {
         shown.sort((a, b) => a.subtitle.compareTo(b.subtitle));
     }
 
+    final t = Pm.current;
+    // Same backdrop as the inner pages: the theme's gradient fading into the base color at the
+    // top of the panel (gray window in retro, flat in ruby).
+    final g = pageGradient(t.highlight);
     return Container(
-      decoration: Pm.current.style == UiStyle.retro
-          ? bevel(color: Pm.base)
+      decoration: t.style == UiStyle.retro
+          ? bevel(color: t.base)
           : BoxDecoration(
-              color: Pm.base,
               borderRadius: BorderRadius.circular(Pm.radius),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: g,
+                stops: const [0, 0.22, 0.5],
+              ),
             ),
       child: Column(
         children: [
@@ -128,13 +138,15 @@ class LibrarySidebar extends ConsumerWidget {
                       children: [
                         const UserAvatar(),
                         const SizedBox(width: 12),
-                        Text(
-                          l10n.commonYourLibrary,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
+                        Expanded(
+                          child: pageTitle(
+                            l10n.commonYourLibrary,
+                            24,
+                            compact: true,
+                            maxLines: 1,
                           ),
                         ),
+                        const SizedBox(width: 8),
                       ],
                     ),
                   )
@@ -150,50 +162,36 @@ class LibrarySidebar extends ConsumerWidget {
                             .toggle(),
                       ),
                       if (!collapsed) ...[
-                        Expanded(
-                          child: Text(
-                            l10n.commonYourLibrary,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
+                        Expanded(child: SmallHeading(l10n.commonYourLibrary)),
                       ],
                     ],
                   ),
           ),
           if (!collapsed) ...[
-            SizedBox(
-              height: 48,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                children: [
-                  for (final f in [
-                    LibFilter.playlists,
-                    LibFilter.albums,
-                    LibFilter.artists,
-                  ])
-                    // The horizontal list stretches the children to the 40 px height: without the Center
-                    // the text stuck to the top, with leftover space below.
-                    Center(
-                      child: Chip2(
-                        switch (f) {
-                          LibFilter.playlists => l10n.commonPlaylists,
-                          LibFilter.albums => l10n.commonAlbums,
-                          LibFilter.artists => l10n.commonArtists,
-                          LibFilter.all => l10n.commonAll,
-                        },
-                        gap: 8,
-                        selected: filter == f,
-                        onTap: () => ref
-                            .read(libFilterProvider.notifier)
-                            .set(filter == f ? LibFilter.all : f),
-                      ),
-                    ),
-                ],
-              ),
+            // Same pill row as the rest of the app: each pill as wide as its label, one
+            // sideways-scrolling line that grows with large system fonts.
+            PillBar(
+              scroll: true,
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+              children: [
+                for (final f in [
+                  LibFilter.playlists,
+                  LibFilter.albums,
+                  LibFilter.artists,
+                ])
+                  Chip2(
+                    switch (f) {
+                      LibFilter.playlists => l10n.commonPlaylists,
+                      LibFilter.albums => l10n.commonAlbums,
+                      LibFilter.artists => l10n.commonArtists,
+                      LibFilter.all => l10n.commonAll,
+                    },
+                    selected: filter == f,
+                    onTap: () => ref
+                        .read(libFilterProvider.notifier)
+                        .set(filter == f ? LibFilter.all : f),
+                  ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
@@ -478,6 +476,7 @@ class _SortMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final retro = Pm.current.style == UiStyle.retro;
     String label(LibSort s) => switch (s) {
       LibSort.recents => l10n.sidebarSortRecents,
       LibSort.added => l10n.sidebarSortAdded,
@@ -511,21 +510,49 @@ class _SortMenu extends ConsumerWidget {
             ),
           ),
       ],
-      child: Padding(
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: _sortDeco(),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              label(sort),
-              style: TextStyle(color: Pm.subdued, fontSize: 13),
+              retro ? label(sort).toUpperCase() : label(sort),
+              style: TextStyle(
+                color: retro ? Pm.accent : Pm.subdued,
+                fontSize: retro ? 12 : 13,
+                letterSpacing: retro ? 1 : null,
+              ),
             ),
             const SizedBox(width: 6),
-            Icon(Icons.format_list_bulleted, size: 16, color: Pm.subdued),
+            Icon(
+              Icons.format_list_bulleted,
+              size: 16,
+              color: retro ? Pm.accent : Pm.subdued,
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+/// Sort button frame: a raised key (retro), an outlined capsule (wave, glass), none otherwise.
+Decoration? _sortDeco() {
+  final t = Pm.current;
+  return switch (t.style) {
+    UiStyle.retro => bevel(),
+    UiStyle.wave => BoxDecoration(
+      borderRadius: BorderRadius.circular(32),
+      border: Border.all(color: t.muted, width: 1.5),
+    ),
+    UiStyle.glass => BoxDecoration(
+      color: t.elevated,
+      borderRadius: BorderRadius.circular(32),
+      border: Border.all(color: t.accent.withValues(alpha: 0.4)),
+    ),
+    UiStyle.night || UiStyle.ruby => null,
+  };
 }
 
 /// Used on the Liked Songs route and in the count.
