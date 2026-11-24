@@ -2265,4 +2265,29 @@ class L10nIt extends L10n {
 
   @override
   String get updateUnavailable => 'Nessun server extra configurato.';
+
+  @override
+  String get settingsHistory => 'Cronologia';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Riepiloghi degli anni precedenti e tutto ciò che hai ascoltato';
+
+  @override
+  String get historyRecaps => 'Riepiloghi';
+
+  @override
+  String get historyPlays => 'Ascolti';
+
+  @override
+  String get historyWholeYear => 'Tutto l’anno';
+
+  @override
+  String get historyLoadMore => 'Carica altro';
+
+  @override
+  String get historyEmpty => 'Ancora nessun ascolto';
+
+  @override
+  String get historyImported => 'importato';
 }

@@ -2292,4 +2292,29 @@ class L10nRu extends L10n {
 
   @override
   String get updateUnavailable => 'Сервер дополнений не настроен.';
+
+  @override
+  String get settingsHistory => 'История';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Итоги прошлых лет и всё, что вы слушали';
+
+  @override
+  String get historyRecaps => 'Итоги';
+
+  @override
+  String get historyPlays => 'Прослушивания';
+
+  @override
+  String get historyWholeYear => 'Весь год';
+
+  @override
+  String get historyLoadMore => 'Загрузить ещё';
+
+  @override
+  String get historyEmpty => 'Пока ничего не прослушано';
+
+  @override
+  String get historyImported => 'импорт';
 }

@@ -587,11 +587,36 @@ class Catalog {
 
   // ---------- year in review ----------
 
-  Future<(List<int>, Map<String, dynamic>?)> recap({int? year}) async {
-    final d = await _get('/api/player/recap', {'year': ?year?.toString()});
+  Future<(List<int>, Map<String, dynamic>?)> recap({
+    int? year,
+    int? month,
+  }) async {
+    final d = await _get('/api/player/recap', {
+      'year': ?year?.toString(),
+      'month': ?month?.toString(),
+    });
     return (
       [for (final y in (d['years'] as List? ?? const [])) (y as num).toInt()],
       d['recap'] as Map<String, dynamic>?,
+    );
+  }
+
+  /// Full play history (library and imported), newest first; pass the last `ts` as [before]
+  /// for the next page. Returns the plays and whether there are more.
+  Future<(List<Map<String, dynamic>>, bool)> history({
+    String? before,
+    int limit = 100,
+  }) async {
+    final d = await _get('/api/player/history', {
+      'before': ?before,
+      'limit': '$limit',
+    });
+    return (
+      [
+        for (final x in (d['plays'] as List? ?? const []))
+          if (x is Map<String, dynamic>) x,
+      ],
+      d['more'] == true,
     );
   }
 

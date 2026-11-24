@@ -597,5 +597,13 @@
   "updateUpToDate": "Masz najnowszą wersję (build {build}).",
   "updateDownloading": "Pobieranie buildu {build}… {percent}%",
   "updateFailed": "Nie udało się sprawdzić: {error}",
-  "updateUnavailable": "Brak skonfigurowanego serwera dodatków."
+  "updateUnavailable": "Brak skonfigurowanego serwera dodatków.",
+  "settingsHistory": "Historia",
+  "settingsHistorySubtitle": "Podsumowania z poprzednich lat i wszystko, czego słuchałeś",
+  "historyRecaps": "Podsumowania",
+  "historyPlays": "Odtworzenia",
+  "historyWholeYear": "Cały rok",
+  "historyLoadMore": "Wczytaj więcej",
+  "historyEmpty": "Jeszcze nic nie odtworzono",
+  "historyImported": "zaimportowane"
 }

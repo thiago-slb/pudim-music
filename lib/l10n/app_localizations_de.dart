@@ -2268,4 +2268,29 @@ class L10nDe extends L10n {
 
   @override
   String get updateUnavailable => 'Kein Extras-Server eingerichtet.';
+
+  @override
+  String get settingsHistory => 'Verlauf';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Rückblicke früherer Jahre und alles, was du gehört hast';
+
+  @override
+  String get historyRecaps => 'Rückblicke';
+
+  @override
+  String get historyPlays => 'Wiedergaben';
+
+  @override
+  String get historyWholeYear => 'Ganzes Jahr';
+
+  @override
+  String get historyLoadMore => 'Mehr laden';
+
+  @override
+  String get historyEmpty => 'Noch nichts gehört';
+
+  @override
+  String get historyImported => 'importiert';
 }

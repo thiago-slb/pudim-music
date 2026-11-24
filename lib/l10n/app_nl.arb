@@ -597,5 +597,13 @@
   "updateUpToDate": "Je hebt de nieuwste versie (build {build}).",
   "updateDownloading": "Build {build} downloaden… {percent}%",
   "updateFailed": "Controleren mislukt: {error}",
-  "updateUnavailable": "Geen extra-server ingesteld."
+  "updateUnavailable": "Geen extra-server ingesteld.",
+  "settingsHistory": "Geschiedenis",
+  "settingsHistorySubtitle": "Overzichten van eerdere jaren en alles wat je hebt geluisterd",
+  "historyRecaps": "Overzichten",
+  "historyPlays": "Afspeelbeurten",
+  "historyWholeYear": "Heel het jaar",
+  "historyLoadMore": "Meer laden",
+  "historyEmpty": "Nog niets afgespeeld",
+  "historyImported": "geïmporteerd"
 }

@@ -24,6 +24,7 @@ import 'features/chat/chat_pages.dart';
 import 'features/profile/profile_page.dart';
 import 'features/shows/shows_page.dart';
 import 'features/podcasts/podcasts.dart';
+import 'features/recap/history_page.dart';
 
 /// Notifies go_router when the session changes (sign in/out).
 class _SessionListenable extends ChangeNotifier {
@@ -156,6 +157,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/recap',
             pageBuilder: (_, s) => page(const RecapPage(), s),
+          ),
+          GoRoute(
+            path: '/history',
+            pageBuilder: (_, s) => page(const HistoryPage(), s),
           ),
           GoRoute(
             path: '/collection/offline',

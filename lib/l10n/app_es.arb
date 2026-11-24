@@ -597,5 +597,13 @@
   "updateUpToDate": "Tienes la versión más reciente (build {build}).",
   "updateDownloading": "Descargando la build {build}… {percent}%",
   "updateFailed": "No se pudo comprobar: {error}",
-  "updateUnavailable": "No hay servidor de extras configurado."
+  "updateUnavailable": "No hay servidor de extras configurado.",
+  "settingsHistory": "Historial",
+  "settingsHistorySubtitle": "Resúmenes de años anteriores y todo lo que escuchaste",
+  "historyRecaps": "Resúmenes",
+  "historyPlays": "Reproducciones",
+  "historyWholeYear": "Todo el año",
+  "historyLoadMore": "Cargar más",
+  "historyEmpty": "Nada reproducido todavía",
+  "historyImported": "importado"
 }

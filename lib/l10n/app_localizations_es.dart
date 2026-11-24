@@ -2263,4 +2263,29 @@ class L10nEs extends L10n {
 
   @override
   String get updateUnavailable => 'No hay servidor de extras configurado.';
+
+  @override
+  String get settingsHistory => 'Historial';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Resúmenes de años anteriores y todo lo que escuchaste';
+
+  @override
+  String get historyRecaps => 'Resúmenes';
+
+  @override
+  String get historyPlays => 'Reproducciones';
+
+  @override
+  String get historyWholeYear => 'Todo el año';
+
+  @override
+  String get historyLoadMore => 'Cargar más';
+
+  @override
+  String get historyEmpty => 'Nada reproducido todavía';
+
+  @override
+  String get historyImported => 'importado';
 }

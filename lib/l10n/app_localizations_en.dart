@@ -2255,4 +2255,29 @@ class L10nEn extends L10n {
 
   @override
   String get updateUnavailable => 'No extras server configured.';
+
+  @override
+  String get settingsHistory => 'History';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Recaps from earlier years and everything you played';
+
+  @override
+  String get historyRecaps => 'Recaps';
+
+  @override
+  String get historyPlays => 'Plays';
+
+  @override
+  String get historyWholeYear => 'Whole year';
+
+  @override
+  String get historyLoadMore => 'Load more';
+
+  @override
+  String get historyEmpty => 'Nothing played yet';
+
+  @override
+  String get historyImported => 'imported';
 }

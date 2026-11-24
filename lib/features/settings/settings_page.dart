@@ -122,6 +122,15 @@ class SettingsPage extends ConsumerWidget {
             const _Section('Last.fm'),
             const _LastfmRow(),
           ],
+          if (extras.isNotEmpty) ...[
+            _Section(context.l10n.settingsHistory),
+            _Row(
+              title: context.l10n.settingsHistory,
+              subtitle: context.l10n.settingsHistorySubtitle,
+              onTap: () => context.go('/history'),
+              trailing: Icon(Icons.chevron_right, color: Pm.subdued),
+            ),
+          ],
           _Section(context.l10n.settingsSectionAbout),
           _Row(title: 'Pudim', subtitle: context.l10n.settingsBuild(appBuild)),
           if (Platform.isAndroid || Platform.isWindows) const _UpdateRow(),
@@ -233,9 +242,21 @@ class _Row extends StatelessWidget {
   final String title;
   final String? subtitle;
   final Widget? trailing;
-  const _Row({required this.title, this.subtitle, this.trailing});
+  final VoidCallback? onTap;
+  const _Row({required this.title, this.subtitle, this.trailing, this.onTap});
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => onTap == null
+      ? _body()
+      : MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onTap,
+            child: _body(),
+          ),
+        );
+
+  Widget _body() => Container(
     padding: const EdgeInsets.symmetric(vertical: 8),
     // Retro and glass draw table-like rows; the others stay open.
     decoration: switch (Pm.current.style) {
@@ -751,13 +772,12 @@ class ThemePreview extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          if (st == UiStyle.retro) nav,
           Expanded(
             child: Padding(padding: const EdgeInsets.all(4), child: content),
           ),
           mini,
           const SizedBox(height: 2),
-          if (st != UiStyle.retro) nav,
+          nav,
         ],
       ),
     );

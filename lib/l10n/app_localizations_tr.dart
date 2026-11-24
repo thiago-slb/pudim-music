@@ -2251,4 +2251,29 @@ class L10nTr extends L10n {
 
   @override
   String get updateUnavailable => 'Ek sunucu ayarlanmamış.';
+
+  @override
+  String get settingsHistory => 'Geçmiş';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Önceki yılların özetleri ve dinlediğin her şey';
+
+  @override
+  String get historyRecaps => 'Özetler';
+
+  @override
+  String get historyPlays => 'Dinlemeler';
+
+  @override
+  String get historyWholeYear => 'Tüm yıl';
+
+  @override
+  String get historyLoadMore => 'Daha fazla yükle';
+
+  @override
+  String get historyEmpty => 'Henüz bir şey dinlenmedi';
+
+  @override
+  String get historyImported => 'içe aktarıldı';
 }

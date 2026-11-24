@@ -10,7 +10,7 @@ Each theme changes the layout as well as the colors:
 | Noite | `night` | floating card in the cover color | bottom bar | big cover over the cover color | cover rows |
 | Rubi | `ruby` | flat strip docked to the bar, progress line on top, square cover | bottom bar on pure black | pure black, big square cover, thin accent progress | bigger square covers |
 | Onda | `wave` | gradient pill with a round cover | bottom bar, pill behind the selected tab | purple gradient, large bold title | cover rows, bold headers |
-| Retrô | `retro` | bevelled panel, LCD with scrolling title, level bars, transport keys | square tabs at the top | compact window: LCD with big time, keys, text playlist | monospace text lines |
+| Retrô | `retro` | bevelled panel, LCD with scrolling title, level bars, transport keys | bottom row of raised bevel keys, the open one pressed in | compact window: LCD with big time, keys, text playlist | monospace text lines |
 | Vidro | `glass` | glass capsule with an orb button | glossy bottom bar, glowing selected icon | blue gradient, glowing cover, visualizer | table rows with columns and stripes |
 
 The inner pages follow the same style:

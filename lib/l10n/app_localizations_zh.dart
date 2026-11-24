@@ -2197,4 +2197,28 @@ class L10nZh extends L10n {
 
   @override
   String get updateUnavailable => '未配置附加服务器。';
+
+  @override
+  String get settingsHistory => '历史记录';
+
+  @override
+  String get settingsHistorySubtitle => '往年回顾和你听过的所有内容';
+
+  @override
+  String get historyRecaps => '回顾';
+
+  @override
+  String get historyPlays => '播放记录';
+
+  @override
+  String get historyWholeYear => '全年';
+
+  @override
+  String get historyLoadMore => '加载更多';
+
+  @override
+  String get historyEmpty => '还没有播放记录';
+
+  @override
+  String get historyImported => '已导入';
 }

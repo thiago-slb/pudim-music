@@ -597,5 +597,13 @@
   "updateUpToDate": "У вас найновіша версія (збірка {build}).",
   "updateDownloading": "Завантаження збірки {build}… {percent}%",
   "updateFailed": "Не вдалося перевірити: {error}",
-  "updateUnavailable": "Сервер доповнень не налаштовано."
+  "updateUnavailable": "Сервер доповнень не налаштовано.",
+  "settingsHistory": "Історія",
+  "settingsHistorySubtitle": "Підсумки попередніх років і все, що ви слухали",
+  "historyRecaps": "Підсумки",
+  "historyPlays": "Прослуховування",
+  "historyWholeYear": "Увесь рік",
+  "historyLoadMore": "Завантажити ще",
+  "historyEmpty": "Поки нічого не прослухано",
+  "historyImported": "імпорт"
 }

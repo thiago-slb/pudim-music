@@ -2290,4 +2290,29 @@ class L10nPl extends L10n {
 
   @override
   String get updateUnavailable => 'Brak skonfigurowanego serwera dodatków.';
+
+  @override
+  String get settingsHistory => 'Historia';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Podsumowania z poprzednich lat i wszystko, czego słuchałeś';
+
+  @override
+  String get historyRecaps => 'Podsumowania';
+
+  @override
+  String get historyPlays => 'Odtworzenia';
+
+  @override
+  String get historyWholeYear => 'Cały rok';
+
+  @override
+  String get historyLoadMore => 'Wczytaj więcej';
+
+  @override
+  String get historyEmpty => 'Jeszcze nic nie odtworzono';
+
+  @override
+  String get historyImported => 'zaimportowane';
 }
