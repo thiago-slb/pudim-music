@@ -130,7 +130,7 @@ class _MediaCardState extends ConsumerState<MediaCard> {
                       _subtitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Pm.subdued, fontSize: 13.5),
+                      style: TextStyle(color: Pm.subdued, fontSize: 13.5),
                     ),
                   ),
                 ],
@@ -298,7 +298,7 @@ class _QuickTileState extends ConsumerState<QuickTile> {
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
-                    color: isCtx ? Pm.green : Pm.text,
+                    color: isCtx ? Pm.accent : Pm.text,
                   ),
                 ),
               ),

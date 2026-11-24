@@ -127,7 +127,7 @@ Future<void> addToPlaylistSheet(
                   color: Pm.highlight,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Icon(Icons.add, color: Pm.text),
+                child: Icon(Icons.add, color: Pm.text),
               ),
               title: Text(sheet.l10n.playlistNew),
               onTap: () => Navigator.pop(sheet, ''),
@@ -145,10 +145,7 @@ Future<void> addToPlaylistSheet(
                     ? null
                     : Text(
                         sheet.l10n.commonSongCount(p.childCount!),
-                        style: const TextStyle(
-                          color: Pm.subdued,
-                          fontSize: 12.5,
-                        ),
+                        style: TextStyle(color: Pm.subdued, fontSize: 12.5),
                       ),
                 onTap: () => Navigator.pop(sheet, p.id),
               ),
@@ -322,7 +319,7 @@ class CollabMembers extends ConsumerWidget {
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Pm.subdued, fontSize: 13),
+              style: TextStyle(color: Pm.subdued, fontSize: 13),
             ),
           ),
         ],
@@ -396,7 +393,7 @@ class RecommendationBar extends ConsumerWidget {
     ),
     child: Row(
       children: [
-        const Icon(Icons.auto_awesome, size: 16, color: Pm.green),
+        Icon(Icons.auto_awesome, size: 16, color: Pm.accent),
         const SizedBox(width: 8),
         Expanded(
           child: Text(

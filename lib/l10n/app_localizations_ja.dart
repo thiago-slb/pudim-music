@@ -2173,4 +2173,28 @@ class L10nJa extends L10n {
   String castFailed(String name) {
     return '$name に接続できませんでした';
   }
+
+  @override
+  String get settingsSectionAppearance => '外観';
+
+  @override
+  String get settingsTheme => 'テーマ';
+
+  @override
+  String get settingsThemeSubtitle => 'すぐに色が変わります。';
+
+  @override
+  String get themeNightDesc => '標準。Spotify 風：黒と緑。';
+
+  @override
+  String get themeRedDesc => 'YouTube Music 風：ほぼ黒と赤。';
+
+  @override
+  String get themeWaveDesc => 'Deezer 風：深いバイオレットと紫。';
+
+  @override
+  String get themeRetroDesc => 'Winamp 風：2000年代のグレーのパネル、緑の表示、レベルバー。';
+
+  @override
+  String get themeClassicDesc => 'Windows Media Player 風：光沢のある黒と青。';
 }

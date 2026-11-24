@@ -63,7 +63,7 @@ class OfflineButton extends ConsumerWidget {
                   child: CircularProgressIndicator(
                     value: ids.isEmpty ? null : done / ids.length,
                     strokeWidth: 2.5,
-                    color: Pm.green,
+                    color: Pm.accent,
                     backgroundColor: Colors.white24,
                   ),
                 ),
@@ -72,7 +72,7 @@ class OfflineButton extends ConsumerWidget {
                     ? Icons.arrow_circle_down
                     : Icons.arrow_circle_down_outlined,
                 size: busy ? 22 : 32,
-                color: saved ? Pm.green : Pm.subdued,
+                color: saved ? Pm.accent : Pm.subdued,
               ),
             ],
           ),
@@ -94,7 +94,7 @@ class OfflineBadge extends ConsumerWidget {
     if (!has) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(right: 4),
-      child: Icon(Icons.arrow_circle_down, size: size, color: Pm.green),
+      child: Icon(Icons.arrow_circle_down, size: size, color: Pm.accent),
     );
   }
 }

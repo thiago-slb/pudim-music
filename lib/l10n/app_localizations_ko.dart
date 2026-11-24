@@ -2176,4 +2176,28 @@ class L10nKo extends L10n {
   String castFailed(String name) {
     return '$name에 연결할 수 없습니다';
   }
+
+  @override
+  String get settingsSectionAppearance => '모양';
+
+  @override
+  String get settingsTheme => '테마';
+
+  @override
+  String get settingsThemeSubtitle => '색상이 바로 바뀝니다.';
+
+  @override
+  String get themeNightDesc => '기본값. Spotify 스타일: 검정과 초록.';
+
+  @override
+  String get themeRedDesc => 'YouTube Music 스타일: 거의 검정과 빨강.';
+
+  @override
+  String get themeWaveDesc => 'Deezer 스타일: 짙은 바이올렛과 보라.';
+
+  @override
+  String get themeRetroDesc => 'Winamp 스타일: 2000년대 회색 패널, 초록 디스플레이, 레벨 막대.';
+
+  @override
+  String get themeClassicDesc => 'Windows Media Player 스타일: 광택 있는 검정과 파랑.';
 }

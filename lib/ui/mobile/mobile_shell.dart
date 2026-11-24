@@ -8,6 +8,7 @@ import '../../audio/player.dart';
 import '../../state/session.dart';
 import '../colors.dart';
 import '../theme.dart';
+import '../widgets/theme_bits.dart';
 import '../widgets/actions.dart';
 import '../widgets/common.dart';
 import '../widgets/offline_banner.dart';
@@ -103,7 +104,7 @@ class _MobileShellState extends ConsumerState<MobileShell> {
                         color: Colors.black54,
                         shape: const CircleBorder(),
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Pm.text),
+                          icon: Icon(Icons.arrow_back, color: Pm.text),
                           tooltip: context.l10n.commonBack,
                           onPressed: () =>
                               _stack.length > 1 ? _back() : context.go('/'),
@@ -166,7 +167,7 @@ class _NavBar extends StatelessWidget {
     }
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -225,10 +226,9 @@ class MiniPlayer extends ConsumerWidget {
         duration: const Duration(milliseconds: 400),
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 4),
         height: 58,
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(6),
-        ),
+        decoration: Pm.current.bar != null
+            ? playerBarDecoration(radius: BorderRadius.circular(Pm.radius))
+            : BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
         clipBehavior: Clip.antiAlias,
         child: Column(
           children: [
@@ -239,37 +239,41 @@ class MiniPlayer extends ConsumerWidget {
                   Cover(cur, size: 40),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          cur.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                    child: LcdPanel(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            cur.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        Text(
-                          cur.artistLine,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12.5,
+                          Text(
+                            cur.artistLine,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: lcdTextColor() ?? Colors.white70,
+                              fontSize: 12.5,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
+                  LevelBars(playing: q.playing, height: 14),
                   IconButton(
                     icon: Icon(
                       cur.favorite
                           ? Icons.check_circle
                           : Icons.add_circle_outline,
-                      color: cur.favorite ? Pm.green : Pm.text,
+                      color: cur.favorite ? Pm.accent : Pm.text,
                     ),
                     tooltip: cur.favorite
                         ? context.l10n.commonRemoveFromLiked
@@ -278,7 +282,7 @@ class MiniPlayer extends ConsumerWidget {
                   ),
                   IconButton(
                     icon: q.buffering
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 22,
                             height: 22,
                             child: CircularProgressIndicator(

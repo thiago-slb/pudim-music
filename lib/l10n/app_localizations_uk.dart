@@ -2233,4 +2233,30 @@ class L10nUk extends L10n {
   String castFailed(String name) {
     return 'Не вдалося підключитися до $name';
   }
+
+  @override
+  String get settingsSectionAppearance => 'Вигляд';
+
+  @override
+  String get settingsTheme => 'Тема';
+
+  @override
+  String get settingsThemeSubtitle => 'Змінює кольори одразу.';
+
+  @override
+  String get themeNightDesc => 'Типова. У стилі Spotify: чорний і зелений.';
+
+  @override
+  String get themeRedDesc => 'У стилі YouTube Music: майже чорний і червоний.';
+
+  @override
+  String get themeWaveDesc => 'У стилі Deezer: темно-фіолетовий і пурпуровий.';
+
+  @override
+  String get themeRetroDesc =>
+      'У стилі Winamp: сірі панелі 2000-х, зелений дисплей і індикатори рівня.';
+
+  @override
+  String get themeClassicDesc =>
+      'У стилі Windows Media Player: чорний і синій із глянцем.';
 }

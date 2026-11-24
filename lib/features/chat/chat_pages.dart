@@ -55,10 +55,10 @@ class ChatButton extends ConsumerWidget {
       onPressed: () => context.push('/chat'),
       icon: Badge(
         isLabelVisible: n > 0,
-        backgroundColor: Pm.green,
-        textColor: Colors.black,
+        backgroundColor: Pm.accent,
+        textColor: Pm.onAccent,
         label: Text('$n'),
-        child: const Icon(Icons.chat_bubble_outline, color: Pm.subdued),
+        child: Icon(Icons.chat_bubble_outline, color: Pm.subdued),
       ),
     );
   }
@@ -131,12 +131,12 @@ class ChatsPage extends ConsumerWidget {
                   children: [
                     Text(
                       _when(c.last.at),
-                      style: const TextStyle(color: Pm.muted, fontSize: 12),
+                      style: TextStyle(color: Pm.muted, fontSize: 12),
                     ),
                     if (c.unread > 0)
                       Badge(
-                        backgroundColor: Pm.green,
-                        textColor: Colors.black,
+                        backgroundColor: Pm.accent,
+                        textColor: Pm.onAccent,
                         label: Text('${c.unread}'),
                       ),
                   ],
@@ -147,7 +147,7 @@ class ChatsPage extends ConsumerWidget {
               const SizedBox(height: 16),
               Text(
                 context.l10n.chatContacts,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Pm.subdued,
                   fontWeight: FontWeight.w700,
                 ),
@@ -158,7 +158,7 @@ class ChatsPage extends ConsumerWidget {
                   leading: _Avatar(c),
                   title: Text(c.displayName),
                   subtitle: c.displayName != c.name
-                      ? Text(c.name, style: const TextStyle(color: Pm.muted))
+                      ? Text(c.name, style: TextStyle(color: Pm.muted))
                       : null,
                   onTap: () => context.push('/chat/${c.id}'),
                 ),
@@ -168,7 +168,7 @@ class ChatsPage extends ConsumerWidget {
                 padding: const EdgeInsets.only(top: 24),
                 child: Text(
                   context.l10n.chatServerUnreachable,
-                  style: const TextStyle(color: Pm.subdued),
+                  style: TextStyle(color: Pm.subdued),
                 ),
               ),
           ],
@@ -296,7 +296,7 @@ class _ChatThreadPageState extends ConsumerState<ChatThreadPage> {
               ],
             ),
           ),
-          const Divider(height: 1, color: Pm.highlight),
+          Divider(height: 1, color: Pm.highlight),
           Expanded(
             child: ListView.builder(
               controller: _scroll,
@@ -333,10 +333,7 @@ class _ChatThreadPageState extends ConsumerState<ChatThreadPage> {
                             alignment: Alignment.centerRight,
                             child: Text(
                               _when(m.at),
-                              style: const TextStyle(
-                                color: Pm.muted,
-                                fontSize: 11,
-                              ),
+                              style: TextStyle(color: Pm.muted, fontSize: 11),
                             ),
                           ),
                         ],
@@ -375,7 +372,7 @@ class _ChatThreadPageState extends ConsumerState<ChatThreadPage> {
                   ),
                   IconButton(
                     onPressed: _sending ? null : _send,
-                    icon: const Icon(Icons.send, color: Pm.green),
+                    icon: Icon(Icons.send, color: Pm.accent),
                   ),
                 ],
               ),
@@ -539,7 +536,7 @@ class SharedCard extends ConsumerWidget {
                     [label, if (s.subtitle.isNotEmpty) s.subtitle].join(' • '),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Pm.subdued, fontSize: 12),
+                    style: TextStyle(color: Pm.subdued, fontSize: 12),
                   ),
                 ],
               ),
@@ -593,7 +590,7 @@ Future<Contact?> pickContact(
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: Pm.subdued)),
+                  Text(subtitle, style: TextStyle(color: Pm.subdued)),
                 ],
                 const SizedBox(height: 12),
                 Flexible(
@@ -603,11 +600,11 @@ Future<Contact?> pickContact(
                       child: Center(child: CircularProgressIndicator()),
                     ),
                     error: (e, _) =>
-                        Text('$e', style: const TextStyle(color: Pm.subdued)),
+                        Text('$e', style: TextStyle(color: Pm.subdued)),
                     data: (list) => list.isEmpty
                         ? Text(
                             context.l10n.chatNoOtherAccounts,
-                            style: const TextStyle(color: Pm.subdued),
+                            style: TextStyle(color: Pm.subdued),
                           )
                         : ListView(
                             shrinkWrap: true,
@@ -617,7 +614,7 @@ Future<Contact?> pickContact(
                                   contentPadding: EdgeInsets.zero,
                                   leading: _Avatar(c, size: 38),
                                   title: Text(c.displayName),
-                                  trailing: const Icon(
+                                  trailing: Icon(
                                     Icons.chevron_right,
                                     color: Pm.subdued,
                                   ),
@@ -763,11 +760,11 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
                     child: Center(child: CircularProgressIndicator()),
                   ),
                   error: (e, _) =>
-                      Text('$e', style: const TextStyle(color: Pm.subdued)),
+                      Text('$e', style: TextStyle(color: Pm.subdued)),
                   data: (list) => list.isEmpty
                       ? Text(
                           context.l10n.chatNoOtherAccounts,
-                          style: const TextStyle(color: Pm.subdued),
+                          style: TextStyle(color: Pm.subdued),
                         )
                       : ListView(
                           shrinkWrap: true,
@@ -785,7 +782,7 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
                                           strokeWidth: 2,
                                         ),
                                       )
-                                    : const Icon(Icons.send, color: Pm.green),
+                                    : Icon(Icons.send, color: Pm.accent),
                                 onTap: _sendingTo == null
                                     ? () => _send(c)
                                     : null,

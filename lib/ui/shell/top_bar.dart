@@ -108,7 +108,7 @@ class _TopBarState extends ConsumerState<TopBar> {
                 child: Row(
                   children: [
                     const SizedBox(width: 12),
-                    const Icon(Icons.search, color: Pm.subdued, size: 24),
+                    Icon(Icons.search, color: Pm.subdued, size: 24),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Focus(
@@ -178,7 +178,7 @@ class _AppMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return PopupMenuButton<String>(
       tooltip: context.l10n.topBarMenu,
-      icon: const Icon(Icons.more_horiz, color: Pm.subdued),
+      icon: Icon(Icons.more_horiz, color: Pm.subdued),
       onSelected: (v) {
         switch (v) {
           case 'settings':
@@ -229,7 +229,7 @@ class _Avatar extends ConsumerWidget {
         return [
           PopupMenuItem(
             enabled: false,
-            child: Text(name, style: const TextStyle(color: Pm.subdued)),
+            child: Text(name, style: TextStyle(color: Pm.subdued)),
           ),
           for (final a in others)
             PopupMenuItem(
@@ -256,10 +256,7 @@ class _Avatar extends ConsumerWidget {
       child: Container(
         width: 48,
         height: 48,
-        decoration: const BoxDecoration(
-          color: Pm.elevated,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: Pm.elevated, shape: BoxShape.circle),
         alignment: Alignment.center,
         child: const MyPhoto(size: 32),
       ),

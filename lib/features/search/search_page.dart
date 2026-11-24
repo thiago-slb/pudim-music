@@ -138,7 +138,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   const SizedBox(height: 8),
                   Text(
                     context.l10n.searchCatalogNoResponse('${cat.error}'),
-                    style: const TextStyle(color: Pm.muted, fontSize: 12),
+                    style: TextStyle(color: Pm.muted, fontSize: 12),
                   ),
                 ],
               ],
@@ -172,7 +172,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   context.l10n.searchAlsoCatalog,
-                  style: const TextStyle(color: Pm.muted, fontSize: 12),
+                  style: TextStyle(color: Pm.muted, fontSize: 12),
                 ),
               )
             else if (cat.hasError)
@@ -180,7 +180,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   context.l10n.searchLibraryOnly('${cat.error}'),
-                  style: const TextStyle(color: Pm.muted, fontSize: 12),
+                  style: TextStyle(color: Pm.muted, fontSize: 12),
                 ),
               ),
             const SizedBox(height: 16),
@@ -310,7 +310,7 @@ class _TopResultState extends ConsumerState<_TopResult> {
                         it.kind == ItemKind.artist
                             ? context.l10n.commonArtist
                             : '${it.typeLabel} • ${it.artistLine}',
-                        style: const TextStyle(color: Pm.subdued),
+                        style: TextStyle(color: Pm.subdued),
                       ),
                     ],
                   ),
@@ -375,7 +375,7 @@ class _Browse extends ConsumerWidget {
               Expanded(child: SectionHeader(context.l10n.searchRecent)),
               TextLink(
                 context.l10n.searchClear,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Pm.subdued,
                   fontWeight: FontWeight.w700,
                 ),

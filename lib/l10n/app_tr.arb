@@ -583,5 +583,13 @@
   "castSearchAgain": "Tekrar ara",
   "castStop": "Yayını durdur",
   "castPlayingOn": "{name} üzerinde çalıyor",
-  "castFailed": "{name} cihazına bağlanılamadı"
+  "castFailed": "{name} cihazına bağlanılamadı",
+  "settingsSectionAppearance": "Görünüm",
+  "settingsTheme": "Tema",
+  "settingsThemeSubtitle": "Renkleri hemen değiştirir.",
+  "themeNightDesc": "Varsayılan. Spotify görünümünden esinlenildi: siyah ve yeşil.",
+  "themeRedDesc": "YouTube Music'ten esinlenildi: siyaha yakın ve kırmızı.",
+  "themeWaveDesc": "Deezer'dan esinlenildi: koyu menekşe ve mor.",
+  "themeRetroDesc": "Winamp'tan esinlenildi: 2000'lerin gri panelleri, yeşil ekran ve seviye çubukları.",
+  "themeClassicDesc": "Windows Media Player'dan esinlenildi: parlak siyah ve mavi."
 }

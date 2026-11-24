@@ -115,11 +115,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     suffixIcon: suffix,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
-      borderSide: const BorderSide(color: Pm.muted),
+      borderSide: BorderSide(color: Pm.muted),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
-      borderSide: const BorderSide(color: Pm.muted),
+      borderSide: BorderSide(color: Pm.muted),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
@@ -144,11 +144,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       child: DragToMoveArea(child: SizedBox.expand()),
                     ),
                     IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        size: 18,
-                        color: Pm.subdued,
-                      ),
+                      icon: Icon(Icons.close, size: 18, color: Pm.subdued),
                       tooltip: context.l10n.commonClose,
                       onPressed: () => windowManager.close(),
                     ),
@@ -192,7 +188,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           Text(
                             context.l10n.loginSubtitle,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: Pm.subdued),
+                            style: TextStyle(color: Pm.subdued),
                           ),
                           const SizedBox(height: 32),
                           if (_error != null) ...[
@@ -245,8 +241,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             height: 48,
                             child: FilledButton(
                               style: FilledButton.styleFrom(
-                                backgroundColor: Pm.green,
-                                foregroundColor: Colors.black,
+                                backgroundColor: Pm.accent,
+                                foregroundColor: Pm.onAccent,
                                 shape: const StadiumBorder(),
                               ),
                               onPressed: _busy ? null : _submit,
@@ -274,7 +270,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             child: OutlinedButton.icon(
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Pm.text,
-                                side: const BorderSide(color: Pm.muted),
+                                side: BorderSide(color: Pm.muted),
                                 shape: const StadiumBorder(),
                               ),
                               icon: const Icon(Icons.qr_code_2, size: 20),
@@ -297,7 +293,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         .cancelAdd(),
                               child: Text(
                                 context.l10n.loginBackToAccount,
-                                style: const TextStyle(color: Pm.text),
+                                style: TextStyle(color: Pm.text),
                               ),
                             ),
                           ],
@@ -309,7 +305,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               _showServer
                                   ? context.l10n.loginHideAddresses
                                   : context.l10n.loginServerAddress,
-                              style: const TextStyle(color: Pm.subdued),
+                              style: TextStyle(color: Pm.subdued),
                             ),
                           ),
                           if (_showServer) ...[
@@ -324,10 +320,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             const SizedBox(height: 4),
                             Text(
                               context.l10n.loginJellyfinServerExample,
-                              style: const TextStyle(
-                                color: Pm.muted,
-                                fontSize: 12,
-                              ),
+                              style: TextStyle(color: Pm.muted, fontSize: 12),
                             ),
                             const SizedBox(height: 12),
                             TextField(
@@ -338,10 +331,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             const SizedBox(height: 4),
                             Text(
                               context.l10n.loginLocalNetworkExample,
-                              style: const TextStyle(
-                                color: Pm.muted,
-                                fontSize: 12,
-                              ),
+                              style: TextStyle(color: Pm.muted, fontSize: 12),
                             ),
                             const SizedBox(height: 12),
                             TextField(
@@ -352,10 +342,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             const SizedBox(height: 4),
                             Text(
                               context.l10n.loginExtrasServerHint,
-                              style: const TextStyle(
-                                color: Pm.muted,
-                                fontSize: 12,
-                              ),
+                              style: TextStyle(color: Pm.muted, fontSize: 12),
                             ),
                           ],
                         ],
@@ -448,15 +435,15 @@ class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
           children: [
             Text(
               context.l10n.loginQcInstructions,
-              style: const TextStyle(color: Pm.subdued),
+              style: TextStyle(color: Pm.subdued),
             ),
             const SizedBox(height: 20),
             Center(
               child: code == null
-                  ? const SizedBox(
+                  ? SizedBox(
                       height: 48,
                       child: Center(
-                        child: CircularProgressIndicator(color: Pm.green),
+                        child: CircularProgressIndicator(color: Pm.accent),
                       ),
                     )
                   : SelectableText(
@@ -480,7 +467,7 @@ class _QuickConnectDialogState extends ConsumerState<_QuickConnectDialog> {
                 Expanded(
                   child: Text(
                     context.l10n.loginQcWaiting,
-                    style: const TextStyle(color: Pm.subdued, fontSize: 13),
+                    style: TextStyle(color: Pm.subdued, fontSize: 13),
                   ),
                 ),
               ],

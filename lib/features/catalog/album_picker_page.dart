@@ -160,7 +160,7 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(sub, style: const TextStyle(color: Pm.subdued)),
+                Text(sub, style: TextStyle(color: Pm.subdued)),
                 if (p != null && p.missing.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Wrap(
@@ -179,8 +179,8 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                   const SizedBox(height: 12),
                   FilledButton(
                     style: FilledButton.styleFrom(
-                      backgroundColor: Pm.green,
-                      foregroundColor: Colors.black,
+                      backgroundColor: Pm.accent,
+                      foregroundColor: Pm.onAccent,
                       shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -209,7 +209,7 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                     padding: EdgeInsets.symmetric(horizontal: side),
                     child: Text(
                       l.catalogNothingMissing,
-                      style: const TextStyle(color: Pm.subdued),
+                      style: TextStyle(color: Pm.subdued),
                     ),
                   )
                 : ListView.builder(
@@ -223,8 +223,8 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                         onChanged: (v) => setState(
                           () => v == true ? _picked.add(i) : _picked.remove(i),
                         ),
-                        activeColor: Pm.green,
-                        checkColor: Colors.black,
+                        activeColor: Pm.accent,
+                        checkColor: Pm.onAccent,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 8,
                         ),
@@ -240,7 +240,7 @@ class _AlbumPickerPageState extends ConsumerState<AlbumPickerPage> {
                             if (tag.isNotEmpty) tag,
                             if (a.partial) l.catalogPartial,
                           ].join(' · '),
-                          style: const TextStyle(color: Pm.subdued),
+                          style: TextStyle(color: Pm.subdued),
                         ),
                       );
                     },
@@ -270,7 +270,7 @@ class _Cover extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (_, _, _) => Container(
           color: Pm.elevated,
-          child: const Icon(Icons.album, color: Pm.muted),
+          child: Icon(Icons.album, color: Pm.muted),
         ),
       ),
     ),
@@ -286,7 +286,7 @@ class _Chip extends StatelessWidget {
   Widget build(BuildContext context) => OutlinedButton(
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
-      side: const BorderSide(color: Pm.muted),
+      side: BorderSide(color: Pm.muted),
       shape: const StadiumBorder(),
       visualDensity: VisualDensity.compact,
     ),

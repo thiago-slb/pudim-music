@@ -63,7 +63,7 @@ class DownloadButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => OutlinedButton.icon(
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
-      side: const BorderSide(color: Pm.muted),
+      side: BorderSide(color: Pm.muted),
       shape: const StadiumBorder(),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
@@ -99,7 +99,7 @@ class _SavePlaylistButtonState extends ConsumerState<_SavePlaylistButton> {
   Widget build(BuildContext context) => OutlinedButton.icon(
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
-      side: const BorderSide(color: Pm.muted),
+      side: BorderSide(color: Pm.muted),
       shape: const StadiumBorder(),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
@@ -112,7 +112,7 @@ class _SavePlaylistButtonState extends ConsumerState<_SavePlaylistButton> {
         : Icon(
             _done ? Icons.check_circle : Icons.add_circle_outline,
             size: 18,
-            color: _done ? Pm.green : null,
+            color: _done ? Pm.accent : null,
           ),
     label: Text(
       _done
@@ -194,11 +194,11 @@ class CatalogListPage extends ConsumerWidget {
                   if (a.year != null) Text(' • ${a.year}'),
                   Text(
                     ' • ${l.commonSongCount(d.tracks.length)}, ${formatTotal(total)}',
-                    style: const TextStyle(color: Pm.subdued),
+                    style: TextStyle(color: Pm.subdued),
                   ),
                   Text(
                     ' • ${have == d.tracks.length ? l.catalogAllInLibrary : l.catalogNInLibrary(have)}',
-                    style: const TextStyle(color: Pm.subdued),
+                    style: TextStyle(color: Pm.subdued),
                   ),
                 ],
               ),
@@ -355,7 +355,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                 ),
               ),
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -390,7 +390,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                         return OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Pm.text,
-                            side: const BorderSide(color: Pm.muted),
+                            side: BorderSide(color: Pm.muted),
                             shape: const StadiumBorder(),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -431,7 +431,7 @@ class _CatalogArtistPageState extends ConsumerState<CatalogArtistPage> {
                           padding: const EdgeInsets.fromLTRB(16, 8, 0, 24),
                           child: TextLink(
                             _showMore ? l.catalogShowLess : l.catalogShowMore,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Pm.subdued,
                               fontWeight: FontWeight.w700,
                               fontSize: 14,

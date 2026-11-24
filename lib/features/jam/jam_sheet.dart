@@ -26,13 +26,13 @@ class JamButton extends ConsumerWidget {
       onPressed: () => showJamSheet(context),
       icon: Badge(
         isLabelVisible: jam != null,
-        backgroundColor: Pm.green,
-        textColor: Colors.black,
+        backgroundColor: Pm.accent,
+        textColor: Pm.onAccent,
         label: Text('$n'),
         child: Icon(
           Icons.groups_outlined,
           size: size,
-          color: jam != null ? Pm.green : Pm.subdued,
+          color: jam != null ? Pm.accent : Pm.subdued,
         ),
       ),
     );
@@ -113,7 +113,7 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
                             : jam.isHost
                             ? context.l10n.jamSubHost
                             : context.l10n.jamSubGuest,
-                        style: const TextStyle(color: Pm.subdued),
+                        style: TextStyle(color: Pm.subdued),
                       ),
                     ],
                   ),
@@ -140,7 +140,7 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
             ] else ...[
               Text(
                 context.l10n.jamMembers(jam.members.length),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: Pm.subdued,
                   fontSize: 13,
@@ -192,7 +192,7 @@ class _JamSheetState extends ConsumerState<_JamSheet> {
                     child: OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Pm.text,
-                        side: const BorderSide(color: Pm.muted),
+                        side: BorderSide(color: Pm.muted),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       icon: const Icon(Icons.person_add_alt, size: 18),

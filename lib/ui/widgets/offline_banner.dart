@@ -28,13 +28,13 @@ class OfflineBanner extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.cloud_off, size: 15, color: Pm.subdued),
+                    Icon(Icons.cloud_off, size: 15, color: Pm.subdued),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
                         context.l10n.widgetOfflineBanner,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Pm.subdued, fontSize: 12),
+                        style: TextStyle(color: Pm.subdued, fontSize: 12),
                       ),
                     ),
                   ],

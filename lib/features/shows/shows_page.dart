@@ -88,7 +88,7 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
                         (d.pending > 0
                             ? ' · ${l.showsSearchingFor(d.pending)}'
                             : ''),
-              style: const TextStyle(color: Pm.subdued),
+              style: TextStyle(color: Pm.subdued),
             ),
             const SizedBox(height: 14),
             Wrap(
@@ -143,7 +143,7 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
               padding: const EdgeInsets.only(top: 24),
               child: Text(
                 l.showsSource,
-                style: const TextStyle(color: Pm.muted, fontSize: 12),
+                style: TextStyle(color: Pm.muted, fontSize: 12),
               ),
             ),
           ],
@@ -159,7 +159,7 @@ class _Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 32),
-    child: Text(text, style: const TextStyle(color: Pm.subdued)),
+    child: Text(text, style: TextStyle(color: Pm.subdued)),
   );
 }
 
@@ -191,7 +191,7 @@ class _EventRow extends StatelessWidget {
       if (e.country.isNotEmpty && e.country.length > 2) e.country,
       if (e.country.length == 2) e.country.toUpperCase(),
     ].join(' · ');
-    final accent = past ? Pm.muted : Pm.green;
+    final accent = past ? Pm.muted : Pm.accent;
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -212,7 +212,7 @@ class _EventRow extends StatelessWidget {
                   ),
                   Text(
                     context.l10n.showsWeekdayShort('w${day.weekday}'),
-                    style: const TextStyle(color: Pm.subdued, fontSize: 12),
+                    style: TextStyle(color: Pm.subdued, fontSize: 12),
                   ),
                 ],
               ),
@@ -282,7 +282,7 @@ class _EventRow extends StatelessWidget {
                           ],
                         ),
                         if (e.name.isNotEmpty)
-                          Text(e.name, style: const TextStyle(color: Pm.text)),
+                          Text(e.name, style: TextStyle(color: Pm.text)),
                         if (where.isNotEmpty || e.time.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 2),
@@ -294,10 +294,7 @@ class _EventRow extends StatelessWidget {
                                       : e.time,
                                 if (where.isNotEmpty) where,
                               ].join(' · '),
-                              style: const TextStyle(
-                                color: Pm.subdued,
-                                fontSize: 13,
-                              ),
+                              style: TextStyle(color: Pm.subdued, fontSize: 13),
                             ),
                           ),
                       ],

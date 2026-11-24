@@ -583,5 +583,13 @@
   "castSearchAgain": "重新搜索",
   "castStop": "停止投放",
   "castPlayingOn": "正在 {name} 上播放",
-  "castFailed": "无法连接到 {name}"
+  "castFailed": "无法连接到 {name}",
+  "settingsSectionAppearance": "外观",
+  "settingsTheme": "主题",
+  "settingsThemeSubtitle": "立即更改颜色。",
+  "themeNightDesc": "默认。Spotify 风格：黑色和绿色。",
+  "themeRedDesc": "YouTube Music 风格：近黑色和红色。",
+  "themeWaveDesc": "Deezer 风格：深紫罗兰和紫色。",
+  "themeRetroDesc": "Winamp 风格：2000 年代的灰色面板、绿色显示屏和电平条。",
+  "themeClassicDesc": "Windows Media Player 风格：带光泽的黑色和蓝色。"
 }

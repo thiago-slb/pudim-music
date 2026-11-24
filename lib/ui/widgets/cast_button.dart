@@ -22,7 +22,7 @@ class CastButton extends ConsumerWidget {
       icon: Icon(
         on ? Icons.cast_connected : Icons.cast,
         size: size,
-        color: on ? Pm.green : Pm.subdued,
+        color: on ? Pm.accent : Pm.subdued,
       ),
     );
   }
@@ -74,11 +74,11 @@ class _CastSheet extends ConsumerWidget {
             ListTile(
               leading: Icon(
                 Icons.smartphone,
-                color: current == null ? Pm.green : Pm.subdued,
+                color: current == null ? Pm.accent : Pm.subdued,
               ),
               title: Text(
                 l.castThisDevice,
-                style: TextStyle(color: current == null ? Pm.green : null),
+                style: TextStyle(color: current == null ? Pm.accent : null),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -92,14 +92,14 @@ class _CastSheet extends ConsumerWidget {
                       ? Icons.cast_connected
                       : Icons.cast,
                   color: current?.serviceName == d.serviceName
-                      ? Pm.green
+                      ? Pm.accent
                       : Pm.subdued,
                 ),
                 title: Text(
                   d.name,
                   style: TextStyle(
                     color: current?.serviceName == d.serviceName
-                        ? Pm.green
+                        ? Pm.accent
                         : null,
                   ),
                 ),
@@ -134,20 +134,17 @@ class _CastSheet extends ConsumerWidget {
               if (s.devices.isEmpty)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 4, 24, 4),
-                  child: Text(
-                    l.castNone,
-                    style: const TextStyle(color: Pm.subdued),
-                  ),
+                  child: Text(l.castNone, style: TextStyle(color: Pm.subdued)),
                 ),
               ListTile(
-                leading: const Icon(Icons.refresh, color: Pm.subdued),
+                leading: Icon(Icons.refresh, color: Pm.subdued),
                 title: Text(l.castSearchAgain),
                 onTap: c.search,
               ),
             ],
             if (current != null)
               ListTile(
-                leading: const Icon(Icons.cast, color: Pm.subdued),
+                leading: Icon(Icons.cast, color: Pm.subdued),
                 title: Text(l.castStop),
                 onTap: () {
                   Navigator.pop(context);

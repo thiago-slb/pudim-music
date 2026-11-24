@@ -2237,4 +2237,32 @@ class L10nPl extends L10n {
   String castFailed(String name) {
     return 'Nie udało się połączyć z $name';
   }
+
+  @override
+  String get settingsSectionAppearance => 'Wygląd';
+
+  @override
+  String get settingsTheme => 'Motyw';
+
+  @override
+  String get settingsThemeSubtitle => 'Zmienia kolory od razu.';
+
+  @override
+  String get themeNightDesc =>
+      'Domyślny. Inspirowany wyglądem Spotify: czerń i zieleń.';
+
+  @override
+  String get themeRedDesc =>
+      'Inspirowany YouTube Music: prawie czarny i czerwony.';
+
+  @override
+  String get themeWaveDesc => 'Inspirowany Deezerem: ciemny fiolet i purpura.';
+
+  @override
+  String get themeRetroDesc =>
+      'Inspirowany Winampem: szare panele z lat 2000, zielony wyświetlacz i paski poziomu.';
+
+  @override
+  String get themeClassicDesc =>
+      'Inspirowany Windows Media Player: czerń i błękit z połyskiem.';
 }

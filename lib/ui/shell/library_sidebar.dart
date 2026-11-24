@@ -343,7 +343,7 @@ class _LibRowState extends ConsumerState<_LibRow> {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 15,
-                            color: playingHere ? Pm.green : Pm.text,
+                            color: playingHere ? Pm.accent : Pm.text,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -351,16 +351,13 @@ class _LibRowState extends ConsumerState<_LibRow> {
                           e.subtitle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Pm.subdued,
-                            fontSize: 13,
-                          ),
+                          style: TextStyle(color: Pm.subdued, fontSize: 13),
                         ),
                       ],
                     ),
                   ),
                   if (playingHere && q.playing)
-                    const Icon(Icons.volume_up, color: Pm.green, size: 16),
+                    Icon(Icons.volume_up, color: Pm.accent, size: 16),
                 ],
               ],
             ),
@@ -399,7 +396,7 @@ class _LibSearchState extends ConsumerState<_LibSearch> {
       child: Row(
         children: [
           const SizedBox(width: 8),
-          const Icon(Icons.search, size: 16, color: Pm.subdued),
+          Icon(Icons.search, size: 16, color: Pm.subdued),
           const SizedBox(width: 6),
           Expanded(
             child: TextField(
@@ -454,11 +451,10 @@ class _SortMenu extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     label(s),
-                    style: TextStyle(color: s == sort ? Pm.green : Pm.text),
+                    style: TextStyle(color: s == sort ? Pm.accent : Pm.text),
                   ),
                 ),
-                if (s == sort)
-                  const Icon(Icons.check, color: Pm.green, size: 18),
+                if (s == sort) Icon(Icons.check, color: Pm.accent, size: 18),
               ],
             ),
           ),
@@ -469,10 +465,10 @@ class _SortMenu extends ConsumerWidget {
           children: [
             Text(
               label(sort),
-              style: const TextStyle(color: Pm.subdued, fontSize: 13),
+              style: TextStyle(color: Pm.subdued, fontSize: 13),
             ),
             const SizedBox(width: 6),
-            const Icon(Icons.format_list_bulleted, size: 16, color: Pm.subdued),
+            Icon(Icons.format_list_bulleted, size: 16, color: Pm.subdued),
           ],
         ),
       ),

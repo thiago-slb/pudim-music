@@ -29,7 +29,7 @@ class NowPlayingPage extends ConsumerWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (context.mounted && context.canPop()) context.pop();
       });
-      return const Scaffold(backgroundColor: Pm.base);
+      return Scaffold(backgroundColor: Pm.base);
     }
     final color = currentCoverColor(ref, cur);
     final c = ref.read(playerProvider.notifier);
@@ -111,7 +111,7 @@ class NowPlayingPage extends ConsumerWidget {
                                   cur.favorite
                                       ? Icons.check_circle
                                       : Icons.add_circle_outline,
-                                  color: cur.favorite ? Pm.green : Pm.text,
+                                  color: cur.favorite ? Pm.accent : Pm.text,
                                 ),
                                 onPressed: () =>
                                     toggleFavorite(context, ref, cur),
@@ -128,13 +128,13 @@ class NowPlayingPage extends ConsumerWidget {
                                 iconSize: 26,
                                 icon: Icon(
                                   q.smart ? Icons.auto_awesome : Icons.shuffle,
-                                  color: q.shuffle ? Pm.green : Pm.text,
+                                  color: q.shuffle ? Pm.accent : Pm.text,
                                 ),
                                 onPressed: c.toggleShuffle,
                               ),
                               IconButton(
                                 iconSize: 44,
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.skip_previous_rounded,
                                   color: Pm.text,
                                 ),
@@ -169,7 +169,7 @@ class NowPlayingPage extends ConsumerWidget {
                               ),
                               IconButton(
                                 iconSize: 44,
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.skip_next_rounded,
                                   color: Pm.text,
                                 ),
@@ -183,7 +183,7 @@ class NowPlayingPage extends ConsumerWidget {
                                       : Icons.repeat,
                                   color: q.repeat == RepeatMode.off
                                       ? Pm.text
-                                      : Pm.green,
+                                      : Pm.accent,
                                 ),
                                 onPressed: c.cycleRepeat,
                               ),
@@ -200,10 +200,7 @@ class NowPlayingPage extends ConsumerWidget {
                               const Spacer(),
                               IconButton(
                                 tooltip: context.l10n.commonQueue,
-                                icon: const Icon(
-                                  Icons.queue_music,
-                                  color: Pm.text,
-                                ),
+                                icon: Icon(Icons.queue_music, color: Pm.text),
                                 onPressed: () => context.push('/queue'),
                               ),
                             ],
@@ -240,7 +237,7 @@ class _TopRow extends ConsumerWidget {
     return Row(
       children: [
         IconButton(
-          icon: const Icon(Icons.keyboard_arrow_down, color: Pm.text, size: 32),
+          icon: Icon(Icons.keyboard_arrow_down, color: Pm.text, size: 32),
           tooltip: context.l10n.commonClose,
           onPressed: () => context.pop(),
         ),
@@ -279,7 +276,7 @@ class _TopRow extends ConsumerWidget {
         ),
         Builder(
           builder: (bctx) => IconButton(
-            icon: const Icon(Icons.more_vert, color: Pm.text),
+            icon: Icon(Icons.more_vert, color: Pm.text),
             tooltip: context.l10n.nowPlayingMoreOptions,
             onPressed: () => showItemMenu(context, ref, cur, Offset.zero),
           ),
@@ -363,7 +360,7 @@ class LyricsFullPage extends ConsumerWidget {
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.keyboard_arrow_down,
                     color: Pm.text,
                     size: 32,
@@ -428,7 +425,7 @@ class LyricsFullPage extends ConsumerWidget {
 class QueuePage extends StatelessWidget {
   const QueuePage({super.key});
   @override
-  Widget build(BuildContext context) => const Scaffold(
+  Widget build(BuildContext context) => Scaffold(
     backgroundColor: Pm.base,
     body: SafeArea(child: QueueView()),
   );

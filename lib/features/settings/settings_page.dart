@@ -7,6 +7,7 @@ import '../../l10n/l10n.dart';
 import '../../ui/widgets/accounts.dart';
 
 import '../../audio/player.dart';
+import '../../state/app_theme.dart';
 import '../../state/locale.dart';
 import '../../state/session.dart';
 import '../../ui/responsive.dart';
@@ -47,7 +48,7 @@ class SettingsPage extends ConsumerWidget {
             trailing: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 foregroundColor: Pm.text,
-                side: const BorderSide(color: Pm.muted),
+                side: BorderSide(color: Pm.muted),
                 shape: const StadiumBorder(),
               ),
               onPressed: () => context.go('/profile'),
@@ -60,7 +61,7 @@ class SettingsPage extends ConsumerWidget {
             trailing: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 foregroundColor: Pm.text,
-                side: const BorderSide(color: Pm.muted),
+                side: BorderSide(color: Pm.muted),
                 shape: const StadiumBorder(),
               ),
               onPressed: () async {
@@ -73,6 +74,8 @@ class SettingsPage extends ConsumerWidget {
           _Section(context.l10n.accountsTitle),
           const AccountsList(),
           const _LanguageRow(),
+          _Section(context.l10n.settingsSectionAppearance),
+          const _ThemePicker(),
           _Section(context.l10n.settingsSectionServer),
           _Row(title: 'Jellyfin', subtitle: urls.wan.isEmpty ? '-' : urls.wan),
           if (urls.lan.isNotEmpty)
@@ -81,7 +84,7 @@ class SettingsPage extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               context.l10n.settingsServerNote,
-              style: const TextStyle(color: Pm.muted, fontSize: 12),
+              style: TextStyle(color: Pm.muted, fontSize: 12),
             ),
           ),
           _Row(
@@ -92,7 +95,7 @@ class SettingsPage extends ConsumerWidget {
             trailing: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 foregroundColor: Pm.text,
-                side: const BorderSide(color: Pm.muted),
+                side: BorderSide(color: Pm.muted),
                 shape: const StadiumBorder(),
               ),
               onPressed: () => _editExtras(context, ref, extras),
@@ -155,7 +158,7 @@ Future<void> _editExtras(
           const SizedBox(height: 8),
           Text(
             ctx.l10n.settingsExtrasEmptyHint,
-            style: const TextStyle(color: Pm.subdued, fontSize: 12),
+            style: TextStyle(color: Pm.subdued, fontSize: 12),
           ),
         ],
       ),
@@ -206,7 +209,7 @@ class _Row extends StatelessWidget {
               if (subtitle != null)
                 Text(
                   subtitle!,
-                  style: const TextStyle(color: Pm.subdued, fontSize: 13),
+                  style: TextStyle(color: Pm.subdued, fontSize: 13),
                 ),
             ],
           ),
@@ -232,7 +235,7 @@ class _AutoplayRowState extends ConsumerState<_AutoplayRow> {
     subtitle: context.l10n.settingsAutoplaySubtitle,
     trailing: Switch(
       value: _v,
-      activeTrackColor: Pm.green,
+      activeTrackColor: Pm.accent,
       onChanged: (v) {
         setState(() => _v = v);
         ref.read(playerProvider.notifier).setAutoplay(v);
@@ -284,7 +287,7 @@ class _LastfmRowState extends ConsumerState<_LastfmRow> {
 
   ButtonStyle get _outlined => OutlinedButton.styleFrom(
     foregroundColor: Pm.text,
-    side: const BorderSide(color: Pm.muted),
+    side: BorderSide(color: Pm.muted),
     shape: const StadiumBorder(),
   );
 
@@ -375,7 +378,7 @@ class _NormalizeRowState extends ConsumerState<_NormalizeRow> {
     subtitle: context.l10n.settingsNormalizeSubtitle,
     trailing: Switch(
       value: _v,
-      activeTrackColor: Pm.green,
+      activeTrackColor: Pm.accent,
       onChanged: (v) {
         setState(() => _v = v);
         ref.read(playerProvider.notifier).setNormalize(v);
@@ -465,4 +468,124 @@ class _LanguageRow extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// The five looks, each with a small preview of its colors.
+class _ThemePicker extends ConsumerWidget {
+  const _ThemePicker();
+
+  String _desc(BuildContext context, String id) => switch (id) {
+    'red' => context.l10n.themeRedDesc,
+    'wave' => context.l10n.themeWaveDesc,
+    'retro' => context.l10n.themeRetroDesc,
+    'classic' => context.l10n.themeClassicDesc,
+    _ => context.l10n.themeNightDesc,
+  };
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final current = ref.watch(appThemeProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Row(
+          title: context.l10n.settingsTheme,
+          subtitle: context.l10n.settingsThemeSubtitle,
+        ),
+        for (final t in appThemes)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(Pm.radius),
+              onTap: () => ref.read(appThemeProvider.notifier).set(t),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: t.id == current.id ? Pm.highlight : Pm.elevated,
+                  borderRadius: BorderRadius.circular(Pm.radius),
+                  border: Border.all(
+                    color: t.id == current.id ? Pm.accent : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    _Swatch(t),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            t.name,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            _desc(context, t.id),
+                            style: TextStyle(color: Pm.subdued, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (t.id == current.id)
+                      Icon(Icons.check_circle, color: Pm.accent),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Miniature of a theme: its background, a panel and the accent.
+class _Swatch extends StatelessWidget {
+  final AppTheme t;
+  const _Swatch(this.t);
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 56,
+    height: 40,
+    decoration: BoxDecoration(
+      color: t.black,
+      borderRadius: BorderRadius.circular(t.radius == 0 ? 0 : 6),
+      border: Border.all(color: t.highlight),
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: Column(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Container(width: 16, color: t.elevated),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Center(
+                  child: Container(
+                    height: 8,
+                    margin: const EdgeInsets.only(right: 6),
+                    decoration: BoxDecoration(
+                      color: t.accent,
+                      borderRadius: BorderRadius.circular(
+                        t.radius == 0 ? 0 : 4,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: 10,
+          decoration: t.bar ?? BoxDecoration(color: t.base),
+        ),
+      ],
+    ),
+  );
 }

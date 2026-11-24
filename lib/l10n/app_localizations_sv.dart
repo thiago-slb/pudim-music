@@ -2206,4 +2206,32 @@ class L10nSv extends L10n {
   String castFailed(String name) {
     return 'Kunde inte ansluta till $name';
   }
+
+  @override
+  String get settingsSectionAppearance => 'Utseende';
+
+  @override
+  String get settingsTheme => 'Tema';
+
+  @override
+  String get settingsThemeSubtitle => 'Byter färger direkt.';
+
+  @override
+  String get themeNightDesc =>
+      'Standard. Inspirerat av Spotifys stil: svart och grönt.';
+
+  @override
+  String get themeRedDesc =>
+      'Inspirerat av YouTube Music: nästan svart och rött.';
+
+  @override
+  String get themeWaveDesc => 'Inspirerat av Deezer: mörkviolett och lila.';
+
+  @override
+  String get themeRetroDesc =>
+      'Inspirerat av Winamp: grå paneler från 2000-talet, grön display och nivåstaplar.';
+
+  @override
+  String get themeClassicDesc =>
+      'Inspirerat av Windows Media Player: svart och blått med glans.';
 }

@@ -583,5 +583,13 @@
   "castSearchAgain": "Искать снова",
   "castStop": "Остановить трансляцию",
   "castPlayingOn": "Играет на {name}",
-  "castFailed": "Не удалось подключиться к {name}"
+  "castFailed": "Не удалось подключиться к {name}",
+  "settingsSectionAppearance": "Оформление",
+  "settingsTheme": "Тема",
+  "settingsThemeSubtitle": "Меняет цвета сразу.",
+  "themeNightDesc": "По умолчанию. В стиле Spotify: чёрный и зелёный.",
+  "themeRedDesc": "В стиле YouTube Music: почти чёрный и красный.",
+  "themeWaveDesc": "В стиле Deezer: тёмно-фиолетовый и пурпурный.",
+  "themeRetroDesc": "В стиле Winamp: серые панели 2000-х, зелёный дисплей и индикаторы уровня.",
+  "themeClassicDesc": "В стиле Windows Media Player: чёрный и синий с глянцем."
 }

@@ -2239,4 +2239,31 @@ class L10nRu extends L10n {
   String castFailed(String name) {
     return 'Не удалось подключиться к $name';
   }
+
+  @override
+  String get settingsSectionAppearance => 'Оформление';
+
+  @override
+  String get settingsTheme => 'Тема';
+
+  @override
+  String get settingsThemeSubtitle => 'Меняет цвета сразу.';
+
+  @override
+  String get themeNightDesc =>
+      'По умолчанию. В стиле Spotify: чёрный и зелёный.';
+
+  @override
+  String get themeRedDesc => 'В стиле YouTube Music: почти чёрный и красный.';
+
+  @override
+  String get themeWaveDesc => 'В стиле Deezer: тёмно-фиолетовый и пурпурный.';
+
+  @override
+  String get themeRetroDesc =>
+      'В стиле Winamp: серые панели 2000-х, зелёный дисплей и индикаторы уровня.';
+
+  @override
+  String get themeClassicDesc =>
+      'В стиле Windows Media Player: чёрный и синий с глянцем.';
 }

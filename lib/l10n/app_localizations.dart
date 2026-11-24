@@ -3626,6 +3626,54 @@ abstract class L10n {
   /// In pt, this message translates to:
   /// **'Não deu para conectar em {name}'**
   String castFailed(String name);
+
+  /// No description provided for @settingsSectionAppearance.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aparência'**
+  String get settingsSectionAppearance;
+
+  /// No description provided for @settingsTheme.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tema'**
+  String get settingsTheme;
+
+  /// No description provided for @settingsThemeSubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Muda as cores na hora.'**
+  String get settingsThemeSubtitle;
+
+  /// No description provided for @themeNightDesc.
+  ///
+  /// In pt, this message translates to:
+  /// **'Padrão. Inspirado no visual do Spotify: preto e verde.'**
+  String get themeNightDesc;
+
+  /// No description provided for @themeRedDesc.
+  ///
+  /// In pt, this message translates to:
+  /// **'Inspirado no YouTube Music: quase preto e vermelho.'**
+  String get themeRedDesc;
+
+  /// No description provided for @themeWaveDesc.
+  ///
+  /// In pt, this message translates to:
+  /// **'Inspirado no Deezer: violeta escuro e roxo.'**
+  String get themeWaveDesc;
+
+  /// No description provided for @themeRetroDesc.
+  ///
+  /// In pt, this message translates to:
+  /// **'Inspirado no Winamp: painéis cinza dos anos 2000, display verde e barras de nível.'**
+  String get themeRetroDesc;
+
+  /// No description provided for @themeClassicDesc.
+  ///
+  /// In pt, this message translates to:
+  /// **'Inspirado no Windows Media Player: preto e azul com brilho.'**
+  String get themeClassicDesc;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

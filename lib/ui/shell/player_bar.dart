@@ -6,6 +6,7 @@ import '../../l10n/l10n.dart';
 import '../../audio/player.dart';
 import '../../state/ui.dart';
 import '../theme.dart';
+import '../widgets/theme_bits.dart';
 import '../widgets/actions.dart';
 import '../widgets/common.dart';
 import '../../features/jam/jam_sheet.dart';
@@ -22,7 +23,7 @@ class PlayerBar extends ConsumerWidget {
     final cur = q.current;
     return Container(
       height: 80,
-      color: Pm.black,
+      decoration: playerBarDecoration(),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: [
@@ -41,30 +42,35 @@ class PlayerBar extends ConsumerWidget {
                       ),
                       const SizedBox(width: 12),
                       Flexible(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextLink(
-                              cur.name,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                        child: LcdPanel(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextLink(
+                                cur.name,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                onTap: cur.albumId == null
+                                    ? null
+                                    : () => context.go(routeFor(cur)),
                               ),
-                              onTap: cur.albumId == null
-                                  ? null
-                                  : () => context.go(routeFor(cur)),
-                            ),
-                            ArtistLinks(
-                              cur,
-                              style: const TextStyle(
-                                color: Pm.subdued,
-                                fontSize: 12,
+                              ArtistLinks(
+                                cur,
+                                style: TextStyle(
+                                  color: lcdTextColor() ?? Pm.subdued,
+                                  fontSize: 12,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 8),
+                      LevelBars(playing: q.playing),
                       IconBtn(
                         cur.favorite
                             ? Icons.check_circle
@@ -203,7 +209,7 @@ class _ProgressState extends ConsumerState<_Progress> {
     final shown = _dragging != null
         ? Duration(milliseconds: (_dragging! * total).round())
         : pos;
-    const st = TextStyle(color: Pm.subdued, fontSize: 12);
+    final st = TextStyle(color: Pm.subdued, fontSize: 12);
     return Row(
       children: [
         SizedBox(
@@ -221,7 +227,7 @@ class _ProgressState extends ConsumerState<_Progress> {
             onExit: (_) => setState(() => _hover = false),
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
-                activeTrackColor: _hover ? Pm.green : Pm.text,
+                activeTrackColor: _hover ? Pm.accent : Pm.text,
                 thumbShape: RoundSliderThumbShape(
                   enabledThumbRadius: _hover ? 6 : 0,
                 ),

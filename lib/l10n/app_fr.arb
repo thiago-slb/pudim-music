@@ -583,5 +583,13 @@
   "castSearchAgain": "Rechercher à nouveau",
   "castStop": "Arrêter de caster",
   "castPlayingOn": "Lecture sur {name}",
-  "castFailed": "Impossible de se connecter à {name}"
+  "castFailed": "Impossible de se connecter à {name}",
+  "settingsSectionAppearance": "Apparence",
+  "settingsTheme": "Thème",
+  "settingsThemeSubtitle": "Change les couleurs immédiatement.",
+  "themeNightDesc": "Par défaut. Inspiré du style de Spotify : noir et vert.",
+  "themeRedDesc": "Inspiré de YouTube Music : presque noir et rouge.",
+  "themeWaveDesc": "Inspiré de Deezer : violet foncé et pourpre.",
+  "themeRetroDesc": "Inspiré de Winamp : panneaux gris des années 2000, écran vert et barres de niveau.",
+  "themeClassicDesc": "Inspiré de Windows Media Player : noir et bleu brillant."
 }

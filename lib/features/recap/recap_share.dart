@@ -193,7 +193,7 @@ class _ShareCardsState extends ConsumerState<_ShareCards> {
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Pm.text,
-                  side: const BorderSide(color: Pm.muted),
+                  side: BorderSide(color: Pm.muted),
                   shape: const StadiumBorder(),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
@@ -222,7 +222,7 @@ class _ShareCardsState extends ConsumerState<_ShareCards> {
               const SizedBox(width: 4),
               IconButton(
                 tooltip: context.l10n.commonClose,
-                icon: const Icon(Icons.close, color: Pm.subdued),
+                icon: Icon(Icons.close, color: Pm.subdued),
                 onPressed: () => Navigator.pop(context),
               ),
             ],

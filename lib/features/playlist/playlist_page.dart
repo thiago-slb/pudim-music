@@ -291,7 +291,7 @@ class _TracksPageState extends ConsumerState<TracksPage> {
                     TextSpan(
                       text:
                           ' • ${context.l10n.playlistSongsAndTime(widget.tracks.length, formatTotal(total))}',
-                      style: const TextStyle(color: Pm.subdued),
+                      style: TextStyle(color: Pm.subdued),
                     ),
                   ],
                 ),
@@ -365,7 +365,7 @@ class _TracksPageState extends ConsumerState<TracksPage> {
                 child: Row(
                   children: [
                     const SizedBox(width: 8),
-                    const Icon(Icons.search, size: 18, color: Pm.subdued),
+                    Icon(Icons.search, size: 18, color: Pm.subdued),
                     const SizedBox(width: 6),
                     Expanded(
                       child: TextField(
@@ -395,7 +395,7 @@ class _TracksPageState extends ConsumerState<TracksPage> {
                   padding: const EdgeInsets.all(32),
                   child: Text(
                     context.l10n.playlistEmpty,
-                    style: const TextStyle(color: Pm.subdued),
+                    style: TextStyle(color: Pm.subdued),
                   ),
                 )
               : TrackTable(

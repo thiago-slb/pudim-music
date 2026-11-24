@@ -244,7 +244,7 @@ class _Invite extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => OutlinedButton.icon(
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
-      side: const BorderSide(color: Pm.muted),
+      side: BorderSide(color: Pm.muted),
       shape: const StadiumBorder(),
     ),
     icon: info.running
@@ -274,7 +274,7 @@ class _MadeInvite extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => OutlinedButton.icon(
     style: OutlinedButton.styleFrom(
       foregroundColor: Pm.text,
-      side: const BorderSide(color: Pm.muted),
+      side: BorderSide(color: Pm.muted),
       shape: const StadiumBorder(),
     ),
     icon: running
