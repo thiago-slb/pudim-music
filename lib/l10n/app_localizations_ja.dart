@@ -2221,4 +2221,28 @@ class L10nJa extends L10n {
 
   @override
   String get updateUnavailable => '追加サーバーが設定されていません。';
+
+  @override
+  String get settingsHistory => '履歴';
+
+  @override
+  String get settingsHistorySubtitle => '過去の年のまとめと再生したすべての曲';
+
+  @override
+  String get historyRecaps => 'まとめ';
+
+  @override
+  String get historyPlays => '再生';
+
+  @override
+  String get historyWholeYear => '年間';
+
+  @override
+  String get historyLoadMore => 'さらに読み込む';
+
+  @override
+  String get historyEmpty => 'まだ再生履歴がありません';
+
+  @override
+  String get historyImported => 'インポート';
 }

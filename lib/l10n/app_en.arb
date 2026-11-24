@@ -597,5 +597,13 @@
   "updateUpToDate": "You have the latest version (build {build}).",
   "updateDownloading": "Downloading build {build}… {percent}%",
   "updateFailed": "Could not check: {error}",
-  "updateUnavailable": "No extras server configured."
+  "updateUnavailable": "No extras server configured.",
+  "settingsHistory": "History",
+  "settingsHistorySubtitle": "Recaps from earlier years and everything you played",
+  "historyRecaps": "Recaps",
+  "historyPlays": "Plays",
+  "historyWholeYear": "Whole year",
+  "historyLoadMore": "Load more",
+  "historyEmpty": "Nothing played yet",
+  "historyImported": "imported"
 }

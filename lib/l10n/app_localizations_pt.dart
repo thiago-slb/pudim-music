@@ -2255,4 +2255,29 @@ class L10nPt extends L10n {
 
   @override
   String get updateUnavailable => 'Sem servidor de extras configurado.';
+
+  @override
+  String get settingsHistory => 'Histórico';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Retrospectivas dos anos anteriores e tudo o que você ouviu';
+
+  @override
+  String get historyRecaps => 'Retrospectivas';
+
+  @override
+  String get historyPlays => 'Reproduções';
+
+  @override
+  String get historyWholeYear => 'Ano todo';
+
+  @override
+  String get historyLoadMore => 'Carregar mais';
+
+  @override
+  String get historyEmpty => 'Nada tocado ainda';
+
+  @override
+  String get historyImported => 'importado';
 }

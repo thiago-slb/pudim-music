@@ -597,5 +597,13 @@
   "updateUpToDate": "Du hast die neueste Version (Build {build}).",
   "updateDownloading": "Build {build} wird geladen… {percent} %",
   "updateFailed": "Prüfung fehlgeschlagen: {error}",
-  "updateUnavailable": "Kein Extras-Server eingerichtet."
+  "updateUnavailable": "Kein Extras-Server eingerichtet.",
+  "settingsHistory": "Verlauf",
+  "settingsHistorySubtitle": "Rückblicke früherer Jahre und alles, was du gehört hast",
+  "historyRecaps": "Rückblicke",
+  "historyPlays": "Wiedergaben",
+  "historyWholeYear": "Ganzes Jahr",
+  "historyLoadMore": "Mehr laden",
+  "historyEmpty": "Noch nichts gehört",
+  "historyImported": "importiert"
 }

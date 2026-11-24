@@ -597,5 +597,13 @@
   "updateUpToDate": "Hai la versione più recente (build {build}).",
   "updateDownloading": "Download della build {build}… {percent}%",
   "updateFailed": "Impossibile verificare: {error}",
-  "updateUnavailable": "Nessun server extra configurato."
+  "updateUnavailable": "Nessun server extra configurato.",
+  "settingsHistory": "Cronologia",
+  "settingsHistorySubtitle": "Riepiloghi degli anni precedenti e tutto ciò che hai ascoltato",
+  "historyRecaps": "Riepiloghi",
+  "historyPlays": "Ascolti",
+  "historyWholeYear": "Tutto l’anno",
+  "historyLoadMore": "Carica altro",
+  "historyEmpty": "Ancora nessun ascolto",
+  "historyImported": "importato"
 }

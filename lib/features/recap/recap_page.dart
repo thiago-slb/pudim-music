@@ -16,14 +16,21 @@ import 'package:file_picker/file_picker.dart';
 import 'recap_share.dart';
 import '../../ui/widgets/theme_bits.dart';
 import '../../ui/widgets/themed.dart';
+import '../../ui/widgets/page_header.dart';
 
 /// The Recap only shows on Home in November and December (the page opens all year).
 bool recapSeason([DateTime? now]) => (now ?? DateTime.now()).month >= 11;
 
+/// Recap of a year, or of one month of it ([month] 1..12).
 final recapProvider = FutureProvider.autoDispose
-    .family<(List<int>, Map<String, dynamic>?), int?>(
-      (ref, year) => ref.watch(catalogProvider).recap(year: year),
+    .family<(List<int>, Map<String, dynamic>?), ({int year, int? month})>(
+      (ref, k) =>
+          ref.watch(catalogProvider).recap(year: k.year, month: k.month),
     );
+
+/// The Recap page shows only the current year; earlier years live in Settings > History.
+({int year, int? month}) get currentRecap =>
+    (year: DateTime.now().year, month: null);
 
 /// Recap card for Home (only in Nov/Dec and if there is something to show).
 class RecapBanner extends ConsumerWidget {
@@ -33,7 +40,7 @@ class RecapBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (!ref.watch(hasExtrasProvider)) return const SizedBox.shrink();
     if (!recapSeason()) return const SizedBox.shrink();
-    final r = ref.watch(recapProvider(null)).value;
+    final r = ref.watch(recapProvider(currentRecap)).value;
     final recap = r?.$2;
     if (recap == null || (recap['plays'] as num? ?? 0) == 0) {
       return const SizedBox.shrink();
@@ -108,19 +115,18 @@ class RecapPage extends ConsumerStatefulWidget {
 }
 
 class _RecapPageState extends ConsumerState<RecapPage> {
-  int? _year;
-
   @override
   Widget build(BuildContext context) {
-    final data = ref.watch(recapProvider(_year));
+    final key = currentRecap;
+    final data = ref.watch(recapProvider(key));
     return Container(
       color: Pm.base,
       child: data.when(
         loading: () => const LoadingBox(),
         error: (e, _) =>
-            ErrorBox(e, onRetry: () => ref.invalidate(recapProvider(_year))),
+            ErrorBox(e, onRetry: () => ref.invalidate(recapProvider(key))),
         data: (d) {
-          final (years, r) = d;
+          final (_, r) = d;
           if (r == null || (r['plays'] as num? ?? 0) == 0) {
             return ListView(
               padding: const EdgeInsets.all(32),
@@ -134,22 +140,27 @@ class _RecapPageState extends ConsumerState<RecapPage> {
               ],
             );
           }
-          return _Recap(
-            r: r,
-            years: years,
-            onYear: (y) => setState(() => _year = y),
-          );
+          return RecapView(r: r);
         },
       ),
     );
   }
 }
 
-class _Recap extends ConsumerWidget {
+/// The recap cards of one year or month. [leading] goes above the title (History adds its
+/// selectors there); [title] replaces "Your Recap {year}".
+class RecapView extends ConsumerWidget {
   final Map<String, dynamic> r;
-  final List<int> years;
-  final ValueChanged<int> onYear;
-  const _Recap({required this.r, required this.years, required this.onYear});
+  final List<Widget> leading;
+  final String? title;
+  final bool showSpotifyCard;
+  const RecapView({
+    super.key,
+    required this.r,
+    this.leading = const [],
+    this.title,
+    this.showSpotifyCard = true,
+  });
 
   List<Map<String, dynamic>> _list(String k) => [
     for (final x in (r[k] as List? ?? const []))
@@ -177,31 +188,11 @@ class _Recap extends ConsumerWidget {
     return ListView(
       padding: EdgeInsets.fromLTRB(pad, 24, pad, 48),
       children: [
-        Text(
-          context.l10n.recapTitle(r['year'] as int),
-          style: TextStyle(
-            fontSize: compact ? 32 : 56,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -1,
-          ),
+        ...leading,
+        pageTitle(
+          title ?? context.l10n.recapTitle(r['year'] as int),
+          compact ? 32 : 56,
         ),
-        if (years.length > 1)
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final y in years)
-                  Chip2(
-                    '$y',
-                    gap: 0,
-                    selected: y == r['year'],
-                    onTap: () => onYear(y),
-                  ),
-              ],
-            ),
-          ),
         const SizedBox(height: 16),
         Align(
           alignment: Alignment.centerLeft,
@@ -416,8 +407,10 @@ class _Recap extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        const SpotifyHistoryCard(),
+        if (showSpotifyCard) ...[
+          const SizedBox(height: 24),
+          const SpotifyHistoryCard(),
+        ],
       ],
     );
   }
@@ -604,7 +597,7 @@ const _ptWeekdays = [
 ];
 
 /// The server sends the month in Portuguese; shows it in the interface language.
-String _month(BuildContext context, String pt, {bool short = false}) {
+String recapMonth(BuildContext context, String pt, {bool short = false}) {
   final i = _ptMonths.indexOf(pt);
   if (i < 0) return short && pt.length > 3 ? pt.substring(0, 3) : pt;
   try {
@@ -803,7 +796,7 @@ class _Months extends StatelessWidget {
               child: Tooltip(
                 message:
                     context.l10n.recapMonthTooltip(
-                      _month(context, '${m['month']}'),
+                      recapMonth(context, '${m['month']}'),
                       _n(m['minutes']),
                     ) +
                     (m['artist'] == null ? '' : ' • ${m['artist']}'),
@@ -852,7 +845,7 @@ class _Months extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      _month(context, '${m['month']}', short: true),
+                      recapMonth(context, '${m['month']}', short: true),
                       style: TextStyle(color: Pm.subdued, fontSize: 11),
                     ),
                   ],

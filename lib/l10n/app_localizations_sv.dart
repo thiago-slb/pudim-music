@@ -2258,4 +2258,29 @@ class L10nSv extends L10n {
 
   @override
   String get updateUnavailable => 'Ingen extraserver inställd.';
+
+  @override
+  String get settingsHistory => 'Historik';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Sammanfattningar från tidigare år och allt du har lyssnat på';
+
+  @override
+  String get historyRecaps => 'Sammanfattningar';
+
+  @override
+  String get historyPlays => 'Spelningar';
+
+  @override
+  String get historyWholeYear => 'Hela året';
+
+  @override
+  String get historyLoadMore => 'Ladda fler';
+
+  @override
+  String get historyEmpty => 'Inget spelat ännu';
+
+  @override
+  String get historyImported => 'importerad';
 }

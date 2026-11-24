@@ -597,5 +597,13 @@
   "updateUpToDate": "최신 버전입니다(빌드 {build}).",
   "updateDownloading": "빌드 {build} 다운로드 중… {percent}%",
   "updateFailed": "확인하지 못했습니다: {error}",
-  "updateUnavailable": "추가 서버가 설정되지 않았습니다."
+  "updateUnavailable": "추가 서버가 설정되지 않았습니다.",
+  "settingsHistory": "기록",
+  "settingsHistorySubtitle": "지난 해 요약과 들었던 모든 곡",
+  "historyRecaps": "요약",
+  "historyPlays": "재생",
+  "historyWholeYear": "연간",
+  "historyLoadMore": "더 보기",
+  "historyEmpty": "아직 재생 기록이 없습니다",
+  "historyImported": "가져옴"
 }

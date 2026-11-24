@@ -319,14 +319,14 @@ class Chip2 extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  /// Space on the right (use 0 inside a Wrap that already has spacing).
+  /// Space on the right; 0 inside a [PillBar], which spaces its pills itself.
   final double gap;
   const Chip2(
     this.label, {
     super.key,
     required this.selected,
     required this.onTap,
-    this.gap = 8,
+    this.gap = 0,
   });
 
   @override
@@ -379,10 +379,11 @@ class Chip2 extends StatelessWidget {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: onTap,
+          // As wide as the label: no alignment here, which made the pill take the whole line
+          // inside a Wrap (pills stacked one under the other). Grows with large system fonts.
           child: Container(
-            height: 32,
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+            constraints: const BoxConstraints(minHeight: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: deco,
             child: Text(
               retro ? label.toUpperCase() : label,
@@ -404,7 +405,47 @@ class Chip2 extends StatelessWidget {
   }
 }
 
-/// Row of pills with breathing room below (so the content does not touch them).
+/// The one way to lay out a group of pills: each pill as wide as its label, 8 px apart.
+/// [scroll] keeps them on one line that scrolls sideways; otherwise they wrap onto more lines
+/// when the screen is narrow. Never stretches a pill to the full width.
+class PillBar extends StatelessWidget {
+  final List<Widget> children;
+  final bool scroll;
+  final EdgeInsetsGeometry padding;
+  const PillBar({
+    super.key,
+    required this.children,
+    this.scroll = false,
+    this.padding = EdgeInsets.zero,
+  });
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: padding,
+    child: scroll
+        ? SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                for (var i = 0; i < children.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  children[i],
+                ],
+              ],
+            ),
+          )
+        : Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: children,
+          ),
+  );
+}
+
+/// Pills on one sideways-scrolling line with breathing room below (artist, search filters).
 class ChipBar extends StatelessWidget {
   final List<Widget> children;
   final EdgeInsets padding;
@@ -415,13 +456,8 @@ class ChipBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: padding,
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(children: children),
-    ),
-  );
+  Widget build(BuildContext context) =>
+      PillBar(scroll: true, padding: padding, children: children);
 }
 
 class LoadingBox extends StatelessWidget {

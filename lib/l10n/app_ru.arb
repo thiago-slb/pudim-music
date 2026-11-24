@@ -597,5 +597,13 @@
   "updateUpToDate": "У вас последняя версия (сборка {build}).",
   "updateDownloading": "Загрузка сборки {build}… {percent}%",
   "updateFailed": "Не удалось проверить: {error}",
-  "updateUnavailable": "Сервер дополнений не настроен."
+  "updateUnavailable": "Сервер дополнений не настроен.",
+  "settingsHistory": "История",
+  "settingsHistorySubtitle": "Итоги прошлых лет и всё, что вы слушали",
+  "historyRecaps": "Итоги",
+  "historyPlays": "Прослушивания",
+  "historyWholeYear": "Весь год",
+  "historyLoadMore": "Загрузить ещё",
+  "historyEmpty": "Пока ничего не прослушано",
+  "historyImported": "импорт"
 }

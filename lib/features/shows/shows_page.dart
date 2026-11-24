@@ -91,25 +91,20 @@ class _ShowsPageState extends ConsumerState<ShowsPage> {
               style: TextStyle(color: Pm.subdued),
             ),
             const SizedBox(height: 14),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
+            PillBar(
               children: [
                 Chip2(
                   l.showsUpcoming,
-                  gap: 0,
                   selected: !_past,
                   onTap: () => setState(() => _past = false),
                 ),
                 Chip2(
                   l.showsPast,
-                  gap: 0,
                   selected: _past,
                   onTap: () => setState(() => _past = true),
                 ),
                 Chip2(
                   l.showsInBrazil,
-                  gap: 0,
                   selected: _brazil,
                   onTap: () => setState(() => _brazil = !_brazil),
                 ),

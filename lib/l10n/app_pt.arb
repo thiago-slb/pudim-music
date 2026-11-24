@@ -1541,5 +1541,13 @@
       }
     }
   },
-  "updateUnavailable": "Sem servidor de extras configurado."
+  "updateUnavailable": "Sem servidor de extras configurado.",
+  "settingsHistory": "Histórico",
+  "settingsHistorySubtitle": "Retrospectivas dos anos anteriores e tudo o que você ouviu",
+  "historyRecaps": "Retrospectivas",
+  "historyPlays": "Reproduções",
+  "historyWholeYear": "Ano todo",
+  "historyLoadMore": "Carregar mais",
+  "historyEmpty": "Nada tocado ainda",
+  "historyImported": "importado"
 }

@@ -2224,4 +2224,28 @@ class L10nKo extends L10n {
 
   @override
   String get updateUnavailable => '추가 서버가 설정되지 않았습니다.';
+
+  @override
+  String get settingsHistory => '기록';
+
+  @override
+  String get settingsHistorySubtitle => '지난 해 요약과 들었던 모든 곡';
+
+  @override
+  String get historyRecaps => '요약';
+
+  @override
+  String get historyPlays => '재생';
+
+  @override
+  String get historyWholeYear => '연간';
+
+  @override
+  String get historyLoadMore => '더 보기';
+
+  @override
+  String get historyEmpty => '아직 재생 기록이 없습니다';
+
+  @override
+  String get historyImported => '가져옴';
 }

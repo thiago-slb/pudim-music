@@ -597,5 +597,13 @@
   "updateUpToDate": "En yeni sürümdesiniz (build {build}).",
   "updateDownloading": "Build {build} indiriliyor… %{percent}",
   "updateFailed": "Denetlenemedi: {error}",
-  "updateUnavailable": "Ek sunucu ayarlanmamış."
+  "updateUnavailable": "Ek sunucu ayarlanmamış.",
+  "settingsHistory": "Geçmiş",
+  "settingsHistorySubtitle": "Önceki yılların özetleri ve dinlediğin her şey",
+  "historyRecaps": "Özetler",
+  "historyPlays": "Dinlemeler",
+  "historyWholeYear": "Tüm yıl",
+  "historyLoadMore": "Daha fazla yükle",
+  "historyEmpty": "Henüz bir şey dinlenmedi",
+  "historyImported": "içe aktarıldı"
 }

@@ -597,5 +597,13 @@
   "updateUpToDate": "已是最新版本（构建 {build}）。",
   "updateDownloading": "正在下载构建 {build}… {percent}%",
   "updateFailed": "无法检查：{error}",
-  "updateUnavailable": "未配置附加服务器。"
+  "updateUnavailable": "未配置附加服务器。",
+  "settingsHistory": "历史记录",
+  "settingsHistorySubtitle": "往年回顾和你听过的所有内容",
+  "historyRecaps": "回顾",
+  "historyPlays": "播放记录",
+  "historyWholeYear": "全年",
+  "historyLoadMore": "加载更多",
+  "historyEmpty": "还没有播放记录",
+  "historyImported": "已导入"
 }

@@ -2286,4 +2286,29 @@ class L10nUk extends L10n {
 
   @override
   String get updateUnavailable => 'Сервер доповнень не налаштовано.';
+
+  @override
+  String get settingsHistory => 'Історія';
+
+  @override
+  String get settingsHistorySubtitle =>
+      'Підсумки попередніх років і все, що ви слухали';
+
+  @override
+  String get historyRecaps => 'Підсумки';
+
+  @override
+  String get historyPlays => 'Прослуховування';
+
+  @override
+  String get historyWholeYear => 'Увесь рік';
+
+  @override
+  String get historyLoadMore => 'Завантажити ще';
+
+  @override
+  String get historyEmpty => 'Поки нічого не прослухано';
+
+  @override
+  String get historyImported => 'імпорт';
 }

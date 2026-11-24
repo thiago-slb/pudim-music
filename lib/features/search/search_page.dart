@@ -370,14 +370,11 @@ class _Browse extends ConsumerWidget {
               ),
             ],
           ),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          PillBar(
             children: [
               for (final s in recent)
                 Chip2(
                   s,
-                  gap: 0,
                   selected: false,
                   onTap: () =>
                       context.go('/search?q=${Uri.encodeQueryComponent(s)}'),

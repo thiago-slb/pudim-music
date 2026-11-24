@@ -597,5 +597,13 @@
   "updateUpToDate": "Du har den senaste versionen (build {build}).",
   "updateDownloading": "Laddar ner build {build}… {percent} %",
   "updateFailed": "Kunde inte söka: {error}",
-  "updateUnavailable": "Ingen extraserver inställd."
+  "updateUnavailable": "Ingen extraserver inställd.",
+  "settingsHistory": "Historik",
+  "settingsHistorySubtitle": "Sammanfattningar från tidigare år och allt du har lyssnat på",
+  "historyRecaps": "Sammanfattningar",
+  "historyPlays": "Spelningar",
+  "historyWholeYear": "Hela året",
+  "historyLoadMore": "Ladda fler",
+  "historyEmpty": "Inget spelat ännu",
+  "historyImported": "importerad"
 }

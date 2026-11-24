@@ -597,5 +597,13 @@
   "updateUpToDate": "最新バージョンです（ビルド {build}）。",
   "updateDownloading": "ビルド {build} をダウンロード中… {percent}%",
   "updateFailed": "確認できませんでした: {error}",
-  "updateUnavailable": "追加サーバーが設定されていません。"
+  "updateUnavailable": "追加サーバーが設定されていません。",
+  "settingsHistory": "履歴",
+  "settingsHistorySubtitle": "過去の年のまとめと再生したすべての曲",
+  "historyRecaps": "まとめ",
+  "historyPlays": "再生",
+  "historyWholeYear": "年間",
+  "historyLoadMore": "さらに読み込む",
+  "historyEmpty": "まだ再生履歴がありません",
+  "historyImported": "インポート"
 }

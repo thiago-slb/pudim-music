@@ -200,6 +200,7 @@ class HomePage extends ConsumerWidget {
                       valueListenable: homeTab,
                       builder: (_, tab, _) => Chip2(
                         label,
+                        gap: 8,
                         selected: tab == i,
                         onTap: () => homeTab.value = i,
                       ),

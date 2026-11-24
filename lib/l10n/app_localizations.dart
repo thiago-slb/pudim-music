@@ -3710,6 +3710,54 @@ abstract class L10n {
   /// In pt, this message translates to:
   /// **'Sem servidor de extras configurado.'**
   String get updateUnavailable;
+
+  /// No description provided for @settingsHistory.
+  ///
+  /// In pt, this message translates to:
+  /// **'Histórico'**
+  String get settingsHistory;
+
+  /// No description provided for @settingsHistorySubtitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'Retrospectivas dos anos anteriores e tudo o que você ouviu'**
+  String get settingsHistorySubtitle;
+
+  /// No description provided for @historyRecaps.
+  ///
+  /// In pt, this message translates to:
+  /// **'Retrospectivas'**
+  String get historyRecaps;
+
+  /// No description provided for @historyPlays.
+  ///
+  /// In pt, this message translates to:
+  /// **'Reproduções'**
+  String get historyPlays;
+
+  /// No description provided for @historyWholeYear.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ano todo'**
+  String get historyWholeYear;
+
+  /// No description provided for @historyLoadMore.
+  ///
+  /// In pt, this message translates to:
+  /// **'Carregar mais'**
+  String get historyLoadMore;
+
+  /// No description provided for @historyEmpty.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nada tocado ainda'**
+  String get historyEmpty;
+
+  /// No description provided for @historyImported.
+  ///
+  /// In pt, this message translates to:
+  /// **'importado'**
+  String get historyImported;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

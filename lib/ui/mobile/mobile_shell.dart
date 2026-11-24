@@ -81,7 +81,6 @@ class _MobileShellState extends ConsumerState<MobileShell> {
         break;
       }
     }
-    final retro = Pm.current.style == UiStyle.retro;
     return PopScope(
       canPop: _stack.length <= 1,
       onPopInvokedWithResult: (didPop, _) {
@@ -91,29 +90,15 @@ class _MobileShellState extends ConsumerState<MobileShell> {
         backgroundColor: Pm.base,
         body: Column(
           children: [
-            if (retro)
-              SafeArea(
-                bottom: false,
-                child: _NavBar(
-                  index: tab,
-                  tabs: _tabs,
-                  top: true,
-                  onTap: (i) => _openTab(_tabs[i]),
-                ),
-              ),
             Expanded(
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: SafeArea(
-                      bottom: false,
-                      top: !retro,
-                      child: widget.child,
-                    ),
+                    child: SafeArea(bottom: false, child: widget.child),
                   ),
                   if (!isRoot || path == '/settings')
                     Positioned(
-                      top: (retro ? 0 : MediaQuery.paddingOf(context).top) + 8,
+                      top: MediaQuery.paddingOf(context).top + 8,
                       left: 8,
                       child: Material(
                         color: Colors.black54,
@@ -134,30 +119,28 @@ class _MobileShellState extends ConsumerState<MobileShell> {
             const MiniPlayer(),
           ],
         ),
-        bottomNavigationBar: retro
-            ? SizedBox(height: MediaQuery.paddingOf(context).bottom)
-            : _NavBar(
-                index: tab,
-                tabs: _tabs,
-                onTap: (i) => _openTab(_tabs[i]),
-              ),
+        // Every theme keeps the tabs at the bottom (retro moved them to a thin top strip that
+        // read as a title bar, so they looked gone).
+        bottomNavigationBar: MobileNavBar(
+          index: tab,
+          tabs: _tabs,
+          onTap: (i) => _openTab(_tabs[i]),
+        ),
       ),
     );
   }
 }
 
-class _NavBar extends StatelessWidget {
+/// Main tabs of the phone app (Home, Search, Shows, Library) in the theme's style.
+class MobileNavBar extends StatelessWidget {
   final int index;
   final List<String> tabs;
   final ValueChanged<int> onTap;
-
-  /// Retro: a strip of square tabs at the top instead of the bottom bar.
-  final bool top;
-  const _NavBar({
+  const MobileNavBar({
+    super.key,
     required this.index,
     required this.tabs,
     required this.onTap,
-    this.top = false,
   });
 
   @override
@@ -176,33 +159,47 @@ class _NavBar extends StatelessWidget {
       ),
     ];
     final style = Pm.current.style;
-    if (top) {
+    final safe = MediaQuery.paddingOf(context).bottom;
+    if (style == UiStyle.retro) {
+      // Raised gray panel with a row of bevel keys; the open tab is pressed in, with an
+      // LCD-green label.
       return Container(
-        color: Pm.black,
-        padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+        decoration: bevel(color: Pm.highlight),
+        padding: EdgeInsets.fromLTRB(6, 6, 6, 6 + safe),
         child: Row(
           children: [
-            for (final (i, _, _, label) in items)
+            for (final (i, icon, selIcon, label) in items)
               Expanded(
                 child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   onTap: () => onTap(i),
                   child: Container(
-                    height: 30,
-                    margin: const EdgeInsets.only(right: 2),
+                    height: 46,
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: bevel(
                       pressed: i == index,
-                      color: i == index ? Pm.black : Pm.elevated,
+                      color: i == index ? Colors.black : Pm.elevated,
                     ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      label.toUpperCase(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 11,
-                        letterSpacing: 1,
-                        color: i == index ? Pm.accent : Pm.text,
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          i == index ? selIcon : icon,
+                          size: 18,
+                          color: i == index ? Pm.accent : Pm.text,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          label.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 10,
+                            letterSpacing: 1,
+                            color: i == index ? Pm.accent : Pm.text,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

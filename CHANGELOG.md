@@ -3,6 +3,20 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 21
+- Retrô theme: the phone tabs are back at the bottom as a row of raised bevel keys (the open one
+  pressed in). The thin strip at the top read as a title bar, so the navigation looked gone. A
+  test checks that every theme shows every tab and that the tabs react to taps.
+- Recap shows only the current year, without year pills. Settings > History has the recaps of
+  every year and of each month (pills that wrap on narrow screens) and the full list of plays,
+  imported history included, loading 100 at a time. Needs the server's `/api/player/history`
+  and `month` on `/api/player/recap`.
+- Pills: every group (Shows upcoming/past, History years and months, recent searches, artist and
+  search filters, library filters, Home tabs) goes through one `PillBar`, and each pill is only as
+  wide as its label. A pill inside a wrapping group took the whole line, so they stacked one under
+  the other. Pills also grow with large system fonts. `test/pills_test.dart` checks one line at
+  360 dp in every theme, at normal and large font.
+
 ## Build 20
 - Themes reach the inner pages: album, playlist and artist headers, search field and results
   chips, library list, queue, lyrics, recap, settings, dialogs, menus, bottom sheets, toasts,
