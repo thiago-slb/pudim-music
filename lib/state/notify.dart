@@ -14,11 +14,14 @@ class Notify {
   static const libraryId = 2; // downloading to the library
 
   static Future<void> init() async {
-    if (!(Platform.isAndroid || Platform.isWindows)) return;
+    if (!(Platform.isAndroid || Platform.isWindows || Platform.isMacOS)) {
+      return;
+    }
     try {
       await _p.initialize(
         settings: const InitializationSettings(
           android: AndroidInitializationSettings('@drawable/ic_stat_pudim'),
+          macOS: DarwinInitializationSettings(),
           windows: WindowsInitializationSettings(
             appName: 'Pudim',
             appUserModelId: 'io.github.thiagoslb.pudim',
@@ -88,6 +91,7 @@ class Notify {
             appL10n.stateNotifyNewsChannel,
             channelDescription: appL10n.stateNotifyNewsChannelDesc,
           ),
+          macOS: const DarwinNotificationDetails(),
           windows: const WindowsNotificationDetails(),
         ),
       );

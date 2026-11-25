@@ -1,6 +1,7 @@
 // The new API (nativeapi) of window_manager 0.7 is still recent; we use the legacy bridge.
 // ignore_for_file: deprecated_member_use
 import 'dart:async';
+import 'dart:io';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,7 +66,8 @@ class _TopBarState extends ConsumerState<TopBar> {
         height: 64,
         child: Row(
           children: [
-            const SizedBox(width: 12),
+            // macOS keeps its own traffic lights on the left.
+            SizedBox(width: Platform.isMacOS ? 84 : 12),
             _AppMenu(),
             IconBtn(
               Icons.chevron_left,
@@ -162,7 +164,7 @@ class _TopBarState extends ConsumerState<TopBar> {
             const SizedBox(width: 4),
             _Avatar(name: session?.userName ?? ''),
             const SizedBox(width: 12),
-            const _WindowButtons(),
+            if (!Platform.isMacOS) const _WindowButtons(),
           ],
         ),
       ),
