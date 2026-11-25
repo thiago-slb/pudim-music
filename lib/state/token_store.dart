@@ -15,7 +15,8 @@ import '../l10n/l10n.dart';
 ///   on Windows requires the Visual Studio ATL component to build.
 /// - Android: AES-GCM key in the Android Keystore (MainActivity.kt, channel
 ///   `pudim/token`); the encrypted file lives in the private app folder.
-/// - iOS/macOS arrive in the Apple phase (Keychain).
+/// - macOS: Keychain (MainFlutterWindow.swift, same `pudim/token` channel, one item per account).
+/// - iOS arrives in the Apple phase.
 class TokenStore {
   /// Account that owns the token (empty = old file, from when only one account fit).
   final String account;
@@ -33,6 +34,13 @@ class TokenStore {
   }
 
   Future<String?> read() async {
+    if (Platform.isMacOS) {
+      try {
+        return await _android.invokeMethod<String>('read', account);
+      } catch (_) {
+        return null;
+      }
+    }
     if (!Platform.isWindows && !Platform.isAndroid) return null;
     final f = await _file();
     if (!await f.exists()) return null;
@@ -51,6 +59,13 @@ class TokenStore {
   }
 
   Future<void> write(String token) async {
+    if (Platform.isMacOS) {
+      await _android.invokeMethod<void>('write', {
+        'account': account,
+        'token': token,
+      });
+      return;
+    }
     if (!Platform.isWindows && !Platform.isAndroid) {
       throw UnsupportedError(appL10n.stateTokenStoreUnsupported);
     }
@@ -68,6 +83,10 @@ class TokenStore {
   }
 
   Future<void> delete() async {
+    if (Platform.isMacOS) {
+      await _android.invokeMethod<void>('delete', account);
+      return;
+    }
     final f = await _file();
     if (await f.exists()) await f.delete();
   }

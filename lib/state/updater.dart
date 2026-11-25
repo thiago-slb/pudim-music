@@ -51,7 +51,8 @@ class UpdateStatusNotifier extends Notifier<UpdateStatus> {
 }
 
 /// Checks the extras server (when there is one) for a new version; downloads in the background and
-/// notifies when it is ready. Android opens the install screen; Windows installs silently and reopens.
+/// notifies when it is ready. Android opens the install screen; Windows installs silently and reopens;
+/// macOS swaps its own .app bundle for the one in the downloaded zip and reopens.
 final updaterProvider = NotifierProvider<Updater, UpdateReady?>(Updater.new);
 
 class Updater extends Notifier<UpdateReady?> {
@@ -62,6 +63,8 @@ class Updater extends Notifier<UpdateReady?> {
       ? 'apk'
       : Platform.isWindows
       ? 'windows'
+      : Platform.isMacOS
+      ? 'macos'
       : null;
 
   /// Last check that reached the server (failed or skipped ones do not hold the next one back).
@@ -132,7 +135,11 @@ class Updater extends Notifier<UpdateReady?> {
       final want = '${file['sha256'] ?? ''}'.toLowerCase();
       final dir = await getTemporaryDirectory();
       final path =
-          '${dir.path}${Platform.pathSeparator}pudim-$build.${kind == 'apk' ? 'apk' : 'exe'}';
+          '${dir.path}${Platform.pathSeparator}pudim-$build.${kind == 'apk'
+              ? 'apk'
+              : kind == 'macos'
+              ? 'zip'
+              : 'exe'}';
       final f = File(path);
       if (!(await f.exists() && await _sha(f) == want)) {
         final part = '$path.part';
@@ -199,6 +206,30 @@ class Updater extends Notifier<UpdateReady?> {
       await Process.start('cmd', [
         '/c',
         bat.path,
+      ], mode: ProcessStartMode.detached);
+      exit(0);
+    }
+    if (Platform.isMacOS) {
+      // Unzips the new version, swaps the .app it is running from and reopens it.
+      final app = Directory(
+        Platform.resolvedExecutable,
+      ).parent.parent.parent.path;
+      final work = '${File(u.path).parent.path}/pudim-update-${u.build}';
+      final sh = File('$work.sh');
+      await sh.writeAsString(
+        '#!/bin/sh\n'
+        'sleep 2\n'
+        'rm -rf "$work" && mkdir -p "$work" || exit 1\n'
+        '/usr/bin/ditto -x -k "${u.path}" "$work" || exit 1\n'
+        'NEW=\$(ls -d "$work"/*.app | head -n 1)\n'
+        '[ -d "\$NEW" ] || exit 1\n'
+        'rm -rf "$app" && /usr/bin/ditto "\$NEW" "$app" || exit 1\n'
+        '/usr/bin/xattr -dr com.apple.quarantine "$app" 2>/dev/null\n'
+        'rm -rf "$work"\n'
+        '/usr/bin/open "$app"\n',
+      );
+      await Process.start('/bin/sh', [
+        sh.path,
       ], mode: ProcessStartMode.detached);
       exit(0);
     }

@@ -81,7 +81,7 @@ jobs:
           cache: true
       - run: flutter build macos --release
       # Not signed or notarized: first open with right click > Open (or allow it in System Settings).
-      - run: ditto -c -k --keepParent build/macos/Build/Products/Release/pudim_music.app "pudim-$TAG-macos.zip"
+      - run: ditto -c -k --keepParent build/macos/Build/Products/Release/Pudim.app "pudim-$TAG-macos.zip"
       - env:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "$TAG" "pudim-$TAG-macos.zip" --clobber
