@@ -22,6 +22,10 @@ class JamController extends Notifier<JamState?> {
   bool _busy = false;
   bool _pushSoon = false;
 
+  /// Longest a sync step may hold the next ones back: a player call that never returns must not
+  /// stop the Jam from following (that is how a guest got stuck until the song ended).
+  static const _stepLimit = Duration(seconds: 15);
+
   Catalog get _cat => ref.read(catalogProvider);
   PlayerController get _player => ref.read(playerProvider.notifier);
 
@@ -110,7 +114,7 @@ class JamController extends Notifier<JamState?> {
     _busy = true;
     try {
       if (s.isHost) {
-        await _push();
+        await _push().timeout(_stepLimit);
       } else {
         final st = await _cat.jam(rev: s.rev);
         if (st == null || st.ended) {
@@ -119,7 +123,11 @@ class JamController extends Notifier<JamState?> {
         }
         final changed = st.rev != s.rev;
         _apply(st);
-        await _follow(st, force: false, revChanged: changed);
+        await _follow(
+          st,
+          force: false,
+          revChanged: changed,
+        ).timeout(_stepLimit);
       }
     } on CatalogException catch (_) {
       // the Jam is gone (panel restarted or it ended): leave quietly
@@ -140,7 +148,7 @@ class JamController extends Notifier<JamState?> {
       if (_busy || state == null) return;
       _busy = true;
       try {
-        await _push();
+        await _push().timeout(_stepLimit);
       } catch (_) {
       } finally {
         _busy = false;

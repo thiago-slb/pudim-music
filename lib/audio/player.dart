@@ -547,7 +547,8 @@ class PlayerController extends Notifier<QueueState> {
         return;
       }
       await audio.seek(Duration.zero);
-      await audio.play();
+      // just_audio's play() only completes when playback stops: never wait on it.
+      unawaited(audio.play());
       return;
     }
     await next();
@@ -695,7 +696,9 @@ class PlayerController extends Notifier<QueueState> {
       return;
     }
     if (play) {
-      await audio.play();
+      // Not awaited: play() only completes when playback stops, and the Jam poll waits on this
+      // call, so a guest stopped following the host until the song ended.
+      unawaited(audio.play());
     } else {
       await audio.pause();
     }
@@ -1130,7 +1133,9 @@ class PlayerController extends Notifier<QueueState> {
     } else if (out != null) {
       await out.play();
     } else {
-      await audio.play();
+      // Not awaited: play() only completes when playback stops (a guest's play command left the
+      // Jam host stuck until the song ended).
+      unawaited(audio.play());
     }
   }
 

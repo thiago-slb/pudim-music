@@ -16,6 +16,10 @@ published to the extras server and installed by the in-app updater; see [docs/up
   while the panel works, which can take a minute or more, and a message then says how many songs
   it has, which new releases started downloading, and the panel's note or error. The playlist
   reloads afterwards.
+- Jam sync: a guest stopped following the host's track changes until the song ended, and a
+  guest's play command could freeze the host the same way. just_audio's `play()` only completes
+  when playback stops, and the Jam sync awaited it; it now starts playback without waiting, and
+  each sync step is capped at 15 s so nothing can hold the Jam back again.
 
 ## Build 27
 - Android Auto review:
