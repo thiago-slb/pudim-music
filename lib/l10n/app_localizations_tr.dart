@@ -2285,4 +2285,19 @@ class L10nTr extends L10n {
 
   @override
   String get historyImported => 'içe aktarıldı';
+
+  @override
+  String widgetMixRadarDone(int count) {
+    return 'Yeni Çıkanlar Radarı: $count şarkı';
+  }
+
+  @override
+  String widgetMixRadarQueued(int count, String list) {
+    return '$count yeni çıkış indiriliyor: $list';
+  }
+
+  @override
+  String widgetMixRadarFailed(String error) {
+    return 'Radar güncellenemedi: $error';
+  }
 }

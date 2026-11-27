@@ -1052,7 +1052,13 @@ class MadeInfo {
   final String? playlist, name, note, error;
   final int tracks;
   final bool running;
-  final DateTime? generated;
+  final DateTime? generated, checked;
+
+  /// Radar: new releases the panel started downloading (artist and albums).
+  final List<({String artist, List<String> albums})> queued;
+
+  /// Radar: "Artist - Album" found on Deezer but not on MusicBrainz yet.
+  final List<String> notFound;
   const MadeInfo({
     this.playlist,
     this.name,
@@ -1061,6 +1067,9 @@ class MadeInfo {
     this.tracks = 0,
     this.running = false,
     this.generated,
+    this.checked,
+    this.queued = const [],
+    this.notFound = const [],
   });
   factory MadeInfo.fromJson(Map<String, dynamic>? j) => j == null
       ? const MadeInfo()
@@ -1072,6 +1081,20 @@ class MadeInfo {
           tracks: (j['tracks'] as num?)?.toInt() ?? 0,
           running: j['running'] == true,
           generated: _epoch(j['generated']),
+          checked: _epoch(j['checked']),
+          queued: [
+            for (final q in (j['queued'] as List? ?? const []))
+              if (q is Map)
+                (
+                  artist: '${q['artist'] ?? ''}',
+                  albums: [
+                    for (final a in (q['albums'] as List? ?? const [])) '$a',
+                  ],
+                ),
+          ],
+          notFound: [
+            for (final x in (j['not_found'] as List? ?? const [])) '$x',
+          ],
         );
 }
 

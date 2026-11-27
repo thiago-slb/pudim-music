@@ -12,6 +12,10 @@ published to the extras server and installed by the in-app updater; see [docs/up
   (Descobertas da semana, Mistura da semana, Radar de Novidades, daylist, Blend): they show in
   "Add to playlist", and tracks can be removed, reordered and shared for editing. The panel's
   refresh keeps tracks added by hand and does not bring back removed ones.
+- Radar de Novidades "Refresh" gives feedback: the button spins ("Looking for new releases…")
+  while the panel works, which can take a minute or more, and a message then says how many songs
+  it has, which new releases started downloading, and the panel's note or error. The playlist
+  reloads afterwards.
 
 ## Build 27
 - Android Auto review:

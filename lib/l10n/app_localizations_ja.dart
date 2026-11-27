@@ -2254,4 +2254,19 @@ class L10nJa extends L10n {
 
   @override
   String get historyImported => 'インポート';
+
+  @override
+  String widgetMixRadarDone(int count) {
+    return '新作レーダー: $count 曲';
+  }
+
+  @override
+  String widgetMixRadarQueued(int count, String list) {
+    return '$count 件の新作をダウンロード中: $list';
+  }
+
+  @override
+  String widgetMixRadarFailed(String error) {
+    return 'レーダーを更新できませんでした: $error';
+  }
 }

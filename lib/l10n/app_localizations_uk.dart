@@ -2320,4 +2320,19 @@ class L10nUk extends L10n {
 
   @override
   String get historyImported => 'імпорт';
+
+  @override
+  String widgetMixRadarDone(int count) {
+    return 'Радар новинок: $count треків';
+  }
+
+  @override
+  String widgetMixRadarQueued(int count, String list) {
+    return 'Завантаження релізів ($count): $list';
+  }
+
+  @override
+  String widgetMixRadarFailed(String error) {
+    return 'Радар не оновився: $error';
+  }
 }

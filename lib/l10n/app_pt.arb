@@ -1552,5 +1552,32 @@
   "historyWholeYear": "Ano todo",
   "historyLoadMore": "Carregar mais",
   "historyEmpty": "Nada tocado ainda",
-  "historyImported": "importado"
+  "historyImported": "importado",
+  "widgetMixRadarDone": "Radar de Novidades: {count} músicas",
+  "@widgetMixRadarDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetMixRadarQueued": "Baixando {count} lançamento(s): {list}",
+  "@widgetMixRadarQueued": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetMixRadarFailed": "O Radar não atualizou: {error}",
+  "@widgetMixRadarFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

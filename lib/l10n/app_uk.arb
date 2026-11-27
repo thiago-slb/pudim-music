@@ -608,5 +608,8 @@
   "historyWholeYear": "Увесь рік",
   "historyLoadMore": "Завантажити ще",
   "historyEmpty": "Поки нічого не прослухано",
-  "historyImported": "імпорт"
+  "historyImported": "імпорт",
+  "widgetMixRadarDone": "Радар новинок: {count} треків",
+  "widgetMixRadarQueued": "Завантаження релізів ({count}): {list}",
+  "widgetMixRadarFailed": "Радар не оновився: {error}"
 }
