@@ -3,6 +3,13 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 30
+- The player is back in the notification shade, on the lock screen and in the car's controls.
+  Since build 27 the release build's resource shrinker removed the like / shuffle / repeat
+  button icons (the media session names them only as strings), audio_service then failed to
+  build the playback state (a car button needs an icon), and the notification vanished.
+  `res/raw/keep.xml` keeps them, and a test checks every icon the media session names is kept.
+
 ## Build 29
 - Queue review (new end-to-end queue tests: the real player on a fake audio engine, 33 scenarios):
   - Going back and forward again kept the songs added with "Add to queue" only as plain

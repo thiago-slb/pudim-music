@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The media notification and Android Auto look these icons up by name (audio_service), so the
+     release build's resource shrinker cannot see they are used. Without them the notification
+     fails and the player vanishes from the notification shade and the lock screen. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_car_*,@drawable/ic_stat_pudim" />
