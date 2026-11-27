@@ -3,6 +3,25 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 29
+- Queue review (new end-to-end queue tests: the real player on a fake audio engine, 33 scenarios):
+  - Going back and forward again kept the songs added with "Add to queue" only as plain
+    playlist tracks: "Add to queue" then went before them. Queued songs now stay queued.
+  - Playing a list with no page of its own (search results, a mix) after a playlist kept the
+    old playlist as the queue's origin (Smart Shuffle and the "playing from" link pointed at it).
+  - After reopening the app, "previous" went to the track before instead of restarting the one
+    it was in the middle of.
+  - Shuffle order: the original order is saved too, so turning shuffle off after a restart
+    brings the playlist order back.
+  - Tapping a song on disc 1 of a multi-disc album queued only that disc; it now queues the
+    whole album from that song.
+  - Tapping an earlier song in the queue (also from the car) no longer leaves later songs
+    marked as queued.
+  - The car / notification shuffle button is a plain on/off (in a playlist it took two taps to
+    turn off, through Smart Shuffle).
+  - Smart Shuffle, the gapless advance and a failed load no longer touch a player that was
+    already closed.
+
 ## Build 28
 - Android Auto: when the car starts the app, the mini player now shows the track and cover. The
   player came up before the login loaded, building the track info failed silently and nothing

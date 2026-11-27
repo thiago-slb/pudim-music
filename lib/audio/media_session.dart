@@ -285,7 +285,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
       case 'like':
         await c.toggleCurrentFavorite();
       case 'shuffle':
-        c.toggleShuffle();
+        c.toggleShuffle(smartStep: false);
       case 'repeat':
         c.cycleRepeat();
     }
@@ -296,10 +296,7 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
     final c = _c;
     if (c == null) return;
     final on = shuffleMode != AudioServiceShuffleMode.none;
-    // In a playlist shuffle cycles through Smart Shuffle: taps until it lands where asked.
-    for (var i = 0; i < 3 && c.queue.shuffle != on; i++) {
-      c.toggleShuffle();
-    }
+    if (c.queue.shuffle != on) c.toggleShuffle(smartStep: false);
   }
 
   @override

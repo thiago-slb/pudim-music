@@ -5,7 +5,7 @@ import 'dart:math';
 
 import 'package:audio_service/audio_service.dart' show MediaItem;
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -66,6 +66,9 @@ abstract class RemoteOutput {
 
 /// Queue state, Spotify style:
 /// "Now playing", "Next in queue" (added manually) and "Next from: `<context>`".
+/// "Not given" for [QueueState.copyWith] fields that can also be set to null.
+const _keep = Object();
+
 class QueueState {
   final List<Item> queue;
   final int index;
@@ -122,7 +125,7 @@ class QueueState {
     int? index,
     int? manualCount,
     String? contextName,
-    String? contextRoute,
+    Object? contextRoute = _keep,
     bool? shuffle,
     RepeatMode? repeat,
     bool? playing,
@@ -135,7 +138,9 @@ class QueueState {
     index: index ?? this.index,
     manualCount: manualCount ?? this.manualCount,
     contextName: contextName ?? this.contextName,
-    contextRoute: contextRoute ?? this.contextRoute,
+    contextRoute: identical(contextRoute, _keep)
+        ? this.contextRoute
+        : contextRoute as String?,
     shuffle: shuffle ?? this.shuffle,
     repeat: repeat ?? this.repeat,
     playing: playing ?? this.playing,
@@ -161,6 +166,19 @@ class PlayerController extends Notifier<QueueState> {
   Timer? _progressTimer;
   Item? _reported; // track Jellyfin knows is playing
   List<Item> _unshuffled = const [];
+
+  /// Songs queued by hand ([QueueState.manualCount]) at each step taken back with "previous":
+  /// going forward again gives them back, so they still play as queued (and "Add to queue" still
+  /// goes after them).
+  final _backManual = <int>[];
+
+  /// manualCount after moving forward one track: a queued song was consumed, or the queued
+  /// songs of the step taken back come back.
+  int _manualAfterForward(QueueState st) {
+    if (st.manualCount > 0) return st.manualCount - 1;
+    return _backManual.isNotEmpty ? _backManual.removeLast() : 0;
+  }
+
   bool autoplay = true;
   bool _sourceReady =
       false; // has the current track already been loaded into the player?
@@ -316,6 +334,10 @@ class PlayerController extends Notifier<QueueState> {
 
   static const _seenKey = 'cloudStateSeen';
 
+  /// Saves the resume point now (tests; the app saves on its own).
+  @visibleForTesting
+  void saveNow() => _save();
+
   /// Queue, current track, position, shuffle and repeat: the app opens paused at the same place.
   void _save() {
     final prefs = ref.read(prefsProvider);
@@ -361,7 +383,20 @@ class PlayerController extends Notifier<QueueState> {
       'p': pos.inMilliseconds,
       if (st.smart) 'sm': true,
       if (st.recommended.isNotEmpty) 'rec': st.recommended.toList(),
+      if (st.shuffle) 'uo': _unshuffledOrder(items),
     };
+  }
+
+  /// Positions in [items] in the order before shuffling (turning shuffle off restores it).
+  List<int> _unshuffledOrder(List<Item> items) {
+    final at = <String, int>{};
+    for (var i = 0; i < items.length; i++) {
+      at.putIfAbsent(items[i].id, () => i);
+    }
+    return [
+      for (final t in _unshuffled)
+        ?at.remove(t.id),
+    ];
   }
 
   /// Sends the queue and position to the panel, for another device to resume from.
@@ -449,7 +484,12 @@ class PlayerController extends Notifier<QueueState> {
       final i = j['i'] as int? ?? 0;
       if (q.isEmpty || i < 0 || i >= q.length) return const QueueState();
       _resumeAt = Duration(milliseconds: j['p'] as int? ?? 0);
-      _unshuffled = q;
+      final uo = [
+        for (final x in (j['uo'] as List? ?? const []))
+          if (x is int && x >= 0 && x < q.length) q[x],
+      ];
+      _unshuffled = uo.isEmpty ? q : uo;
+      _backManual.clear();
       return QueueState(
         queue: q,
         index: i,
@@ -574,6 +614,7 @@ class PlayerController extends Notifier<QueueState> {
         false) {
       return;
     }
+    _backManual.clear();
     final sh = shuffle ?? state.shuffle;
     var list = List<Item>.of(tracks);
     var idx = start.clamp(0, list.length - 1);
@@ -631,6 +672,7 @@ class PlayerController extends Notifier<QueueState> {
         }
       } catch (_) {}
     }
+    if (!ref.mounted) return;
     if (!state.smart || recs.isEmpty) return; // turned off while fetching
     recs.shuffle(Random());
     final headLen = state.index + 1 + state.manualCount;
@@ -668,6 +710,7 @@ class PlayerController extends Notifier<QueueState> {
     bool play,
     String context,
   ) async {
+    _backManual.clear();
     state = state.copyWith(
       queue: List.of(q),
       index: index,
@@ -878,6 +921,7 @@ class PlayerController extends Notifier<QueueState> {
       if (play) unawaited(audio.play());
       _scheduleSync(); // the queue may have changed while loading
     } catch (_) {
+      if (!ref.mounted) return;
       // Problematic file: skips to the next one.
       if (state.index + 1 < state.queue.length) {
         state = state.copyWith(
@@ -928,6 +972,7 @@ class PlayerController extends Notifier<QueueState> {
 
   /// The player moved on by itself to the preloaded track (no gap between the two).
   Future<void> _autoAdvanced([int tries = 0]) async {
+    if (!ref.mounted) return;
     if (_busy) {
       // Busy preparing the next track (e.g. the queue just changed): try again shortly instead of
       // dropping the advance, which left the queue, the notification and Android Auto on the old track.
@@ -960,7 +1005,7 @@ class PlayerController extends Notifier<QueueState> {
     if (st.next?.id == id) {
       state = st.copyWith(
         index: st.index + 1,
-        manualCount: max(0, st.manualCount - 1),
+        manualCount: _manualAfterForward(st),
       );
     } else if (st.repeat == RepeatMode.all &&
         st.queue.isNotEmpty &&
@@ -1160,12 +1205,13 @@ class PlayerController extends Notifier<QueueState> {
     if (state.index + 1 < state.queue.length) {
       state = state.copyWith(
         index: state.index + 1,
-        manualCount: max(0, state.manualCount - 1),
+        manualCount: _manualAfterForward(state),
       );
       await _load(play: true);
       return;
     }
     if (state.repeat == RepeatMode.all && state.queue.isNotEmpty) {
+      _backManual.clear();
       state = state.copyWith(index: 0, manualCount: 0);
       await _load(play: true);
       return;
@@ -1213,10 +1259,13 @@ class PlayerController extends Notifier<QueueState> {
 
   Future<void> previous() async {
     if (remote?.call('previous') ?? false) return;
-    if (position > const Duration(seconds: 3) || state.index <= 0) {
+    // Not loaded yet (app just reopened): the point it stopped at counts, not the player's 0:00.
+    final at = _sourceReady ? position : _resumeAt;
+    if (at > const Duration(seconds: 3) || state.index <= 0) {
       await seek(Duration.zero);
       return;
     }
+    _backManual.add(state.manualCount);
     state = state.copyWith(index: state.index - 1, manualCount: 0);
     await _load(play: true);
   }
@@ -1224,10 +1273,14 @@ class PlayerController extends Notifier<QueueState> {
   Future<void> jumpTo(int queueIndex) async {
     if (queueIndex < 0 || queueIndex >= state.queue.length) return;
     if (remote?.call('jump', index: queueIndex) ?? false) return;
+    _backManual.clear();
     final consumed = queueIndex - state.index - 1;
     state = state.copyWith(
       index: queueIndex,
-      manualCount: max(0, state.manualCount - max(0, consumed + 1)),
+      // Back to an earlier track: the queued songs are no longer right after it.
+      manualCount: queueIndex < state.index
+          ? 0
+          : max(0, state.manualCount - max(0, consumed + 1)),
     );
     await _load(play: true);
   }
@@ -1325,6 +1378,19 @@ class PlayerController extends Notifier<QueueState> {
       return;
     }
     final q = List<Item>.of(state.queue);
+    if (_backManual.isNotEmpty) {
+      // Stepped back: the queued songs are further ahead (after the tracks to go forward through).
+      final at =
+          state.index +
+          1 +
+          state.manualCount +
+          _backManual.length +
+          _backManual.fold<int>(0, (a, b) => a + b);
+      q.insertAll(min(at, q.length), tracks);
+      _backManual[0] += tracks.length;
+      state = state.copyWith(queue: q);
+      return;
+    }
     q.insertAll(state.index + 1 + state.manualCount, tracks);
     state = state.copyWith(
       queue: q,
@@ -1348,6 +1414,7 @@ class PlayerController extends Notifier<QueueState> {
 
   void removeAt(int queueIndex) {
     if (queueIndex <= state.index || queueIndex >= state.queue.length) return;
+    _backManual.clear();
     final q = List<Item>.of(state.queue)..removeAt(queueIndex);
     final wasManual = queueIndex <= state.index + state.manualCount;
     state = state.copyWith(
@@ -1359,20 +1426,24 @@ class PlayerController extends Notifier<QueueState> {
   /// Reorders within what comes after the current one ([from]/[to] are queue indices).
   void move(int from, int to) {
     if (from <= state.index || to <= state.index) return;
+    _backManual.clear();
     final q = List<Item>.of(state.queue);
     final t = q.removeAt(from);
     q.insert(to > from ? to - 1 : to, t);
     state = state.copyWith(queue: q);
   }
 
-  /// Shuffle → Smart Shuffle (in a playlist) → off.
-  void toggleShuffle() {
+  /// Shuffle → Smart Shuffle (in a playlist) → off. [smartStep] false (car, notification, whose
+  /// button is only on/off): straight from shuffle to off.
+  void toggleShuffle({bool smartStep = true}) {
+    _backManual.clear();
     final cur = state.current;
     if (cur == null) {
       state = state.copyWith(shuffle: !state.shuffle);
       return;
     }
-    if (state.shuffle &&
+    if (smartStep &&
+        state.shuffle &&
         !state.smart &&
         state.contextPlaylistId != null &&
         remote == null) {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +32,10 @@ class TrackTable extends ConsumerWidget {
   /// Collaborative: name of who added each track.
   final String? Function(Item)? addedBy;
 
+  /// What a tap plays when the table shows only part of it (one disc of an album): the whole
+  /// list, starting at the tapped track. Defaults to [tracks].
+  final List<Item>? playTracks;
+
   const TrackTable({
     super.key,
     required this.tracks,
@@ -43,6 +49,7 @@ class TrackTable extends ConsumerWidget {
     this.limit,
     this.playlistId,
     this.addedBy,
+    this.playTracks,
   });
 
   @override
@@ -68,14 +75,20 @@ class TrackTable extends ConsumerWidget {
                 showDate: showDateAdded && wide,
                 playlistId: playlistId,
                 addedBy: addedBy?.call(shown[i]),
-                onPlay: () => ref
-                    .read(playerProvider.notifier)
-                    .playList(
-                      tracks,
-                      start: i,
-                      contextName: contextName,
-                      contextRoute: contextRoute,
-                    ),
+                onPlay: () {
+                  final all = playTracks ?? tracks;
+                  final at = identical(all, tracks)
+                      ? i
+                      : all.indexWhere((t) => t.id == shown[i].id);
+                  ref
+                      .read(playerProvider.notifier)
+                      .playList(
+                        all,
+                        start: max(0, at),
+                        contextName: contextName,
+                        contextRoute: contextRoute,
+                      );
+                },
               ),
           ],
         );
