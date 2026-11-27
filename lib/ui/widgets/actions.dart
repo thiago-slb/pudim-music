@@ -200,7 +200,6 @@ Future<void> showItemMenu(
             ),
           if (it.kind == ItemKind.playlist &&
               !it.isCatalog &&
-              !isGeneratedPlaylist(it.name) &&
               ref.read(hasExtrasProvider))
             _MenuEntry(
               Icons.group_add_outlined,

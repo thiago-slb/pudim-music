@@ -608,5 +608,8 @@
   "historyWholeYear": "Cały rok",
   "historyLoadMore": "Wczytaj więcej",
   "historyEmpty": "Jeszcze nic nie odtworzono",
-  "historyImported": "zaimportowane"
+  "historyImported": "zaimportowane",
+  "widgetMixRadarDone": "Radar nowości: {count} utworów",
+  "widgetMixRadarQueued": "Pobieranie nowości ({count}): {list}",
+  "widgetMixRadarFailed": "Radar nie został odświeżony: {error}"
 }

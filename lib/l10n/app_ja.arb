@@ -608,5 +608,8 @@
   "historyWholeYear": "年間",
   "historyLoadMore": "さらに読み込む",
   "historyEmpty": "まだ再生履歴がありません",
-  "historyImported": "インポート"
+  "historyImported": "インポート",
+  "widgetMixRadarDone": "新作レーダー: {count} 曲",
+  "widgetMixRadarQueued": "{count} 件の新作をダウンロード中: {list}",
+  "widgetMixRadarFailed": "レーダーを更新できませんでした: {error}"
 }

@@ -2292,4 +2292,19 @@ class L10nSv extends L10n {
 
   @override
   String get historyImported => 'importerad';
+
+  @override
+  String widgetMixRadarDone(int count) {
+    return 'Nyhetsradar: $count låtar';
+  }
+
+  @override
+  String widgetMixRadarQueued(int count, String list) {
+    return 'Laddar ner $count utgåva/or: $list';
+  }
+
+  @override
+  String widgetMixRadarFailed(String error) {
+    return 'Radarn uppdaterades inte: $error';
+  }
 }

@@ -608,5 +608,8 @@
   "historyWholeYear": "全年",
   "historyLoadMore": "加载更多",
   "historyEmpty": "还没有播放记录",
-  "historyImported": "已导入"
+  "historyImported": "已导入",
+  "widgetMixRadarDone": "新歌雷达：{count} 首",
+  "widgetMixRadarQueued": "正在下载 {count} 张新发行：{list}",
+  "widgetMixRadarFailed": "雷达未能更新：{error}"
 }

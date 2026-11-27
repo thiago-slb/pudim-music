@@ -3,6 +3,24 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 28
+- Android Auto: when the car starts the app, the mini player now shows the track and cover. The
+  player came up before the login loaded, building the track info failed silently and nothing
+  sent it again; now the title goes right away, the cover follows once the login loads, and any
+  missing or stale track is re-sent on the next player change.
+- Every playlist is editable, including Spotify/Deezer imports and the ones the panel builds
+  (Descobertas da semana, Mistura da semana, Radar de Novidades, daylist, Blend): they show in
+  "Add to playlist", and tracks can be removed, reordered and shared for editing. The panel's
+  refresh keeps tracks added by hand and does not bring back removed ones.
+- Radar de Novidades "Refresh" gives feedback: the button spins ("Looking for new releases…")
+  while the panel works, which can take a minute or more, and a message then says how many songs
+  it has, which new releases started downloading, and the panel's note or error. The playlist
+  reloads afterwards.
+- Jam sync: a guest stopped following the host's track changes until the song ended, and a
+  guest's play command could freeze the host the same way. just_audio's `play()` only completes
+  when playback stops, and the Jam sync awaited it; it now starts playback without waiting, and
+  each sync step is capped at 15 s so nothing can hold the Jam back again.
+
 ## Build 27
 - Android Auto review:
   - Covers in the car folders: the car only loads content:// images, so server covers go through

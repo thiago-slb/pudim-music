@@ -608,5 +608,8 @@
   "historyWholeYear": "Whole year",
   "historyLoadMore": "Load more",
   "historyEmpty": "Nothing played yet",
-  "historyImported": "imported"
+  "historyImported": "imported",
+  "widgetMixRadarDone": "New Releases Radar: {count} songs",
+  "widgetMixRadarQueued": "Downloading {count} release(s): {list}",
+  "widgetMixRadarFailed": "The Radar did not update: {error}"
 }

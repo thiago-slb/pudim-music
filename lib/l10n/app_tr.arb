@@ -608,5 +608,8 @@
   "historyWholeYear": "Tüm yıl",
   "historyLoadMore": "Daha fazla yükle",
   "historyEmpty": "Henüz bir şey dinlenmedi",
-  "historyImported": "içe aktarıldı"
+  "historyImported": "içe aktarıldı",
+  "widgetMixRadarDone": "Yeni Çıkanlar Radarı: {count} şarkı",
+  "widgetMixRadarQueued": "{count} yeni çıkış indiriliyor: {list}",
+  "widgetMixRadarFailed": "Radar güncellenemedi: {error}"
 }

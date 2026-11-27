@@ -3776,6 +3776,24 @@ abstract class L10n {
   /// In pt, this message translates to:
   /// **'importado'**
   String get historyImported;
+
+  /// No description provided for @widgetMixRadarDone.
+  ///
+  /// In pt, this message translates to:
+  /// **'Radar de Novidades: {count} músicas'**
+  String widgetMixRadarDone(int count);
+
+  /// No description provided for @widgetMixRadarQueued.
+  ///
+  /// In pt, this message translates to:
+  /// **'Baixando {count} lançamento(s): {list}'**
+  String widgetMixRadarQueued(int count, String list);
+
+  /// No description provided for @widgetMixRadarFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'O Radar não atualizou: {error}'**
+  String widgetMixRadarFailed(String error);
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

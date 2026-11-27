@@ -2324,4 +2324,19 @@ class L10nPl extends L10n {
 
   @override
   String get historyImported => 'zaimportowane';
+
+  @override
+  String widgetMixRadarDone(int count) {
+    return 'Radar nowości: $count utworów';
+  }
+
+  @override
+  String widgetMixRadarQueued(int count, String list) {
+    return 'Pobieranie nowości ($count): $list';
+  }
+
+  @override
+  String widgetMixRadarFailed(String error) {
+    return 'Radar nie został odświeżony: $error';
+  }
 }

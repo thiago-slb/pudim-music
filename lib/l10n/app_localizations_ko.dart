@@ -2257,4 +2257,19 @@ class L10nKo extends L10n {
 
   @override
   String get historyImported => '가져옴';
+
+  @override
+  String widgetMixRadarDone(int count) {
+    return '신곡 레이더: $count곡';
+  }
+
+  @override
+  String widgetMixRadarQueued(int count, String list) {
+    return '신작 $count개 다운로드 중: $list';
+  }
+
+  @override
+  String widgetMixRadarFailed(String error) {
+    return '레이더를 업데이트하지 못했습니다: $error';
+  }
 }

@@ -608,5 +608,8 @@
   "historyWholeYear": "Hela året",
   "historyLoadMore": "Ladda fler",
   "historyEmpty": "Inget spelat ännu",
-  "historyImported": "importerad"
+  "historyImported": "importerad",
+  "widgetMixRadarDone": "Nyhetsradar: {count} låtar",
+  "widgetMixRadarQueued": "Laddar ner {count} utgåva/or: {list}",
+  "widgetMixRadarFailed": "Radarn uppdaterades inte: {error}"
 }

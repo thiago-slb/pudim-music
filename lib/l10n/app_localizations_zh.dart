@@ -2230,4 +2230,19 @@ class L10nZh extends L10n {
 
   @override
   String get historyImported => '已导入';
+
+  @override
+  String widgetMixRadarDone(int count) {
+    return '新歌雷达：$count 首';
+  }
+
+  @override
+  String widgetMixRadarQueued(int count, String list) {
+    return '正在下载 $count 张新发行：$list';
+  }
+
+  @override
+  String widgetMixRadarFailed(String error) {
+    return '雷达未能更新：$error';
+  }
 }

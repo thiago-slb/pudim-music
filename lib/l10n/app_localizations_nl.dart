@@ -2300,4 +2300,19 @@ class L10nNl extends L10n {
 
   @override
   String get historyImported => 'geïmporteerd';
+
+  @override
+  String widgetMixRadarDone(int count) {
+    return 'Nieuwe-releasesradar: $count nummers';
+  }
+
+  @override
+  String widgetMixRadarQueued(int count, String list) {
+    return '$count release(s) downloaden: $list';
+  }
+
+  @override
+  String widgetMixRadarFailed(String error) {
+    return 'De radar is niet bijgewerkt: $error';
+  }
 }

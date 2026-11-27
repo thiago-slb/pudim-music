@@ -17,7 +17,8 @@ import '../../ui/widgets/common.dart';
 import '../../ui/widgets/user_photo.dart';
 import '../chat/chat_pages.dart';
 
-/// Playlists the panel builds on its own (can't be edited by hand: they would be rewritten).
+/// Playlists the panel builds or imports on its own. Only groups them on Home: they are all
+/// editable, since the panel's refresh keeps tracks added by hand and leaves out removed ones.
 bool isGeneratedPlaylist(String name) =>
     name.startsWith('Descobertas da semana') ||
     name == 'Mistura da semana' ||
@@ -88,9 +89,7 @@ Future<void> addToPlaylistSheet(
   }
   final lib = await ref.read(libraryProvider.future);
   if (!context.mounted) return;
-  final mine = lib.playlists
-      .where((p) => !isGeneratedPlaylist(p.name))
-      .toList();
+  final mine = lib.playlists;
   final picked = await showModalBottomSheet<String>(
     context: context,
     useRootNavigator: true,

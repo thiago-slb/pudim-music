@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../api/catalog.dart';
+import '../../features/playlist/playlist_edit.dart' show playlistProvider;
 import '../../state/library.dart';
 import '../../state/session.dart';
 import '../../l10n/l10n.dart';
@@ -42,30 +43,91 @@ String? mixKindOf(String playlistName) =>
     ? 'daylist'
     : null;
 
-/// Builds the Radar / daylist of this account now.
+/// Radar / daylist this device asked the panel for and is still waiting on: the button spins
+/// right away, before the panel reports it is running.
+final madeWaitingProvider = NotifierProvider<MadeWaiting, Set<String>>(
+  MadeWaiting.new,
+);
+
+class MadeWaiting extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const {};
+  void set(String kind, bool on) =>
+      state = on ? {...state, kind} : ({...state}..remove(kind));
+}
+
+/// Builds the Radar / daylist of this account now, follows the panel until it is done (the Radar
+/// checks every followed artist and can take a minute or more) and then says what came out.
 Future<void> runMade(BuildContext context, WidgetRef ref, String kind) async {
+  // Lives on after the page closes: the wait outlasts it.
+  final box = ProviderScope.containerOf(context, listen: false);
+  final say = ScaffoldMessenger.maybeOf(context);
+  final l = context.l10n;
+  final waiting = box.read(madeWaitingProvider.notifier);
+  if (box.read(madeWaitingProvider).contains(kind)) return;
+  final cat = box.read(catalogProvider);
+  void show(String msg, {int seconds = 2}) => say
+    ?..hideCurrentSnackBar()
+    ..showSnackBar(
+      SnackBar(
+        content: Text(msg, textAlign: TextAlign.center),
+        width: 360,
+        duration: Duration(seconds: seconds),
+      ),
+    );
+  waiting.set(kind, true);
   try {
-    await ref.read(catalogProvider).runMade(kind);
-    if (context.mounted) {
-      toast(
-        context,
-        kind == 'radar'
-            ? context.l10n.widgetMixSearchingReleases
-            : context.l10n.widgetMixBuildingDaylist,
-      );
+    await cat.runMade(kind);
+    show(
+      kind == 'radar'
+          ? l.widgetMixSearchingReleases
+          : l.widgetMixBuildingDaylist,
+    );
+    MadeInfo? info;
+    final until = DateTime.now().add(const Duration(minutes: 10));
+    while (DateTime.now().isBefore(until)) {
+      await Future<void>.delayed(const Duration(seconds: 3));
+      try {
+        final m = await cat.made();
+        info = kind == 'radar' ? m.radar : m.daylist;
+        box.invalidate(madeProvider);
+        if (!info.running) break;
+      } catch (_) {
+        // the panel did not answer this time: asks again
+      }
     }
-    ref.invalidate(madeProvider);
-    for (final s in const [8, 25, 60]) {
-      Timer(Duration(seconds: s), () {
-        try {
-          ref.invalidate(madeProvider);
-          ref.invalidate(libraryProvider);
-        } catch (_) {}
-      });
-    }
+    box.invalidate(libraryProvider);
+    final id = info?.playlist;
+    if (id != null) box.invalidate(playlistProvider(id));
+    if (info == null || info.running) return;
+    final msg = madeResult(l, kind, info);
+    if (msg != null) show(msg, seconds: 6);
   } catch (e) {
-    if (context.mounted) toast(context, '$e');
+    show('$e');
+  } finally {
+    waiting.set(kind, false);
   }
+}
+
+/// What a finished Radar / daylist run says (null: nothing worth a message).
+String? madeResult(L10n l, String kind, MadeInfo info) {
+  final error = info.error;
+  if (error != null && error.isNotEmpty) return l.widgetMixRadarFailed(error);
+  if (kind != 'radar') return null;
+  final albums = [
+    for (final q in info.queued)
+      for (final a in q.albums) '${q.artist} – $a',
+  ];
+  final note = info.note;
+  return [
+    l.widgetMixRadarDone(info.tracks),
+    if (albums.isNotEmpty)
+      l.widgetMixRadarQueued(
+        albums.length,
+        albums.length > 3 ? '${albums.take(3).join(', ')}…' : albums.join(', '),
+      ),
+    if (note != null && note.isNotEmpty) note,
+  ].join('\n');
 }
 
 MixInfo mixInfo((MixInfo, MixInfo) m, String kind) =>
@@ -169,13 +231,15 @@ extension on MixButton {
     final m = ref.watch(madeProvider).value;
     if (m == null) return const SizedBox.shrink();
     final info = kind == 'radar' ? m.radar : m.daylist;
+    final running =
+        info.running || ref.watch(madeWaitingProvider).contains(kind);
     return Tooltip(
       message: info.generated == null
           ? context.l10n.commonBuildNow
           : context.l10n.widgetMixBuiltOn(_date(info.generated!)),
       child: TextButton.icon(
         style: TextButton.styleFrom(foregroundColor: Pm.subdued),
-        icon: info.running
+        icon: running
             ? const SizedBox(
                 width: 14,
                 height: 14,
@@ -183,11 +247,13 @@ extension on MixButton {
               )
             : const Icon(Icons.refresh, size: 18),
         label: Text(
-          info.running
-              ? context.l10n.commonBuilding
+          running
+              ? (kind == 'radar'
+                    ? context.l10n.widgetMixSearchingReleases
+                    : context.l10n.commonBuilding)
               : context.l10n.widgetMixRefresh,
         ),
-        onPressed: info.running ? null : () => runMade(context, ref, kind),
+        onPressed: running ? null : () => runMade(context, ref, kind),
       ),
     );
   }
@@ -224,9 +290,11 @@ class MixInvites extends ConsumerWidget {
           for (final kind in madeKinds)
             _MadeInvite(
               kind: kind,
-              running: kind == 'radar'
-                  ? made!.radar.running
-                  : made!.daylist.running,
+              running:
+                  (kind == 'radar'
+                      ? made!.radar.running
+                      : made!.daylist.running) ||
+                  ref.watch(madeWaitingProvider).contains(kind),
             ),
         ],
       ),
