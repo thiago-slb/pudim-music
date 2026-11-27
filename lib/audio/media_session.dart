@@ -73,7 +73,13 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
   /// Called on every queue change.
   void update(QueueState? prev, QueueState next) {
     final a = prev?.current, b = next.current;
-    if (a?.id != b?.id || a?.favorite != b?.favorite) _pushItem();
+    // Also when the system has no track or a stale one (an earlier send failed): otherwise the car
+    // plays with an empty mini player until the track changes.
+    if (a?.id != b?.id ||
+        a?.favorite != b?.favorite ||
+        (_c != null && mediaItem.value?.id != _nowPlaying(_c!)?.id)) {
+      _pushItem();
+    }
     if (!identical(prev?.queue, next.queue) ||
         prev?.index != next.index ||
         prev?.contextName != next.contextName) {
@@ -88,6 +94,14 @@ class MediaSession extends BaseAudioHandler with SeekHandler {
         a?.favorite != b?.favorite) {
       _broadcast();
     }
+  }
+
+  /// Sends the track and the queue again (for example once the login loads, for the covers).
+  void refresh() {
+    final c = _c;
+    if (c == null) return;
+    _pushItem();
+    _pushQueue(c.queue);
   }
 
   void _pushItem() {

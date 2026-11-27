@@ -3,6 +3,12 @@
 Build numbers are the `appBuild` in `lib/version.dart` (the Android `versionCode`). Builds are
 published to the extras server and installed by the in-app updater; see [docs/updates.md](docs/updates.md).
 
+## Build 28
+- Android Auto: when the car starts the app, the mini player now shows the track and cover. The
+  player came up before the login loaded, building the track info failed silently and nothing
+  sent it again; now the title goes right away, the cover follows once the login loads, and any
+  missing or stale track is re-sent on the next player change.
+
 ## Build 27
 - Android Auto review:
   - Covers in the car folders: the car only loads content:// images, so server covers go through

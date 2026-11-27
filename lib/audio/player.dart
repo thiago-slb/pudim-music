@@ -266,6 +266,13 @@ class PlayerController extends Notifier<QueueState> {
     Future.microtask(() {
       if (ref.mounted) MediaSession.instance?.attach(this);
     });
+    // The car can start the app (and the music) before the login is loaded: once it is, sends the
+    // track again with its cover.
+    ref.listen(sessionProvider, (prev, next) {
+      if (next.hasValue && prev?.value != next.value) {
+        MediaSession.instance?.refresh();
+      }
+    });
     // Saves the resume point every 5 s while playing (closing the app loses at most that).
     _saveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (isPlaying) {
@@ -1076,7 +1083,13 @@ class PlayerController extends Notifier<QueueState> {
 
   /// Track data for the notification, lock screen and Android Auto.
   MediaItem mediaItemOf(Item t, {Duration? duration}) {
-    final art = _api.imageUrl(t.imageItemId, size: 512);
+    String? art;
+    try {
+      art = _api.imageUrl(t.imageItemId, size: 512);
+    } catch (_) {
+      // No session yet (the car opened the app before the login loaded): the title still goes,
+      // and the cover follows once the session arrives (see build()).
+    }
     final d = duration ?? t.duration;
     return MediaItem(
       id: t.id,
