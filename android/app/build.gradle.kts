@@ -21,6 +21,11 @@ android {
     compileSdk = 37 // flutter_local_notifications 23 requires API 37
     ndkVersion = flutter.ndkVersion
 
+    // resValue below (Firebase ids for push) needs this on AGP 9.
+    buildFeatures {
+        resValues = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
