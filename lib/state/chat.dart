@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/catalog.dart';
@@ -22,7 +23,12 @@ class ChatsNotifier extends Notifier<ChatList> {
 
   @override
   ChatList build() {
-    ref.onDispose(() => _timer?.cancel());
+    // Back to the app: checks right away (Jam invites sent while it was in the background).
+    final life = AppLifecycleListener(onResume: () => unawaited(refresh()));
+    ref.onDispose(() {
+      _timer?.cancel();
+      life.dispose();
+    });
     ref.watch(catalogProvider);
     _timer = Timer(const Duration(seconds: 3), refresh);
     return ChatList.empty;

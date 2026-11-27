@@ -9,6 +9,10 @@ published to the extras server and installed by the in-app updater; see [docs/up
   opens it full screen: close, switch (button, swipe or arrow keys), previous / play / next, and
   the lyrics pass by in a band at the bottom (synced line by line, plain lyrics scroll with the
   track). Esc closes; the choice is remembered.
+- Chat and Jam invites: the app checks for new messages from launch (not only after the chat
+  icon showed up) and right when it comes back to the foreground, so the invite notification
+  shows up sooner. With the app closed there is still no push (the panel has no channel to the
+  phone yet).
 
 ## Build 30
 - The player is back in the notification shade, on the lock screen and in the car's controls.
