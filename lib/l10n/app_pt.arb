@@ -1585,5 +1585,7 @@
   "visualsWaves": "Ondas",
   "visualsSwirl": "Redemoinho",
   "visualsBars": "Barras",
-  "visualsNebula": "Nebulosa"
+  "visualsNebula": "Nebulosa",
+  "stateNotifyChatChannel": "Conversas",
+  "stateNotifyChatChannelDesc": "Mensagens e convites para Jam"
 }

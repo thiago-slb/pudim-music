@@ -2330,4 +2330,11 @@ class L10nEs extends L10n {
 
   @override
   String get visualsNebula => 'Nebulosa';
+
+  @override
+  String get stateNotifyChatChannel => 'Mensajes';
+
+  @override
+  String get stateNotifyChatChannelDesc =>
+      'Mensajes del chat e invitaciones a Jam';
 }

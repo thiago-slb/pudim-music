@@ -2322,4 +2322,10 @@ class L10nPt extends L10n {
 
   @override
   String get visualsNebula => 'Nebulosa';
+
+  @override
+  String get stateNotifyChatChannel => 'Conversas';
+
+  @override
+  String get stateNotifyChatChannelDesc => 'Mensagens e convites para Jam';
 }

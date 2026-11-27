@@ -1,10 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart' show AppLifecycleListener;
+import 'package:flutter/widgets.dart'
+    show AppLifecycleListener, AppLifecycleState, WidgetsBinding;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/catalog.dart';
 import 'notify.dart';
+import 'push.dart';
 import 'session.dart';
 import '../l10n/l10n.dart';
 
@@ -23,8 +25,11 @@ class ChatsNotifier extends Notifier<ChatList> {
 
   @override
   ChatList build() {
-    // Back to the app: checks right away (Jam invites sent while it was in the background).
-    final life = AppLifecycleListener(onResume: () => unawaited(refresh()));
+    // Back to the app: checks right away (Jam invites sent while it was in the background). With push
+    // on, those already showed up as a notification, so this check does not notify them again.
+    final life = AppLifecycleListener(
+      onResume: () => unawaited(refresh(quiet: Push.active)),
+    );
     ref.onDispose(() {
       _timer?.cancel();
       life.dispose();
@@ -34,25 +39,24 @@ class ChatsNotifier extends Notifier<ChatList> {
     return ChatList.empty;
   }
 
-  Future<void> refresh() async {
+  Future<void> refresh({bool quiet = false}) async {
     _timer?.cancel();
     try {
       final cat = ref.read(catalogProvider);
       if (cat.token.isNotEmpty) {
         final list = await cat.chats();
         final me = ref.read(sessionProvider).value?.userId;
-        if (_lastId >= 0) {
+        // In the background with push on, the push is the notification.
+        final away =
+            WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed;
+        if (_lastId >= 0 && !quiet && !(away && Push.active)) {
           for (final c in list.chats) {
             final m = c.last;
             if (m.id > _lastId && m.from != me && c.user.id != openWith) {
               final what = m.share != null
                   ? appL10n.stateChatShared(m.share!.title)
                   : m.text;
-              Notify.show(
-                0x40000000 + (c.user.id.hashCode & 0xFFFF),
-                c.user.displayName,
-                what,
-              );
+              Notify.chat(c.user.id, c.user.displayName, what);
             }
           }
         }

@@ -617,5 +617,7 @@
   "visualsWaves": "ウェーブ",
   "visualsSwirl": "渦巻き",
   "visualsBars": "バー",
-  "visualsNebula": "星雲"
+  "visualsNebula": "星雲",
+  "stateNotifyChatChannel": "メッセージ",
+  "stateNotifyChatChannelDesc": "チャットのメッセージとJamへの招待"
 }

@@ -2290,4 +2290,10 @@ class L10nKo extends L10n {
 
   @override
   String get visualsNebula => '성운';
+
+  @override
+  String get stateNotifyChatChannel => '메시지';
+
+  @override
+  String get stateNotifyChatChannelDesc => '채팅 메시지와 Jam 초대';
 }

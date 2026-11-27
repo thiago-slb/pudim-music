@@ -617,5 +617,7 @@
   "visualsWaves": "Fale",
   "visualsSwirl": "Wir",
   "visualsBars": "Słupki",
-  "visualsNebula": "Mgławica"
+  "visualsNebula": "Mgławica",
+  "stateNotifyChatChannel": "Wiadomości",
+  "stateNotifyChatChannelDesc": "Wiadomości na czacie i zaproszenia do Jam"
 }

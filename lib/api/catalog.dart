@@ -746,6 +746,14 @@ extension SocialApi on Catalog {
       if (c is Map<String, dynamic>) Contact.fromJson(c),
   ];
 
+  /// Registers this phone for push (chat, Jam invites); true when the server can send them.
+  Future<bool> pushToken(String token) async =>
+      (await _send('POST', '/api/player/push/token', {
+        'token': token,
+        'platform': 'android',
+      }))['push'] ==
+      true;
+
   Future<ChatList> chats() async {
     final d = await _get('/api/player/chats');
     return ChatList(

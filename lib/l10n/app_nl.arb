@@ -617,5 +617,7 @@
   "visualsWaves": "Golven",
   "visualsSwirl": "Draaikolk",
   "visualsBars": "Balken",
-  "visualsNebula": "Nevel"
+  "visualsNebula": "Nevel",
+  "stateNotifyChatChannel": "Berichten",
+  "stateNotifyChatChannelDesc": "Chatberichten en Jam-uitnodigingen"
 }

@@ -1,4 +1,14 @@
+import java.util.Base64
 import java.util.Properties
+
+// Push (Firebase Cloud Messaging): the Firebase ids come from the build's --dart-define values
+// (PUDIM_FCM_*, kept out of git with the other addresses). They become the string resources Firebase
+// reads at startup, so a push also arrives with the app closed. Without them, the app has no push.
+val dartDefines: Map<String, String> = (project.findProperty("dart-defines") as String?)
+    ?.split(",")
+    ?.mapNotNull { runCatching { String(Base64.getDecoder().decode(it), Charsets.UTF_8) }.getOrNull() }
+    ?.mapNotNull { it.split("=", limit = 2).takeIf { kv -> kv.size == 2 }?.let { kv -> kv[0] to kv[1] } }
+    ?.toMap() ?: emptyMap()
 
 plugins {
     id("com.android.application")
@@ -33,6 +43,15 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        val fcm = listOf("PUDIM_FCM_APP_ID", "PUDIM_FCM_API_KEY", "PUDIM_FCM_PROJECT_ID", "PUDIM_FCM_SENDER_ID")
+            .map { dartDefines[it].orEmpty() }
+        if (fcm.all { it.isNotEmpty() }) {
+            resValue("string", "google_app_id", fcm[0])
+            resValue("string", "google_api_key", fcm[1])
+            resValue("string", "project_id", fcm[2])
+            resValue("string", "gcm_defaultSenderId", fcm[3])
+        }
     }
 
     // On Android the audio engine is ExoPlayer (just_audio); media_kit's mpv is only needed on desktop.
@@ -78,4 +97,6 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // Push for chat and Jam invites (native: the Flutter plugin would add Firebase's C++ SDK to the Windows build).
+    implementation("com.google.firebase:firebase-messaging:24.1.2")
 }

@@ -2335,4 +2335,11 @@ class L10nFr extends L10n {
 
   @override
   String get visualsNebula => 'Nébuleuse';
+
+  @override
+  String get stateNotifyChatChannel => 'Messages';
+
+  @override
+  String get stateNotifyChatChannelDesc =>
+      'Messages du chat et invitations à une Jam';
 }

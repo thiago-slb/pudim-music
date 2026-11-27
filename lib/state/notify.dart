@@ -10,6 +10,7 @@ class Notify {
   static final _p = FlutterLocalNotificationsPlugin();
   static bool _ready = false;
 
+  static const chatChannel = 'conversas';
   static const offlineId = 1; // downloading to the device
   static const libraryId = 2; // downloading to the library
 
@@ -30,11 +31,20 @@ class Notify {
         ),
       );
       if (Platform.isAndroid) {
-        await _p
+        final android = _p
             .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin
-            >()
-            ?.requestNotificationsPermission();
+            >();
+        await android?.requestNotificationsPermission();
+        // Also used by the pushes that arrive with the app closed (see AndroidManifest).
+        await android?.createNotificationChannel(
+          AndroidNotificationChannel(
+            chatChannel,
+            appL10n.stateNotifyChatChannel,
+            description: appL10n.stateNotifyChatChannelDesc,
+            importance: Importance.high,
+          ),
+        );
       }
       _ready = true;
     } catch (_) {
@@ -90,6 +100,31 @@ class Notify {
             'novidades',
             appL10n.stateNotifyNewsChannel,
             channelDescription: appL10n.stateNotifyNewsChannelDesc,
+          ),
+          macOS: const DarwinNotificationDetails(),
+          windows: const WindowsNotificationDetails(),
+        ),
+      );
+    } catch (_) {}
+  }
+
+  /// New chat message (or Jam invite) from [uid]. Same tag as the push for that conversation, so the
+  /// two replace each other instead of showing twice.
+  static Future<void> chat(String uid, String title, String body) async {
+    if (!_ready) return;
+    try {
+      await _p.show(
+        id: Platform.isAndroid ? 0 : 0x40000000 + (uid.hashCode & 0xFFFF),
+        title: title,
+        body: body,
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            chatChannel,
+            appL10n.stateNotifyChatChannel,
+            channelDescription: appL10n.stateNotifyChatChannelDesc,
+            importance: Importance.high,
+            priority: Priority.high,
+            tag: 'chat-$uid',
           ),
           macOS: const DarwinNotificationDetails(),
           windows: const WindowsNotificationDetails(),

@@ -617,5 +617,7 @@
   "visualsWaves": "波浪",
   "visualsSwirl": "漩涡",
   "visualsBars": "频谱条",
-  "visualsNebula": "星云"
+  "visualsNebula": "星云",
+  "stateNotifyChatChannel": "消息",
+  "stateNotifyChatChannelDesc": "聊天消息和 Jam 邀请"
 }

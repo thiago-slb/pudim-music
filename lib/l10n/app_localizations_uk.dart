@@ -2353,4 +2353,11 @@ class L10nUk extends L10n {
 
   @override
   String get visualsNebula => 'Туманність';
+
+  @override
+  String get stateNotifyChatChannel => 'Повідомлення';
+
+  @override
+  String get stateNotifyChatChannelDesc =>
+      'Повідомлення в чаті та запрошення до Jam';
 }

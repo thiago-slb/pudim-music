@@ -1,8 +1,11 @@
 package io.github.thiagoslb.pudim
 
+import android.content.Intent
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -18,8 +21,29 @@ import javax.crypto.spec.GCMParameterSpec
  * never leaves the Android Keystore.
  */
 class MainActivity : AudioServiceActivity() {
+    private var push: MethodChannel? = null
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // Push: device token for the extras server, and the screen a tapped notification opens
+        // (Firebase puts the message's data, e.g. "route", in the launch intent).
+        push = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "pudim/push").apply {
+            setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "token" -> {
+                        if (FirebaseApp.getApps(applicationContext).isEmpty()) {
+                            result.success(null) // build without the Firebase ids
+                        } else {
+                            FirebaseMessaging.getInstance().token.addOnCompleteListener { t ->
+                                result.success(if (t.isSuccessful) t.result else null)
+                            }
+                        }
+                    }
+                    "initialRoute" -> result.success(routeOf(intent).also { intent?.removeExtra("route") })
+                    else -> result.notImplemented()
+                }
+            }
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "pudim/token")
             .setMethodCallHandler { call, result ->
                 try {
@@ -49,6 +73,14 @@ class MainActivity : AudioServiceActivity() {
                 }
             }
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        routeOf(intent)?.let { push?.invokeMethod("open", it) }
+    }
+
+    private fun routeOf(i: Intent?): String? =
+        i?.getStringExtra("route")?.takeIf { it.startsWith("/") }
 
     private fun key(): SecretKey {
         val ks = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }

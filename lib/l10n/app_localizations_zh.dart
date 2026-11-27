@@ -2263,4 +2263,10 @@ class L10nZh extends L10n {
 
   @override
   String get visualsNebula => '星云';
+
+  @override
+  String get stateNotifyChatChannel => '消息';
+
+  @override
+  String get stateNotifyChatChannelDesc => '聊天消息和 Jam 邀请';
 }
