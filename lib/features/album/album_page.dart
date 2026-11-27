@@ -217,6 +217,8 @@ class AlbumPage extends ConsumerWidget {
                         tracks: d.tracks
                             .where((t) => (t.disc ?? 1) == disc)
                             .toList(),
+                        // A track on one disc plays the whole album from it.
+                        playTracks: d.tracks,
                         contextName: a.name,
                         contextRoute: route,
                         showAlbum: false,
