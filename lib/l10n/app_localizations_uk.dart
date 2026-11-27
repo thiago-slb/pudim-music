@@ -2335,4 +2335,22 @@ class L10nUk extends L10n {
   String widgetMixRadarFailed(String error) {
     return 'Радар не оновився: $error';
   }
+
+  @override
+  String get visualsFullscreen => 'На весь екран';
+
+  @override
+  String get visualsSwitch => 'Змінити візуалізацію';
+
+  @override
+  String get visualsWaves => 'Хвилі';
+
+  @override
+  String get visualsSwirl => 'Вихор';
+
+  @override
+  String get visualsBars => 'Смуги';
+
+  @override
+  String get visualsNebula => 'Туманність';
 }

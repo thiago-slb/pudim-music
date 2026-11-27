@@ -611,5 +611,11 @@
   "historyImported": "импорт",
   "widgetMixRadarDone": "Радар новинок: {count} треков",
   "widgetMixRadarQueued": "Загрузка релизов ({count}): {list}",
-  "widgetMixRadarFailed": "Радар не обновился: {error}"
+  "widgetMixRadarFailed": "Радар не обновился: {error}",
+  "visualsFullscreen": "Во весь экран",
+  "visualsSwitch": "Сменить визуализацию",
+  "visualsWaves": "Волны",
+  "visualsSwirl": "Вихрь",
+  "visualsBars": "Полосы",
+  "visualsNebula": "Туманность"
 }

@@ -611,5 +611,11 @@
   "historyImported": "içe aktarıldı",
   "widgetMixRadarDone": "Yeni Çıkanlar Radarı: {count} şarkı",
   "widgetMixRadarQueued": "{count} yeni çıkış indiriliyor: {list}",
-  "widgetMixRadarFailed": "Radar güncellenemedi: {error}"
+  "widgetMixRadarFailed": "Radar güncellenemedi: {error}",
+  "visualsFullscreen": "Tam ekran",
+  "visualsSwitch": "Görselleştirmeyi değiştir",
+  "visualsWaves": "Dalgalar",
+  "visualsSwirl": "Girdap",
+  "visualsBars": "Çubuklar",
+  "visualsNebula": "Bulutsu"
 }

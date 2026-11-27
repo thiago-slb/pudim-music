@@ -1579,5 +1579,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "visualsFullscreen": "Tela cheia",
+  "visualsSwitch": "Trocar visualização",
+  "visualsWaves": "Ondas",
+  "visualsSwirl": "Redemoinho",
+  "visualsBars": "Barras",
+  "visualsNebula": "Nebulosa"
 }

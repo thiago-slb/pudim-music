@@ -611,5 +611,11 @@
   "historyImported": "geïmporteerd",
   "widgetMixRadarDone": "Nieuwe-releasesradar: {count} nummers",
   "widgetMixRadarQueued": "{count} release(s) downloaden: {list}",
-  "widgetMixRadarFailed": "De radar is niet bijgewerkt: {error}"
+  "widgetMixRadarFailed": "De radar is niet bijgewerkt: {error}",
+  "visualsFullscreen": "Volledig scherm",
+  "visualsSwitch": "Visualisatie wisselen",
+  "visualsWaves": "Golven",
+  "visualsSwirl": "Draaikolk",
+  "visualsBars": "Balken",
+  "visualsNebula": "Nevel"
 }

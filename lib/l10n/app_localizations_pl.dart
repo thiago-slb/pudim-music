@@ -2339,4 +2339,22 @@ class L10nPl extends L10n {
   String widgetMixRadarFailed(String error) {
     return 'Radar nie został odświeżony: $error';
   }
+
+  @override
+  String get visualsFullscreen => 'Pełny ekran';
+
+  @override
+  String get visualsSwitch => 'Zmień wizualizację';
+
+  @override
+  String get visualsWaves => 'Fale';
+
+  @override
+  String get visualsSwirl => 'Wir';
+
+  @override
+  String get visualsBars => 'Słupki';
+
+  @override
+  String get visualsNebula => 'Mgławica';
 }

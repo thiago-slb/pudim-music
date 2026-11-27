@@ -611,5 +611,11 @@
   "historyImported": "importato",
   "widgetMixRadarDone": "Radar delle novità: {count} brani",
   "widgetMixRadarQueued": "Download di {count} uscita/e: {list}",
-  "widgetMixRadarFailed": "Il Radar non si è aggiornato: {error}"
+  "widgetMixRadarFailed": "Il Radar non si è aggiornato: {error}",
+  "visualsFullscreen": "Schermo intero",
+  "visualsSwitch": "Cambia visualizzazione",
+  "visualsWaves": "Onde",
+  "visualsSwirl": "Vortice",
+  "visualsBars": "Barre",
+  "visualsNebula": "Nebulosa"
 }

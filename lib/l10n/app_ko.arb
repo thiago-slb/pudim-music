@@ -611,5 +611,11 @@
   "historyImported": "가져옴",
   "widgetMixRadarDone": "신곡 레이더: {count}곡",
   "widgetMixRadarQueued": "신작 {count}개 다운로드 중: {list}",
-  "widgetMixRadarFailed": "레이더를 업데이트하지 못했습니다: {error}"
+  "widgetMixRadarFailed": "레이더를 업데이트하지 못했습니다: {error}",
+  "visualsFullscreen": "전체 화면",
+  "visualsSwitch": "시각화 바꾸기",
+  "visualsWaves": "물결",
+  "visualsSwirl": "소용돌이",
+  "visualsBars": "막대",
+  "visualsNebula": "성운"
 }

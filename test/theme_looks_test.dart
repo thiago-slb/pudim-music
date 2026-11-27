@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pudim_music/features/settings/settings_page.dart';
 import 'package:pudim_music/ui/theme.dart';
 import 'package:pudim_music/ui/widgets/theme_bits.dart';
+import 'package:pudim_music/ui/widgets/visuals.dart';
 
 /// Renders each theme's building blocks (preview, play button, keys, bars) to catch layout errors
 /// in every style. Run with --update-goldens to look at test/goldens/theme_looks.png.
@@ -31,7 +32,8 @@ void main() {
             const SizedBox(width: 12),
             const SizedBox(
               width: 200,
-              child: Visualizer(playing: false, height: 40),
+              height: 40,
+              child: AmbientVisual(playing: false, kind: VisualKind.bars),
             ),
             const SizedBox(width: 12),
             Expanded(

@@ -2272,4 +2272,22 @@ class L10nKo extends L10n {
   String widgetMixRadarFailed(String error) {
     return '레이더를 업데이트하지 못했습니다: $error';
   }
+
+  @override
+  String get visualsFullscreen => '전체 화면';
+
+  @override
+  String get visualsSwitch => '시각화 바꾸기';
+
+  @override
+  String get visualsWaves => '물결';
+
+  @override
+  String get visualsSwirl => '소용돌이';
+
+  @override
+  String get visualsBars => '막대';
+
+  @override
+  String get visualsNebula => '성운';
 }

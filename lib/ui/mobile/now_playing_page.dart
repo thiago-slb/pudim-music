@@ -13,6 +13,7 @@ import '../widgets/common.dart';
 import 'mobile_shell.dart';
 import 'retro_playing.dart';
 import '../widgets/theme_bits.dart';
+import '../widgets/visual_screen.dart';
 import '../../features/jam/jam_sheet.dart';
 import '../../features/playlist/playlist_edit.dart';
 import '../widgets/sleep_speed.dart';
@@ -119,7 +120,7 @@ class NowPlayingPage extends ConsumerWidget {
                           ),
                           if (glassy) ...[
                             const SizedBox(height: 12),
-                            Visualizer(playing: q.playing, height: 56),
+                            const VisualPanel(),
                           ],
                           const SizedBox(height: 32),
                           Row(
