@@ -617,5 +617,7 @@
   "visualsWaves": "Dalgalar",
   "visualsSwirl": "Girdap",
   "visualsBars": "Çubuklar",
-  "visualsNebula": "Bulutsu"
+  "visualsNebula": "Bulutsu",
+  "stateNotifyChatChannel": "Mesajlar",
+  "stateNotifyChatChannelDesc": "Sohbet mesajları ve Jam davetleri"
 }

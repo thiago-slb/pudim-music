@@ -617,5 +617,7 @@
   "visualsWaves": "Волны",
   "visualsSwirl": "Вихрь",
   "visualsBars": "Полосы",
-  "visualsNebula": "Туманность"
+  "visualsNebula": "Туманность",
+  "stateNotifyChatChannel": "Сообщения",
+  "stateNotifyChatChannelDesc": "Сообщения в чате и приглашения в Jam"
 }

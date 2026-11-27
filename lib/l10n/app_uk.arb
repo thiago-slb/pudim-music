@@ -617,5 +617,7 @@
   "visualsWaves": "Хвилі",
   "visualsSwirl": "Вихор",
   "visualsBars": "Смуги",
-  "visualsNebula": "Туманність"
+  "visualsNebula": "Туманність",
+  "stateNotifyChatChannel": "Повідомлення",
+  "stateNotifyChatChannelDesc": "Повідомлення в чаті та запрошення до Jam"
 }

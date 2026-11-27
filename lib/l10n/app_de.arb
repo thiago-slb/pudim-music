@@ -617,5 +617,7 @@
   "visualsWaves": "Wellen",
   "visualsSwirl": "Wirbel",
   "visualsBars": "Balken",
-  "visualsNebula": "Nebel"
+  "visualsNebula": "Nebel",
+  "stateNotifyChatChannel": "Nachrichten",
+  "stateNotifyChatChannelDesc": "Chatnachrichten und Jam-Einladungen"
 }

@@ -2357,4 +2357,11 @@ class L10nPl extends L10n {
 
   @override
   String get visualsNebula => 'Mgławica';
+
+  @override
+  String get stateNotifyChatChannel => 'Wiadomości';
+
+  @override
+  String get stateNotifyChatChannelDesc =>
+      'Wiadomości na czacie i zaproszenia do Jam';
 }

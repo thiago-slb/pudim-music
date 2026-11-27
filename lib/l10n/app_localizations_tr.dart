@@ -2318,4 +2318,10 @@ class L10nTr extends L10n {
 
   @override
   String get visualsNebula => 'Bulutsu';
+
+  @override
+  String get stateNotifyChatChannel => 'Mesajlar';
+
+  @override
+  String get stateNotifyChatChannelDesc => 'Sohbet mesajları ve Jam davetleri';
 }

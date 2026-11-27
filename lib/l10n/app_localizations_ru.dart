@@ -2359,4 +2359,11 @@ class L10nRu extends L10n {
 
   @override
   String get visualsNebula => 'Туманность';
+
+  @override
+  String get stateNotifyChatChannel => 'Сообщения';
+
+  @override
+  String get stateNotifyChatChannelDesc =>
+      'Сообщения в чате и приглашения в Jam';
 }

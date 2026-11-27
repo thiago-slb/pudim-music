@@ -617,5 +617,7 @@
   "visualsWaves": "물결",
   "visualsSwirl": "소용돌이",
   "visualsBars": "막대",
-  "visualsNebula": "성운"
+  "visualsNebula": "성운",
+  "stateNotifyChatChannel": "메시지",
+  "stateNotifyChatChannelDesc": "채팅 메시지와 Jam 초대"
 }

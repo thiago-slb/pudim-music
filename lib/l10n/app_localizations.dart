@@ -3830,6 +3830,18 @@ abstract class L10n {
   /// In pt, this message translates to:
   /// **'Nebulosa'**
   String get visualsNebula;
+
+  /// No description provided for @stateNotifyChatChannel.
+  ///
+  /// In pt, this message translates to:
+  /// **'Conversas'**
+  String get stateNotifyChatChannel;
+
+  /// No description provided for @stateNotifyChatChannelDesc.
+  ///
+  /// In pt, this message translates to:
+  /// **'Mensagens e convites para Jam'**
+  String get stateNotifyChatChannelDesc;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

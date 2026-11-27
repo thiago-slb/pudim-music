@@ -28,6 +28,7 @@ import 'ui/widgets/disk_image.dart';
 import 'state/notify.dart';
 import 'state/android_widget.dart';
 import 'state/chat.dart';
+import 'state/push.dart';
 import 'state/jam.dart';
 import 'audio/player.dart';
 import 'audio/carplay_bridge.dart';
@@ -111,6 +112,8 @@ class PudimMusicApp extends ConsumerWidget {
       // Chat (and the Jam invites that arrive through it): polls from the start, not only once
       // the chat icon is on screen, so new messages become notifications.
       ref.listen(chatsProvider, (_, _) {});
+      // Push on Android: chat and Jam invites also arrive with the app closed.
+      ref.watch(pushProvider);
     }
     final locale = ref.watch(localeProvider);
     final look = ref.watch(appThemeProvider);

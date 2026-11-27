@@ -617,5 +617,7 @@
   "visualsWaves": "Vågor",
   "visualsSwirl": "Virvel",
   "visualsBars": "Staplar",
-  "visualsNebula": "Nebulosa"
+  "visualsNebula": "Nebulosa",
+  "stateNotifyChatChannel": "Meddelanden",
+  "stateNotifyChatChannelDesc": "Chattmeddelanden och Jam-inbjudningar"
 }

@@ -2287,4 +2287,10 @@ class L10nJa extends L10n {
 
   @override
   String get visualsNebula => '星雲';
+
+  @override
+  String get stateNotifyChatChannel => 'メッセージ';
+
+  @override
+  String get stateNotifyChatChannelDesc => 'チャットのメッセージとJamへの招待';
 }
