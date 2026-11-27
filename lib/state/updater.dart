@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../config.dart';
 import '../version.dart';
 import 'session.dart';
 
@@ -59,7 +60,9 @@ class Updater extends Notifier<UpdateReady?> {
   Timer? _timer;
   bool _busy = false;
 
-  static String? get _kind => Platform.isAndroid
+  static String? get _kind => playStoreBuild
+      ? null // the store updates this build
+      : Platform.isAndroid
       ? 'apk'
       : Platform.isWindows
       ? 'windows'

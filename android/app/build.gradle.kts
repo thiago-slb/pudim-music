@@ -83,6 +83,12 @@ android {
         }
     }
 
+    // Google Play build (--dart-define=PUDIM_STORE=play): the store installs updates, so the release
+    // manifest drops the permission to install packages (src/play/AndroidManifest.xml).
+    if (dartDefines["PUDIM_STORE"] == "play") {
+        sourceSets.getByName("release").manifest.srcFile("src/play/AndroidManifest.xml")
+    }
+
     buildTypes {
         release {
             signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")

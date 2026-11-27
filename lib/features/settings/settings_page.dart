@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../config.dart';
 import '../../l10n/l10n.dart';
 import '../../ui/widgets/accounts.dart';
 
@@ -133,7 +134,8 @@ class SettingsPage extends ConsumerWidget {
           ],
           _Section(context.l10n.settingsSectionAbout),
           _Row(title: 'Pudim', subtitle: context.l10n.settingsBuild(appBuild)),
-          if (Platform.isAndroid || Platform.isWindows) const _UpdateRow(),
+          if ((Platform.isAndroid || Platform.isWindows) && !playStoreBuild)
+            const _UpdateRow(),
         ],
       ),
     );
