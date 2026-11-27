@@ -8,6 +8,10 @@ published to the extras server and installed by the in-app updater; see [docs/up
   player came up before the login loaded, building the track info failed silently and nothing
   sent it again; now the title goes right away, the cover follows once the login loads, and any
   missing or stale track is re-sent on the next player change.
+- Every playlist is editable, including Spotify/Deezer imports and the ones the panel builds
+  (Descobertas da semana, Mistura da semana, Radar de Novidades, daylist, Blend): they show in
+  "Add to playlist", and tracks can be removed, reordered and shared for editing. The panel's
+  refresh keeps tracks added by hand and does not bring back removed ones.
 
 ## Build 27
 - Android Auto review:

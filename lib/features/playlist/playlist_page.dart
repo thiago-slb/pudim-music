@@ -52,7 +52,6 @@ class PlaylistPage extends ConsumerWidget {
         final api = ref.watch(apiProvider);
         final p = d.playlist;
         final collab = ref.watch(collabProvider(id)).value;
-        final editable = !isGeneratedPlaylist(p.name);
         return TracksPage(
           title: p.name,
           type: playlistOrigin(p.name),
@@ -60,7 +59,7 @@ class PlaylistPage extends ConsumerWidget {
           colorFromUrl: api.imageUrl(p.id, size: 64),
           description: (p.overview ?? '').isEmpty ? null : Text(p.overview!),
           above: CollabMembers(id),
-          playlistId: editable ? id : null,
+          playlistId: id,
           addedBy: collab != null && collab.isCollab
               ? (t) => collab.who(t.id)?.displayName
               : null,
