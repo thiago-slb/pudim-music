@@ -2300,4 +2300,22 @@ class L10nTr extends L10n {
   String widgetMixRadarFailed(String error) {
     return 'Radar güncellenemedi: $error';
   }
+
+  @override
+  String get visualsFullscreen => 'Tam ekran';
+
+  @override
+  String get visualsSwitch => 'Görselleştirmeyi değiştir';
+
+  @override
+  String get visualsWaves => 'Dalgalar';
+
+  @override
+  String get visualsSwirl => 'Girdap';
+
+  @override
+  String get visualsBars => 'Çubuklar';
+
+  @override
+  String get visualsNebula => 'Bulutsu';
 }

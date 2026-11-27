@@ -3794,6 +3794,42 @@ abstract class L10n {
   /// In pt, this message translates to:
   /// **'O Radar não atualizou: {error}'**
   String widgetMixRadarFailed(String error);
+
+  /// No description provided for @visualsFullscreen.
+  ///
+  /// In pt, this message translates to:
+  /// **'Tela cheia'**
+  String get visualsFullscreen;
+
+  /// No description provided for @visualsSwitch.
+  ///
+  /// In pt, this message translates to:
+  /// **'Trocar visualização'**
+  String get visualsSwitch;
+
+  /// No description provided for @visualsWaves.
+  ///
+  /// In pt, this message translates to:
+  /// **'Ondas'**
+  String get visualsWaves;
+
+  /// No description provided for @visualsSwirl.
+  ///
+  /// In pt, this message translates to:
+  /// **'Redemoinho'**
+  String get visualsSwirl;
+
+  /// No description provided for @visualsBars.
+  ///
+  /// In pt, this message translates to:
+  /// **'Barras'**
+  String get visualsBars;
+
+  /// No description provided for @visualsNebula.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nebulosa'**
+  String get visualsNebula;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

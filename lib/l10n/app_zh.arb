@@ -611,5 +611,11 @@
   "historyImported": "已导入",
   "widgetMixRadarDone": "新歌雷达：{count} 首",
   "widgetMixRadarQueued": "正在下载 {count} 张新发行：{list}",
-  "widgetMixRadarFailed": "雷达未能更新：{error}"
+  "widgetMixRadarFailed": "雷达未能更新：{error}",
+  "visualsFullscreen": "全屏",
+  "visualsSwitch": "切换可视化效果",
+  "visualsWaves": "波浪",
+  "visualsSwirl": "漩涡",
+  "visualsBars": "频谱条",
+  "visualsNebula": "星云"
 }

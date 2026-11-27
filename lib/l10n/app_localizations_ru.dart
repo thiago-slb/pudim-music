@@ -2341,4 +2341,22 @@ class L10nRu extends L10n {
   String widgetMixRadarFailed(String error) {
     return 'Радар не обновился: $error';
   }
+
+  @override
+  String get visualsFullscreen => 'Во весь экран';
+
+  @override
+  String get visualsSwitch => 'Сменить визуализацию';
+
+  @override
+  String get visualsWaves => 'Волны';
+
+  @override
+  String get visualsSwirl => 'Вихрь';
+
+  @override
+  String get visualsBars => 'Полосы';
+
+  @override
+  String get visualsNebula => 'Туманность';
 }

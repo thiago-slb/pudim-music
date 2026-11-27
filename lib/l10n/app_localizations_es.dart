@@ -2312,4 +2312,22 @@ class L10nEs extends L10n {
   String widgetMixRadarFailed(String error) {
     return 'El Radar no se actualizó: $error';
   }
+
+  @override
+  String get visualsFullscreen => 'Pantalla completa';
+
+  @override
+  String get visualsSwitch => 'Cambiar visualización';
+
+  @override
+  String get visualsWaves => 'Ondas';
+
+  @override
+  String get visualsSwirl => 'Remolino';
+
+  @override
+  String get visualsBars => 'Barras';
+
+  @override
+  String get visualsNebula => 'Nebulosa';
 }

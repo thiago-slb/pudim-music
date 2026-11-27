@@ -2245,4 +2245,22 @@ class L10nZh extends L10n {
   String widgetMixRadarFailed(String error) {
     return '雷达未能更新：$error';
   }
+
+  @override
+  String get visualsFullscreen => '全屏';
+
+  @override
+  String get visualsSwitch => '切换可视化效果';
+
+  @override
+  String get visualsWaves => '波浪';
+
+  @override
+  String get visualsSwirl => '漩涡';
+
+  @override
+  String get visualsBars => '频谱条';
+
+  @override
+  String get visualsNebula => '星云';
 }

@@ -611,5 +611,11 @@
   "historyImported": "importerad",
   "widgetMixRadarDone": "Nyhetsradar: {count} låtar",
   "widgetMixRadarQueued": "Laddar ner {count} utgåva/or: {list}",
-  "widgetMixRadarFailed": "Radarn uppdaterades inte: {error}"
+  "widgetMixRadarFailed": "Radarn uppdaterades inte: {error}",
+  "visualsFullscreen": "Helskärm",
+  "visualsSwitch": "Byt visualisering",
+  "visualsWaves": "Vågor",
+  "visualsSwirl": "Virvel",
+  "visualsBars": "Staplar",
+  "visualsNebula": "Nebulosa"
 }

@@ -611,5 +611,11 @@
   "historyImported": "імпорт",
   "widgetMixRadarDone": "Радар новинок: {count} треків",
   "widgetMixRadarQueued": "Завантаження релізів ({count}): {list}",
-  "widgetMixRadarFailed": "Радар не оновився: {error}"
+  "widgetMixRadarFailed": "Радар не оновився: {error}",
+  "visualsFullscreen": "На весь екран",
+  "visualsSwitch": "Змінити візуалізацію",
+  "visualsWaves": "Хвилі",
+  "visualsSwirl": "Вихор",
+  "visualsBars": "Смуги",
+  "visualsNebula": "Туманність"
 }

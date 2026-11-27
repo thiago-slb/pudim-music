@@ -2269,4 +2269,22 @@ class L10nJa extends L10n {
   String widgetMixRadarFailed(String error) {
     return 'レーダーを更新できませんでした: $error';
   }
+
+  @override
+  String get visualsFullscreen => '全画面';
+
+  @override
+  String get visualsSwitch => 'ビジュアライザーを切り替え';
+
+  @override
+  String get visualsWaves => 'ウェーブ';
+
+  @override
+  String get visualsSwirl => '渦巻き';
+
+  @override
+  String get visualsBars => 'バー';
+
+  @override
+  String get visualsNebula => '星雲';
 }

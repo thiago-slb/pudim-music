@@ -2307,4 +2307,22 @@ class L10nSv extends L10n {
   String widgetMixRadarFailed(String error) {
     return 'Radarn uppdaterades inte: $error';
   }
+
+  @override
+  String get visualsFullscreen => 'Helskärm';
+
+  @override
+  String get visualsSwitch => 'Byt visualisering';
+
+  @override
+  String get visualsWaves => 'Vågor';
+
+  @override
+  String get visualsSwirl => 'Virvel';
+
+  @override
+  String get visualsBars => 'Staplar';
+
+  @override
+  String get visualsNebula => 'Nebulosa';
 }

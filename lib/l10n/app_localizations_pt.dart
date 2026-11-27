@@ -2304,4 +2304,22 @@ class L10nPt extends L10n {
   String widgetMixRadarFailed(String error) {
     return 'O Radar não atualizou: $error';
   }
+
+  @override
+  String get visualsFullscreen => 'Tela cheia';
+
+  @override
+  String get visualsSwitch => 'Trocar visualização';
+
+  @override
+  String get visualsWaves => 'Ondas';
+
+  @override
+  String get visualsSwirl => 'Redemoinho';
+
+  @override
+  String get visualsBars => 'Barras';
+
+  @override
+  String get visualsNebula => 'Nebulosa';
 }

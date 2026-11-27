@@ -611,5 +611,11 @@
   "historyImported": "インポート",
   "widgetMixRadarDone": "新作レーダー: {count} 曲",
   "widgetMixRadarQueued": "{count} 件の新作をダウンロード中: {list}",
-  "widgetMixRadarFailed": "レーダーを更新できませんでした: {error}"
+  "widgetMixRadarFailed": "レーダーを更新できませんでした: {error}",
+  "visualsFullscreen": "全画面",
+  "visualsSwitch": "ビジュアライザーを切り替え",
+  "visualsWaves": "ウェーブ",
+  "visualsSwirl": "渦巻き",
+  "visualsBars": "バー",
+  "visualsNebula": "星雲"
 }
